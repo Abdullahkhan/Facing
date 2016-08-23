@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="topBar">#919ffa</color>
+    <color name="bottomBar">#6c7ce4</color>
+</resources>
