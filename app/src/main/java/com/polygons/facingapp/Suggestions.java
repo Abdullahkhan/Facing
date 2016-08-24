@@ -77,14 +77,14 @@ public class Suggestions extends Activity {
 
                         arrayListUsernameSuggestions.add(jsonObject.getString("Name"));
                         arrayListUserIdSuggestions.add(jsonObject.getString("_id"));
-                        return true;
                     }
+                    return true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return false;
         }
 
         @Override

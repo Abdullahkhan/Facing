@@ -1,3 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Users\Zeeshan Ali\AppData\Local\Android\Sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1_127efadaeaf0737274039266acca046009b1123b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\libs\httpclient-4.3.6.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f3cf3b25e14d3bca47773e95aa85ea8fefbf8e81">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\httpclient-4.3.6_f62620a6c832cbb3ee451f8caef82650b2b5cdd1.jar" />
+    </item>
+    <item
+        jar="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.0.1_6e5d0c8ea557cd515126818f9cbc8c8528a51143.jar" />
+    </item>
+    <item
+        jar="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.0.1_83597e56cb3fcfaad65bbd97f4455a165bd43493.jar" />
+    </item>
+    <item
+        jar="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1_b1d3cc81cf20157997437e861757884ab49c1735.jar" />
+    </item>
+    <item
+        jar="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\libs\httpmime-4.3.6.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="66a39a5e37d5da40fdad6176fc24ef4316e74702">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\httpmime-4.3.6_ef96b03c1e745d5e8a55c06f7d234af1a51ec6fe.jar" />
+    </item>
+    <item
+        jar="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\libs\httpcore-4.3.3.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="f91b7a4aadc5cf486df6e4634748d7dd7a73f06d">
+        <dex dex="C:\Users\Zeeshan Ali\Downloads\Compressed\Facing\app\build\intermediates\pre-dexed\debug\httpcore-4.3.3_d4918560e15fa4ebd92336e30200011828d824f0.jar" />
+    </item>
+
+</items>
