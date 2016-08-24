@@ -85,9 +85,10 @@ public class SignUp extends Activity {
 
             Log.d("request", "starting");
 
-            JSONObject json = jsonParser.makeHttpRequest(signUpURL, "POST",
-                    params);
+
             try {
+                JSONObject json = jsonParser.makeHttpRequest(signUpURL, "POST",
+                        params);
                 boolean status = json.getBoolean(TAG_STATUS);
                 if (status) {
 

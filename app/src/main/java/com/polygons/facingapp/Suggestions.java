@@ -32,7 +32,8 @@ public class Suggestions extends Activity {
     ArrayList<String> arrayListUserIdSuggestions;
     String userid;
     JSONParser jsonParser = new JSONParser();
-    String suggestionsURL = Login.myURL + "default_follows";
+    String suggestionsURL = Login.myURL + "suggestions";
+    private static final String TAG_STATUS = "status";
 
 
     SharedPreferences sp;
@@ -51,50 +52,33 @@ public class Suggestions extends Activity {
 
     }
 
-    class GetSuggestions extends AsyncTask<String, String, String> {
+    class GetSuggestions extends AsyncTask<String, String, Boolean> {
 
         @Override
-        protected String doInBackground(String... args) {
+        protected Boolean doInBackground(String... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("userid", args[0]);
 
-//            JSONObject json = jsonParser.makeHttpRequest(suggestionsURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(suggestionsURL, "POST", params);
+
             try {
+                boolean status = json.getBoolean(TAG_STATUS);
+                if (status) {
 
-                // Log.i("Suggest", jsonParser.makeHttpRequest(suggestionsURL, "POST", params).toString());
-                //   JSONArray jsonArray = new JSONArray(jsonParser.makeHttpRequest(suggestionsURL, "POST", params).toString());
-                JSONArray jsonArray = new JSONArray("[\n" +
-                        "  {\n" +
-                        "    \"_id\": \"57bbfd7ca6d0cf030033d3ac\",\n" +
-                        "    \"Name\": \"facing\"\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    \"_id\": \"57bbfdd6a6d0cf030033d3ae\",\n" +
-                        "    \"Name\": \"abd7\"\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    \"_id\": \"57bc0152a6d0cf030033d3af\",\n" +
-                        "    \"Name\": \"abd7\"\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    \"_id\": \"57bc0155a6d0cf030033d3b0\",\n" +
-                        "    \"Name\": \"abd8\"\n" +
-                        "  },\n" +
-                        "  {\n" +
-                        "    \"_id\": \"57bc2a297c0813030091be6c\",\n" +
-                        "    \"Name\": \"zeeshan\"\n" +
-                        "  }\n" +
-                        "]");
-                arrayListUsernameSuggestions = new ArrayList<String>();
-                arrayListUserIdSuggestions = new ArrayList<String>();
+                    // Log.i("Suggest", jsonParser.makeHttpRequest(suggestionsURL, "POST", params).toString());
+                    JSONArray jsonArray = json.getJSONArray("result");
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    arrayListUsernameSuggestions = new ArrayList<String>();
+                    arrayListUserIdSuggestions = new ArrayList<String>();
 
-                    arrayListUsernameSuggestions.add(jsonObject.getString("Name"));
-                    arrayListUserIdSuggestions.add(jsonObject.getString("_id"));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
 
+                        arrayListUsernameSuggestions.add(jsonObject.getString("Name"));
+                        arrayListUserIdSuggestions.add(jsonObject.getString("_id"));
+                        return true;
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -104,12 +88,12 @@ public class Suggestions extends Activity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(Boolean s) {
             super.onPostExecute(s);
 
-
-            listViewSuggestions.setAdapter(adapter);
-
+            if (s) {
+                listViewSuggestions.setAdapter(adapter);
+            }
         }
     }
 
