@@ -32,7 +32,7 @@ public class Login extends Activity {
     private static final String TAG_STATUS = "status";
     public static User user;
     Context context = this;
-    SharedPreferences sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+    SharedPreferences sp;
 
 
     @Override
@@ -50,6 +50,8 @@ public class Login extends Activity {
                         editTextPassword.getText().toString());
             }
         });
+
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
 
     }
 

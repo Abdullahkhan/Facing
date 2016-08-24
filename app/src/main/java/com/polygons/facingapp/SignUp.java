@@ -29,8 +29,7 @@ public class SignUp extends AppCompatActivity {
     Context context = this;
     String signUpURL = Login.myURL + "register";
     private static final String TAG_STATUS = "status";
-    SharedPreferences sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
-
+    SharedPreferences sp;
 
 
     @Override
@@ -58,6 +57,8 @@ public class SignUp extends AppCompatActivity {
                 startActivity(new Intent(context, Login.class));
             }
         });
+
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
     }
 
     class SignUpUser extends AsyncTask<String, String, String> {
