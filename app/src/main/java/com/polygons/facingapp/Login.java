@@ -102,8 +102,8 @@ public class Login extends Activity {
             JSONObject json = jsonParser.makeHttpRequest(loginURL, "POST",
                     params);
             try {
-                boolean success = json.getBoolean(TAG_STATUS);
-                if (success) {
+                boolean status = json.getBoolean(TAG_STATUS);
+                if (status) {
 
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putBoolean("isLoggedIn", true);

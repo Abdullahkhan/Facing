@@ -17,11 +17,10 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class SignUp extends AppCompatActivity {
+public class SignUp extends Activity {
     EditText editTextFirstName;
     EditText editTextLastName;
     EditText editTextSignUpPassword;
-    EditText editTextSignUpRePassword;
     JSONParser jsonParser = new JSONParser();
     Button buttonSignUp;
     Button buttonGoToLogin;
@@ -40,14 +39,13 @@ public class SignUp extends AppCompatActivity {
         editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextLastName = (EditText) findViewById(R.id.editTextLastName);
         editTextSignUpPassword = (EditText) findViewById(R.id.editTextSignUpPassword);
-        editTextSignUpRePassword = (EditText) findViewById(R.id.editTextSignUpRePassword);
 
         buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
         buttonGoToLogin = (Button) findViewById(R.id.buttonGoToLogin);
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SignUpUser().execute(editTextFirstName.getText().toString(), editTextLastName.getText().toString(), editTextSignUpPassword.getText().toString(), editTextSignUpPassword.getText().toString());
+                new SignUpUser().execute(editTextFirstName.getText().toString(), editTextLastName.getText().toString(), editTextSignUpPassword.getText().toString());
 
             }
         });
@@ -84,22 +82,21 @@ public class SignUp extends AppCompatActivity {
             params.put("first_name", args[0]);
             params.put("last_name", args[1]);
             params.put("password", args[2]);
-            params.put("repassword", args[3]);
 
             Log.d("request", "starting");
 
             JSONObject json = jsonParser.makeHttpRequest(signUpURL, "POST",
                     params);
             try {
-                boolean success = json.getBoolean(TAG_STATUS);
-                if (success) {
+                boolean status = json.getBoolean(TAG_STATUS);
+                if (status) {
 
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putBoolean("isLoggedIn", true);
                     editor.putString("userid", json.getString("userid"));
                     editor.commit();
 
-                    startActivity(new Intent(context, NewsFeed.class));
+                    startActivity(new Intent(context, Suggestions.class));
 
                 }
                 //  Log.i("Login",""+ success);

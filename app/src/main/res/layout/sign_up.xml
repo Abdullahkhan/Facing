@@ -11,24 +11,20 @@
     tools:context="com.polygons.facingapp.SignUp">
 
     <EditText
-        android:id="@+id/editTextFirstName"
+        android:id="@+id/editTextFirstName" android:hint="First Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/editTextLastName"
+        android:id="@+id/editTextLastName" android:hint="Last Name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/editTextSignUpPassword"
-        android:layout_width="match_parent"
+        android:layout_width="match_parent" android:hint="Password"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/editTextSignUpRePassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/buttonSignUp"
