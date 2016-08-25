@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.polygons.facingapp.tools.ImageLoader;
 
@@ -28,11 +30,13 @@ import java.util.HashMap;
 public class Suggestions extends Activity {
     Context context = this;
     ListView listViewSuggestions;
+    Button buttonItemListViewFollowSuggestion;
     ArrayList<String> arrayListUsernameSuggestions;
     ArrayList<String> arrayListUserIdSuggestions;
     String userid;
     JSONParser jsonParser = new JSONParser();
     String suggestionsURL = Login.myURL + "suggestions";
+    String followTheUserURL = Login.myURL + "follow_friend";
     private static final String TAG_STATUS = "status";
 
 
@@ -43,7 +47,6 @@ public class Suggestions extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.suggestions);
         listViewSuggestions = (ListView) findViewById(R.id.listViewSuggestions);
-
         sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
         userid = sp.getString("userid", "0");
 
@@ -97,8 +100,37 @@ public class Suggestions extends Activity {
         }
     }
 
-    ;
+    class FollowTheUser extends AsyncTask<String,String, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... args) {
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("userid", args[0]);
+            params.put("friend_id",args[1]);
 
+            JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, "POST", params);
+
+            try {
+                boolean status = json.getBoolean(TAG_STATUS);
+                if (status) {
+                    return true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if(aBoolean)
+            {
+                Toast.makeText(context,"User Followed ",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private BaseAdapter adapter = new BaseAdapter() {
         TextView username;
 
@@ -118,19 +150,28 @@ public class Suggestions extends Activity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
 
             View retval = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.item_listview_suggestions, null);
 
 
             username = (TextView) retval.findViewById(R.id.textViewItemListViewNameSuggestion);
+            buttonItemListViewFollowSuggestion=(Button)retval.findViewById(R.id.buttonItemListViewFollowSuggestion);
+
             username.setText(arrayListUsernameSuggestions.get(position));
 
             username.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(context, Profile.class));
+                }
+            });
+
+            buttonItemListViewFollowSuggestion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new FollowTheUser().execute(userid,arrayListUserIdSuggestions.get(position));
                 }
             });
 
