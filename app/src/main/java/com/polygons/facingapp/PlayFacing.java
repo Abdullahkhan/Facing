@@ -28,6 +28,8 @@ public class PlayFacing extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.playfacing);
+        setAllXMLReferences();
+        setAllClickListner();
         clonedfacingsUrlArrayList = new ArrayList<ArrayList<String>>();
         for (int i = 0; i < NewsFeed.facingsUrlArrayList.size(); i++) {
             ArrayList<String> al = new ArrayList<String>();
@@ -40,14 +42,18 @@ public class PlayFacing extends Activity {
             clonedfacingsUrlArrayList.add(al);
 
         }
+        position = getIntent().getExtras().getInt(NewsFeed.TAG_POSITION);
+        startTheVideo();
+    }
 
-
+    void setAllXMLReferences()
+    {
         videoViewFacing = (VideoView) findViewById(R.id.videoViewFacing);
         buttonReply = (Button) findViewById(R.id.buttonReply);
+    }
 
-
-        position = getIntent().getExtras().getInt(NewsFeed.TAG_POSITION);
-
+    void  setAllClickListner()
+    {
         buttonReply.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -72,10 +78,7 @@ public class PlayFacing extends Activity {
                 startActivity(intent);
             }
         });
-        startTheVideo();
     }
-
-
     public void startTheVideo() {
         Log.d("set vid", clonedfacingsUrlArrayList.get(position).toString());
         System.out.println(clonedfacingsUrlArrayList.get(position)

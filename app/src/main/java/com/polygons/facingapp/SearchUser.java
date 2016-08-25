@@ -48,9 +48,19 @@ public class SearchUser extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.searchuser);
+		setAllXMLReferences();
+		setAllClickListner();
+	}
+
+	void setAllXMLReferences()
+	{
 		editTextSearchField = (EditText) findViewById(R.id.editTextSearchField);
 		buttonSearch = (Button) findViewById(R.id.buttonSearch);
 		listViewSearchedUsers = (ListView) findViewById(R.id.listViewSearchedUsers);
+	}
+
+	void  setAllClickListner()
+	{
 		buttonSearch.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -62,7 +72,7 @@ public class SearchUser extends Activity {
 
 							@Override
 							public void onItemClick(AdapterView<?> parent,
-									View view, int position, long id) {
+													View view, int position, long id) {
 								TextView name = (TextView) view
 										.findViewById(R.id.name);
 								String toBeFollowedUsername = name.getText()
@@ -76,9 +86,7 @@ public class SearchUser extends Activity {
 						});
 			}
 		});
-
 	}
-
 	class SearchUserPlease extends AsyncTask<String, String, String> {
 		@Override
 		protected void onPreExecute() {

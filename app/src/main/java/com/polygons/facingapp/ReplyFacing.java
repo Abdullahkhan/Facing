@@ -60,16 +60,25 @@ public class ReplyFacing extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.reply_facing);
+		setAllXMLReferences();
+		setAllClickListner();
 		username = getIntent().getExtras().getString(PlayFacing.TAG_USERNAME);
 		replyUsername = getIntent().getExtras().getString(
 				PlayFacing.TAG_REPLY_USERNAME);
 		facingID = getIntent().getExtras().getString(PlayFacing.TAG_FACING_ID);
+		recordVideo();
+	}
 
+	void setAllXMLReferences()
+	{
 		buttonOKReply = (Button) findViewById(R.id.buttonOKReply);
 		videoViewPreviewReply = (VideoView) findViewById(R.id.videoViewPreviewReply);
 		progressBarReplyFacing = (ProgressBar) findViewById(R.id.progressBarReplyFacing);
 		textViewPercentageReplyFacing = (TextView) findViewById(R.id.textViewPercentageReplyFacing);
+	}
 
+	void  setAllClickListner()
+	{
 		buttonOKReply.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -79,9 +88,7 @@ public class ReplyFacing extends Activity {
 						facingID);
 			}
 		});
-		recordVideo();
 	}
-
 	private void recordVideo() {
 		Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 		fileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);

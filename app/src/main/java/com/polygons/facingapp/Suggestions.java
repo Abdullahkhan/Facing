@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +32,6 @@ import java.util.HashMap;
 public class Suggestions extends Activity {
     Context context = this;
     ListView listViewSuggestions;
-    Button buttonItemListViewFollowSuggestion;
     ArrayList<String> arrayListUsernameSuggestions;
     ArrayList<String> arrayListUserIdSuggestions;
     String userid;
@@ -46,13 +47,29 @@ public class Suggestions extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.suggestions);
-        listViewSuggestions = (ListView) findViewById(R.id.listViewSuggestions);
+        setAllXMLReferences();
+        setAllClickListner();
         sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
         userid = sp.getString("userid", "0");
-
         new GetSuggestions().execute(userid);
+    }
 
+    void setAllXMLReferences()
+    {
+        listViewSuggestions = (ListView) findViewById(R.id.listViewSuggestions);
+    }
 
+    void setAllClickListner()
+    {
+        listViewSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Intent intent=new Intent(context,Profile.class);
+                intent.putExtra("userid",arrayListUserIdSuggestions.get(i));
+                startActivity(intent);
+            }
+        });
     }
 
     class GetSuggestions extends AsyncTask<String, String, Boolean> {
@@ -133,6 +150,9 @@ public class Suggestions extends Activity {
     }
     private BaseAdapter adapter = new BaseAdapter() {
         TextView username;
+         LinearLayout linearLayoutItemListViewSuggestions;
+        Button buttonItemListViewFollowSuggestion;
+
 
         @Override
         public int getCount() {
@@ -158,13 +178,17 @@ public class Suggestions extends Activity {
 
             username = (TextView) retval.findViewById(R.id.textViewItemListViewNameSuggestion);
             buttonItemListViewFollowSuggestion=(Button)retval.findViewById(R.id.buttonItemListViewFollowSuggestion);
-
+            linearLayoutItemListViewSuggestions=(LinearLayout)retval.findViewById(R.id.linearLayoutItemListViewSuggestions);
             username.setText(arrayListUsernameSuggestions.get(position));
 
-            username.setOnClickListener(new View.OnClickListener() {
+            linearLayoutItemListViewSuggestions.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(context, Profile.class));
+
+                    Intent intent=new Intent(context,Profile.class);
+                    intent.putExtra("userid",arrayListUserIdSuggestions.get(position));
+                    startActivity(intent);
+                   // startActivity(new Intent(context, Profile.class));
                 }
             });
 

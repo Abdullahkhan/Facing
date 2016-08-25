@@ -39,9 +39,20 @@ public class Login extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        setAllXMLReferences();
+        setAllClickListner();
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+    }
+
+    void  setAllXMLReferences()
+    {
         editTextUsername = (EditText) findViewById(R.id.editTextUsername);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
+
+    }
+    void setAllClickListner()
+    {
         buttonLogin.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -50,9 +61,6 @@ public class Login extends Activity {
                         editTextPassword.getText().toString());
             }
         });
-
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
-
     }
 
     @Override

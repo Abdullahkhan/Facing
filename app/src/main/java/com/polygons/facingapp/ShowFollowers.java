@@ -38,8 +38,18 @@ public class ShowFollowers extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show_followers);
+		setAllXMLReferences();
+		setAllClickListner();
+	}
+
+	void setAllXMLReferences()
+	{
 		buttonRefreshShowFollowers = (Button) findViewById(R.id.buttonRefreshShowFollowers);
 		listViewShowFollowers = (ListView) findViewById(R.id.listViewShowFollowers);
+	}
+
+	void setAllClickListner()
+	{
 		buttonRefreshShowFollowers
 				.setOnClickListener(new View.OnClickListener() {
 
@@ -49,7 +59,6 @@ public class ShowFollowers extends Activity {
 					}
 				});
 	}
-
 	class AllFollowers extends AsyncTask<String, String, String> {
 		@Override
 		protected void onPreExecute() {

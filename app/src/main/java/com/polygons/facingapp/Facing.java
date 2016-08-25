@@ -60,8 +60,15 @@ public class Facing extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.facing);
         setAllXMLReferences();
+        setAllClickListner();
+        recordVideo();
 
 
+    }
+
+
+    void setAllClickListner()
+    {
         buttonOK.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -69,13 +76,7 @@ public class Facing extends Activity {
                 new UploadFacingToServer().execute();
             }
         });
-
-        recordVideo();
-
-
     }
-
-
     void setAllXMLReferences() {
 
         videoViewPreview = (VideoView) findViewById(R.id.videoViewPreview);

@@ -38,8 +38,18 @@ public class ShowFollowing extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.show_following);
+		setAllXMLReferences();
+		setAllClickListner();
+	}
+
+	void setAllXMLReferences()
+	{
 		buttonRefreshShowFollowing = (Button) findViewById(R.id.buttonRefreshShowFollowing);
 		listViewShowFollowing = (ListView) findViewById(R.id.listViewShowFollowing);
+	}
+
+	void setAllClickListner()
+	{
 		buttonRefreshShowFollowing
 				.setOnClickListener(new View.OnClickListener() {
 

@@ -35,13 +35,22 @@ public class SignUp extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up);
+        setAllXMLReferences();
+        setAllClickListner();
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+    }
 
+    void  setAllXMLReferences()
+    {
         editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextLastName = (EditText) findViewById(R.id.editTextLastName);
         editTextSignUpPassword = (EditText) findViewById(R.id.editTextSignUpPassword);
-
         buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
         buttonGoToLogin = (Button) findViewById(R.id.buttonGoToLogin);
+    }
+
+    void setAllClickListner()
+    {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,10 +64,7 @@ public class SignUp extends Activity {
                 startActivity(new Intent(context, Login.class));
             }
         });
-
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
     }
-
     class SignUpUser extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
