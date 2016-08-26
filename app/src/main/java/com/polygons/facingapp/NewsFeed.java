@@ -1,11 +1,16 @@
 package com.polygons.facingapp;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,9 +18,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +40,7 @@ import android.widget.TextView;
 import com.polygons.facingapp.tools.ImageLoader;
 
 public class NewsFeed extends Activity {
+    Context context = this;
     Button buttonFace;
     Button buttonLogOut;
     Button buttonRefreshFacings;
@@ -40,8 +48,8 @@ public class NewsFeed extends Activity {
     Button buttonShowFollowers;
     Button buttonShowFollowing;
     ListView listViewNewsFeed;
+    String userid;
     ProgressDialog pDialog;
-    Context context = this;
     static ArrayList<ArrayList<String>> facingsUrlArrayList;
     ArrayList<String> singleFacingURLArraylist;
     public static int loader = R.drawable.ic_launcher;
@@ -49,10 +57,13 @@ public class NewsFeed extends Activity {
     JSONArray allFacingsURL = null;
     JSONParser jsonparser = new JSONParser();
     JSONObject json;
-    String TAG_SUCCESS = "success";
+    String TAG_SUCCESS = "status";
     String TAG_MESSAGE = "message";
     public static String TAG_POSITION = "position";
-    String refreshFacings = Login.myURL + "/facing/news_feed.php";
+    String refreshFacings = Login.myURL + "newsfeed";
+    SharedPreferences sp;
+
+    ArrayList<ArrayList<String>> post;
 
 
     @Override
@@ -61,6 +72,12 @@ public class NewsFeed extends Activity {
         setContentView(R.layout.newsfeed);
         setAllXMLReferences();
         setAllButtonOnClickListeners();
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+        userid = sp.getString("userid", "0");
+        Log.i("userid", userid);
+        //   new RefreshFacings().execute(userid, "0", "20");
+
+
         listViewNewsFeed.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -77,11 +94,7 @@ public class NewsFeed extends Activity {
     private void setAllXMLReferences() {
 
         buttonFace = (Button) findViewById(R.id.buttonFace);
-        buttonLogOut = (Button) findViewById(R.id.buttonLogOut);
-        buttonRefreshFacings = (Button) findViewById(R.id.buttonRefreshFacings);
-        buttonSearchUser = (Button) findViewById(R.id.buttonSearchUser);
-        buttonShowFollowers = (Button) findViewById(R.id.buttonShowFollowers);
-        buttonShowFollowing = (Button) findViewById(R.id.buttonShowFollowing);
+//      buttonSearchUser = (Button) findViewById(R.id.buttonSearchUser);
         listViewNewsFeed = (ListView) findViewById(R.id.listViewNewsFeed);
     }
 
@@ -90,42 +103,20 @@ public class NewsFeed extends Activity {
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, Facing.class));
+                startActivity(new Intent(context, PostText.class));
             }
         });
-        buttonRefreshFacings.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                new RefreshFacings().execute(Login.user.getUsername());
-
-            }
-        });
-        buttonSearchUser.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, SearchUser.class));
-            }
-        });
-        buttonShowFollowers.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, ShowFollowers.class));
-            }
-        });
-        buttonShowFollowing.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, ShowFollowing.class));
-            }
-        });
+//        buttonSearchUser.setOnClickListener(new OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(context, SearchUser.class));
+//            }
+//        });
 
     }
 
-    class RefreshFacings extends AsyncTask<String, String, String> {
+    class RefreshFacings extends AsyncTask<String, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -138,107 +129,66 @@ public class NewsFeed extends Activity {
         }
 
         @Override
-        protected String doInBackground(String... args) {
-
-            // List<NameValuePair> params = new ArrayList<NameValuePair>();
-            // params.add(new BasicNameValuePair("username", Username));
+        protected Boolean doInBackground(String... args) {
+            post = new ArrayList<ArrayList<String>>();
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("username", args[0]);
+            params.put("userid", args[0]);
+            params.put("offset", args[1]);
+            params.put("bucket", args[2]);
             json = jsonparser.makeHttpRequest(refreshFacings, "POST", params);
             facingsUrlArrayList = new ArrayList<ArrayList<String>>();
-
+            JSONArray jsonArray;
             try {
-                int success = json.getInt(TAG_SUCCESS);
+                Boolean success = json.getBoolean(TAG_SUCCESS);
+                Log.i("newsfeed", json.toString());
+                if (success) {
+                    jsonArray = json.getJSONArray("message");
+                    Log.i("newsfeed", jsonArray.toString());
 
-                switch (success) {
-                    case 0:
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        ArrayList<String> eachPost = new ArrayList<String>();
+                        JSONObject postObject = jsonArray.getJSONObject(i);
+                        eachPost.add(postObject.getString("_id"));
+                        eachPost.add(postObject.getString("user_id"));
+                        eachPost.add(postObject.getString("post"));
+                        eachPost.add(postObject.getString("time"));
+                        post.add(eachPost);
+                        Log.i("newsfeed", post.toString());
 
-                        showAlert(json.getString(TAG_MESSAGE));
-                        break;
-                    case 1:
-                        allFacingsURL = json.getJSONArray("all_news_feed");
-                        // showAlert("HELLO");
-
-                        for (int i = 0; i < allFacingsURL.length(); i++) {
-                            JSONObject c = allFacingsURL.getJSONObject(i);
-                            JSONArray allFacingURLJSONArray = c
-                                    .getJSONArray("entry");
-
-                            for (int j = 0; j < allFacingURLJSONArray.length(); j++) {
-                                JSONArray b = allFacingURLJSONArray.getJSONArray(j);
-                                singleFacingURLArraylist = new ArrayList<String>();
-                                for (int k = 0; k < b.length(); k++) {
-
-                                    JSONObject singleFacingURL = b.getJSONObject(k);
-                                    String facing = singleFacingURL
-                                            .getString("facing");
-                                    singleFacingURLArraylist.add(facing);
-                                    System.out.println(facing);
-                                }
-                                facingsUrlArrayList.add(singleFacingURLArraylist);
-                            }
-                        }
-
-                        break;
-                    default:
-                        break;
+                    }
                 }
+                return true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             pDialog.dismiss();
-            // startTheVideo();
-            // sample.setText(facingsUrlArrayList.toString());
-            runOnUiThread(new Runnable() {
+            if (result) {
+                runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
-                    listViewNewsFeed.setAdapter(adapter);
-                    // showAlert(allFacingsURL.toString());
-                    // Adapter adapter = new Adapter(context,
-                    // R.layout.abc_list_menu_item_layout, facingsUrlArrayList);
-                    // // adapter.notifyDataSetChanged();
-                    // setListAdapter(adapter);
-                }
-            });
-
-            //
-            // ArrayAdapter<ArrayList<String>> listAdapter = new
-            // ArrayAdapter<ArrayList<String>>(
-            // Profile.this, R.id.videoview_list,
-            // facingsUrlArrayList);
-            // lv.setOnItemClickListener(new OnItemClickListener() {
-            // @Override
-            // public void onItemClick(AdapterView<?> arg0, View arg1,
-            // int arg2, long arg3) {
-            //
-            // }
-            // });
-            // runOnUiThread(new Runnable() {
-            // public void run() {
-            // ListAdapter adapter = new SimpleAdapter(Profile.this,
-            // Followers.userArrayList, R.layout.usernewsfeed,
-            // new String[] { "FirstName", "follower" },
-            // new int[] { R.id.facingsVideoView });
-            //
-            // setListAdapter(adapter);
-            //
-            // }
-            // });
+                    @Override
+                    public void run() {
+                        listViewNewsFeed.setAdapter(adapter);
+                    }
+                });
+            }
 
         }
     }
 
     private BaseAdapter adapter = new BaseAdapter() {
-        ImageView imageView;
-        TextView username;
-        Bitmap bmImg;
+        //        ImageView imageView;
+//        TextView username;
+//        Bitmap bmImg;
+        TextView textViewItemListViewNamePostNewsFeed;
+        TextView textViewItemListViewPostNewsFeed;
+        TextView textViewItemListViewTimePostNewsFeed;
+        TextView textViewItemListViewPostIDPostNewsFeed;
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
@@ -246,56 +196,40 @@ public class NewsFeed extends Activity {
                     R.layout.item_listview_newsfeed, null);
 
 
-            imageView = (ImageView) retval.findViewById(R.id.imageButtonItemListViewNewsFeed);
-            username = (TextView) retval.findViewById(R.id.textViewItemListViewNewsFeedUsername);
+//            imageView = (ImageView) retval.findViewById(R.id.imageButtonItemListViewNewsFeed);
+//            username = (TextView) retval.findViewById(R.id.textViewItemListViewNewsFeedUsername);
 
-            ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-            int loader = R.drawable.ic_launcher;
+
+            textViewItemListViewPostIDPostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
+            textViewItemListViewNamePostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
+            textViewItemListViewPostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewPostNewsFeed);
+            textViewItemListViewTimePostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
+
+            textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(0));
+            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(1));
+            textViewItemListViewPostNewsFeed.setText(post.get(position).get(2));
+            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(3))));
+
+
+//            ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+//            int loader = R.drawable.ic_launcher;
             // whenever you want to load an image from url
             // call DisplayImage function
             // url - image url to load
             // loader - loader image, will be displayed before getting image
             // image - ImageView
-            imgLoader.DisplayImage(facingsUrlArrayList.get(position).get(0), loader, imageView);
-            imageView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, PlayFacing.class);
-                    intent.putExtra(TAG_POSITION, position);
-                    startActivity(intent);
-
-                }
-            });
-            username.setText(facingsUrlArrayList.get(position).get(0).split("_")[1].substring(0,facingsUrlArrayList.get(position).get(0).split("_")[1].length()-4));
-//			TextView title=(TextView) retval.findViewById(R.id.title);
-//			title.setText(facingsUrlArrayList.get(position).get(0));
-//			VideoView videoView=(VideoView) retval.findViewById(R.id.videoViewItemListViewNewsFeed);
-//			videoView.setVideoPath(facingsUrlArrayList.get(position).get(0));
-//			//videoView.start();
-//			 videoView.seekTo(1000);
-//			videoView.setOnTouchListener(new View.OnTouchListener() {
-//				@Override
-//				public boolean onTouch(View v, MotionEvent event) {
-//					Intent intent = new Intent(context, PlayFacing.class);
-//					intent.putExtra(TAG_POSITION, position);
-//					startActivity(intent);
-//					return false;
-//				}
-//			});
-//			videoView.start();
-//			final ImageButton imageButton= (ImageButton) retval.findViewById(R.id.imageButtonItemListViewNewsFeed);
-//			Bitmap thumbnail= ThumbnailUtils.createVideoThumbnail(facingsUrlArrayList.get(position).get(0).toString(), MediaStore.Images.Thumbnails.MINI_KIND);
-
-//			imageButton.setImageBitmap(thumbnail);
-
-//			BitmapDrawable bitmapDrawable =new BitmapDrawable(thumbnail);
-//			videoView.setBackgroundDrawable(bitmapDrawable);
-//			imageButton.setOnClickListener(new OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					imageButton.setVisibility(View.GONE);
-//				}
-//			});
+//            imgLoader.DisplayImage(facingsUrlArrayList.get(position).get(0), loader, imageView);
+//            imageView.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(context, PlayFacing.class);
+//                    intent.putExtra(TAG_POSITION, position);
+//                    startActivity(intent);
+//
+//                }
+//            });
+//            username.setText(facingsUrlArrayList.get(position).get(0).split("_")[1].substring(0, facingsUrlArrayList.get(position).get(0).split("_")[1].length() - 4));
+//
 
             return retval;
         }
@@ -307,12 +241,12 @@ public class NewsFeed extends Activity {
 
         @Override
         public Object getItem(int position) {
-            return facingsUrlArrayList.get(position).get(0);
+            return post.get(position).get(0);
         }
 
         @Override
         public int getCount() {
-            return facingsUrlArrayList.size();
+            return post.size();
         }
     };
 
@@ -335,10 +269,37 @@ public class NewsFeed extends Activity {
         });
     }
 
+    public static final List<Long> times = Arrays.asList(
+            TimeUnit.DAYS.toMillis(365),
+            TimeUnit.DAYS.toMillis(30),
+            TimeUnit.DAYS.toMillis(1),
+            TimeUnit.HOURS.toMillis(1),
+            TimeUnit.MINUTES.toMillis(1),
+            TimeUnit.SECONDS.toMillis(1));
+    public static final List<String> timesString = Arrays.asList("year", "month", "day", "hour", "minute", "second");
+
+    public static String toDuration(long duration) {
+
+        StringBuffer res = new StringBuffer();
+        for (int i = 0; i < NewsFeed.times.size(); i++) {
+            Long current = NewsFeed.times.get(i);
+            long temp = duration / current;
+            if (temp > 0) {
+                res.append(temp).append(" ").append(NewsFeed.timesString.get(i)).append(temp > 1 ? "s" : "").append(" ago");
+                break;
+            }
+        }
+        if ("".equals(res.toString()))
+            return "0 second ago";
+        else
+            return res.toString();
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
-//        new RefreshFacings().execute(Login.user.getUsername());
+        new RefreshFacings().execute(userid, "0", "20");
 
     }
 }

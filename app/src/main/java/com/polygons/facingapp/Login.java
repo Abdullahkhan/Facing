@@ -44,15 +44,14 @@ public class Login extends Activity {
         sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
     }
 
-    void  setAllXMLReferences()
-    {
+    void setAllXMLReferences() {
         editTextUsername = (EditText) findViewById(R.id.editTextUsername);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
     }
-    void setAllClickListner()
-    {
+
+    void setAllClickListner() {
         buttonLogin.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -117,7 +116,7 @@ public class Login extends Activity {
                     editor.putBoolean("isLoggedIn", true);
                     editor.putString("userid", json.getString("userid"));
                     editor.commit();
-
+                    Log.i("Login", json.getString("userid"));
                     startActivity(new Intent(context, NewsFeed.class));
 
                 }
