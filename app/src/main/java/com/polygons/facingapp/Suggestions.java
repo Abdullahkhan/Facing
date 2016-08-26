@@ -32,6 +32,7 @@ import java.util.HashMap;
 public class Suggestions extends Activity {
     Context context = this;
     ListView listViewSuggestions;
+    Button buttonSkipSuggestions;
     ArrayList<String> arrayListUsernameSuggestions;
     ArrayList<String> arrayListUserIdSuggestions;
     String userid;
@@ -54,20 +55,27 @@ public class Suggestions extends Activity {
         new GetSuggestions().execute(userid);
     }
 
-    void setAllXMLReferences()
-    {
+    void setAllXMLReferences() {
         listViewSuggestions = (ListView) findViewById(R.id.listViewSuggestions);
+        buttonSkipSuggestions = (Button) findViewById(R.id.buttonSkipSuggestions);
     }
 
-    void setAllClickListner()
-    {
+    void setAllClickListner() {
         listViewSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Intent intent=new Intent(context,Profile.class);
-                intent.putExtra("userid",arrayListUserIdSuggestions.get(i));
+                Intent intent = new Intent(context, Profile.class);
+                intent.putExtra("userid", arrayListUserIdSuggestions.get(i));
                 startActivity(intent);
+            }
+        });
+
+
+        buttonSkipSuggestions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, NewsFeed.class));
             }
         });
     }
@@ -117,13 +125,12 @@ public class Suggestions extends Activity {
         }
     }
 
-    class FollowTheUser extends AsyncTask<String,String, Boolean>
-    {
+    class FollowTheUser extends AsyncTask<String, String, Boolean> {
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("userid", args[0]);
-            params.put("friend_id",args[1]);
+            params.put("friend_id", args[1]);
 
             JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, "POST", params);
 
@@ -142,15 +149,15 @@ public class Suggestions extends Activity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
-            if(aBoolean)
-            {
-                Toast.makeText(context,"User Followed ",Toast.LENGTH_SHORT).show();
+            if (aBoolean) {
+                Toast.makeText(context, "User Followed ", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     private BaseAdapter adapter = new BaseAdapter() {
         TextView username;
-         LinearLayout linearLayoutItemListViewSuggestions;
+        LinearLayout linearLayoutItemListViewSuggestions;
         Button buttonItemListViewFollowSuggestion;
 
 
@@ -177,25 +184,25 @@ public class Suggestions extends Activity {
 
 
             username = (TextView) retval.findViewById(R.id.textViewItemListViewNameSuggestion);
-            buttonItemListViewFollowSuggestion=(Button)retval.findViewById(R.id.buttonItemListViewFollowSuggestion);
-            linearLayoutItemListViewSuggestions=(LinearLayout)retval.findViewById(R.id.linearLayoutItemListViewSuggestions);
+            buttonItemListViewFollowSuggestion = (Button) retval.findViewById(R.id.buttonItemListViewFollowSuggestion);
+            linearLayoutItemListViewSuggestions = (LinearLayout) retval.findViewById(R.id.linearLayoutItemListViewSuggestions);
             username.setText(arrayListUsernameSuggestions.get(position));
 
             linearLayoutItemListViewSuggestions.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent=new Intent(context,Profile.class);
-                    intent.putExtra("userid",arrayListUserIdSuggestions.get(position));
+                    Intent intent = new Intent(context, Profile.class);
+                    intent.putExtra("userid", arrayListUserIdSuggestions.get(position));
                     startActivity(intent);
-                   // startActivity(new Intent(context, Profile.class));
+                    // startActivity(new Intent(context, Profile.class));
                 }
             });
 
             buttonItemListViewFollowSuggestion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new FollowTheUser().execute(userid,arrayListUserIdSuggestions.get(position));
+                    new FollowTheUser().execute(userid, arrayListUserIdSuggestions.get(position));
                 }
             });
 
