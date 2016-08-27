@@ -54,7 +54,7 @@ public class PostText extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Refreshing your Facings");
+            pDialog.setMessage("Posting");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -85,10 +85,11 @@ public class PostText extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
+            pDialog.dismiss();
 
             if (result) {
                 Toast.makeText(context, "Posted successfully ", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(context, NewsFeed.class));
+                finish();
             } else {
                 Toast.makeText(context, "Posting failed ", Toast.LENGTH_SHORT).show();
             }

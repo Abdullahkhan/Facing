@@ -110,20 +110,20 @@ public class ShowFollowers extends Activity {
 		protected void onPostExecute(String file_url) {
 			pDialog.dismiss();
 
-			runOnUiThread(new Runnable() {
-				public void run() {
-					ListAdapter adapter = new SimpleAdapter(
-							context,
-							userArrayList,
-							R.layout.item_listview_searchuser,// temporary item
-																// layout
-							new String[] { "FirstName", "follower" },
-							new int[] { R.id.pid, R.id.name });
-
-					listViewShowFollowers.setAdapter(adapter);
-
-				}
-			});
+//			runOnUiThread(new Runnable() {
+//				public void run() {
+//					ListAdapter adapter = new SimpleAdapter(
+//							context,
+//							userArrayList,
+//							R.layout.item_listview_searchuser,// temporary item
+//																// layout
+//							new String[] { "FirstName", "follower" },
+//							new int[] { R.id.pid, R.id.name });
+//
+//					listViewShowFollowers.setAdapter(adapter);
+//
+//				}
+//			});
 
 		}
 	}

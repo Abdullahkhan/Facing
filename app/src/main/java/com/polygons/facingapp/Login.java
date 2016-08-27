@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class Login extends Activity {
+    String userid;
     EditText editTextUsername;
     EditText editTextPassword;
     Button buttonLogin;
@@ -33,6 +34,7 @@ public class Login extends Activity {
     public static User user;
     Context context = this;
     SharedPreferences sp;
+    String TAG_ISLOGGEDIN = "isLoggedIn";
 
 
     @Override
@@ -41,7 +43,10 @@ public class Login extends Activity {
         setContentView(R.layout.login);
         setAllXMLReferences();
         setAllClickListner();
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+        setUserid();
+        if (isLoggedIn()) {
+            startActivity(new Intent(context, MainActivity.class));
+        }
     }
 
     void setAllXMLReferences() {
@@ -81,7 +86,7 @@ public class Login extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    class LoginUser extends AsyncTask<String, String, String> {
+    class LoginUser extends AsyncTask<String, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -93,18 +98,12 @@ public class Login extends Activity {
         }
 
         @Override
-        protected String doInBackground(String... args) {
-            // String username = editTextUsername.getText().toString();
-            // String password = editTextPassword.getText().toString();
-            //
-            // List<NameValuePair> params = new ArrayList<NameValuePair>();
-            // params.add(new BasicNameValuePair("username", username));
-            // params.add(new BasicNameValuePair("password", password));
+        protected Boolean doInBackground(String... args) {
+
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("first_name", args[0]);
             params.put("password", args[1]);
 
-            Log.d("request", "starting");
 
             JSONObject json = jsonParser.makeHttpRequest(loginURL, "POST",
                     params);
@@ -113,46 +112,23 @@ public class Login extends Activity {
                 if (status) {
 
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putBoolean("isLoggedIn", true);
+                    editor.putBoolean(TAG_ISLOGGEDIN, true);
                     editor.putString("userid", json.getString("userid"));
                     editor.commit();
-                    Log.i("Login", json.getString("userid"));
-                    startActivity(new Intent(context, NewsFeed.class));
 
                 }
-                //  Log.i("Login",""+ success);
-//            try {
-//                int success = json.getInt(TAG_STATUS);
-//                switch (success) {
-//                    case 1:
-//                        user = new User();
-//                        user.setUsername(json.getString("username"));
-//                        user.setFirstName(json.getString("firstName"));
-//                        user.setLastName(json.getString("lastName"));
-//                        user.setEmail(json.getString("email"));
-//
-//                        startActivity(new Intent(context, NewsFeed.class));
-//                        break;
-//                    case 2:
-//                        showAlert("Sorry! It looks like you are not registered: :/");
-//                        break;
-//                    case 0:
-//                        showAlert("Sorry! We have a problem. Try again :/");
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
+                return true;
             } catch (Exception e) {
             }
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             pDialog.dismiss();
+            if (result) {
+                startActivity(new Intent(context, MainActivity.class));
+            }
         }
     }
 
@@ -173,5 +149,18 @@ public class Login extends Activity {
                 alert.show();
             }
         });
+    }
+
+    void setUserid() {
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+        userid = sp.getString("userid", "0");
+
+    }
+
+    boolean isLoggedIn() {
+        if (sp.getBoolean(TAG_ISLOGGEDIN, false)) {
+            return true;
+        } else
+            return false;
     }
 }

@@ -75,7 +75,7 @@ public class Suggestions extends Activity {
         buttonSkipSuggestions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, NewsFeed.class));
+                startActivity(new Intent(context, MainActivity.class));
             }
         });
     }
@@ -195,7 +195,6 @@ public class Suggestions extends Activity {
                     Intent intent = new Intent(context, Profile.class);
                     intent.putExtra("userid", arrayListUserIdSuggestions.get(position));
                     startActivity(intent);
-                    // startActivity(new Intent(context, Profile.class));
                 }
             });
 

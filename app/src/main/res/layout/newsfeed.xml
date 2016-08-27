@@ -52,29 +52,38 @@
                 android:text="Log Out" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/topBar"></LinearLayout>
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:background="@color/topBar"></LinearLayout>-->
 
         <ListView
             android:id="@+id/listViewNewsFeed"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></ListView>
+            android:layout_height="wrap_content"
+            android:visibility="gone"></ListView>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/linearLayoutPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout></ScrollView>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="bottom"
-        android:background="@color/bottomBar"></LinearLayout>
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:layout_gravity="bottom"-->
+    <!--android:background="@color/bottomBar"></LinearLayout>-->
 
-    <Button
-        android:id="@+id/buttonFace"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom|center"
-        android:background="@drawable/button_record" />
+    <!--<Button-->
+    <!--android:id="@+id/buttonFace"-->
+    <!--android:layout_width="100dp"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:layout_gravity="bottom|center"-->
+    <!--android:background="@drawable/button_record" />-->
 
 </FrameLayout>

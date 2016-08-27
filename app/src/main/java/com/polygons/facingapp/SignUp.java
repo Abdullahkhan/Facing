@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 public class SignUp extends Activity {
+    String userid;
     EditText editTextFirstName;
     EditText editTextLastName;
     EditText editTextSignUpPassword;
@@ -29,6 +30,7 @@ public class SignUp extends Activity {
     String signUpURL = Login.myURL + "register";
     private static final String TAG_STATUS = "status";
     SharedPreferences sp;
+    String TAG_ISLOGGEDIN = "isLoggedIn";
 
 
     @Override
@@ -37,11 +39,13 @@ public class SignUp extends Activity {
         setContentView(R.layout.sign_up);
         setAllXMLReferences();
         setAllClickListner();
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+        setUserid();
+        if (isLoggedIn()) {
+            startActivity(new Intent(context, MainActivity.class));
+        }
     }
 
-    void  setAllXMLReferences()
-    {
+    void setAllXMLReferences() {
         editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextLastName = (EditText) findViewById(R.id.editTextLastName);
         editTextSignUpPassword = (EditText) findViewById(R.id.editTextSignUpPassword);
@@ -49,8 +53,7 @@ public class SignUp extends Activity {
         buttonGoToLogin = (Button) findViewById(R.id.buttonGoToLogin);
     }
 
-    void setAllClickListner()
-    {
+    void setAllClickListner() {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +68,7 @@ public class SignUp extends Activity {
             }
         });
     }
+
     class SignUpUser extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
@@ -99,7 +103,7 @@ public class SignUp extends Activity {
                 if (status) {
 
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putBoolean("isLoggedIn", true);
+                    editor.putBoolean(TAG_ISLOGGEDIN, true);
                     editor.putString("userid", json.getString("userid"));
                     editor.commit();
 
@@ -140,5 +144,18 @@ public class SignUp extends Activity {
         protected void onPostExecute(String result) {
             pDialog.dismiss();
         }
+    }
+
+    void setUserid() {
+        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+        userid = sp.getString("userid", "0");
+
+    }
+
+    boolean isLoggedIn() {
+        if (sp.getBoolean(TAG_ISLOGGEDIN, false)) {
+            return true;
+        } else
+            return false;
     }
 }

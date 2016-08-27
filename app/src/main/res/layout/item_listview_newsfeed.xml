@@ -8,29 +8,29 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:id="@+id/textViewItemListViewPostIDPostNewsFeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="post ID" />
+    <!--<TextView-->
+        <!--android:id="@+id/textViewItemListViewPostIDPostNewsFeed"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="post ID" />-->
 
-    <TextView
-        android:id="@+id/textViewItemListViewNamePostNewsFeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name" />
+    <!--<TextView-->
+        <!--android:id="@+id/textViewItemListViewNamePostNewsFeed"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Name" />-->
 
-    <TextView
-        android:id="@+id/textViewItemListViewPostNewsFeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="post" />
+    <!--<TextView-->
+        <!--android:id="@+id/textViewItemListViewPostNewsFeed"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="post" />-->
 
-    <TextView
-        android:id="@+id/textViewItemListViewTimePostNewsFeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="time" />
+    <!--<TextView-->
+        <!--android:id="@+id/textViewItemListViewTimePostNewsFeed"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="time" />-->
 
 
     <!--<FrameLayout-->

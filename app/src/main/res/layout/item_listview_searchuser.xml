@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" 
-    android:background="#4169E1" >
- 
-    <TextView
-        android:id="@+id/pid"
-        android:layout_width="fill_parent"
+    android:background="#ffffff"
+    android:orientation="horizontal"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:weightSum="5">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutItemListViewSearch"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:layout_weight="4">
+
+        <TextView
+            android:id="@+id/textViewItemListViewFirstNameSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="First Name"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textViewItemListViewLastNameSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="6dip"
+            android:paddingTop="6dip"
+            android:text="Last Name" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonItemListViewFollowSearch"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Follow"
+       />
+
+    <Button
+        android:id="@+id/buttonItemListViewUnFollowSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="unFollow"
         android:visibility="gone" />
- 
-    <!-- Name Label -->
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="6dip"
-        android:paddingLeft="6dip"
-        android:textSize="17dip"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF" />
- 
+
 </LinearLayout>

@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,20 +35,23 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.polygons.facingapp.tools.ImageLoader;
 
-public class NewsFeed extends Activity {
-    Context context = this;
-    Button buttonFace;
+public class NewsFeed extends Fragment {
+    Context context = getContext();
+    View view;
+    //    Button buttonFace;
     Button buttonLogOut;
     Button buttonRefreshFacings;
     Button buttonSearchUser;
     Button buttonShowFollowers;
     Button buttonShowFollowing;
     ListView listViewNewsFeed;
+    LinearLayout linearLayoutPost;
     String userid;
     ProgressDialog pDialog;
     static ArrayList<ArrayList<String>> facingsUrlArrayList;
@@ -65,47 +69,54 @@ public class NewsFeed extends Activity {
 
     ArrayList<ArrayList<String>> post;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.newsfeed, container, false);
+
+        return view;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.newsfeed);
         setAllXMLReferences();
         setAllButtonOnClickListeners();
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
+        sp = this.getActivity().getSharedPreferences("user", Activity.MODE_PRIVATE);
         userid = sp.getString("userid", "0");
         Log.i("userid", userid);
-        //   new RefreshFacings().execute(userid, "0", "20");
+//        new RefreshFacings().execute(userid, "0", "20");
 
 
-        listViewNewsFeed.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Intent intent = new Intent(context, PlayFacing.class);
-                intent.putExtra(TAG_POSITION, position);
-                startActivity(intent);
-            }
-        });
+//        listViewNewsFeed.setOnItemClickListener(new OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+//                Intent intent = new Intent(context, PlayFacing.class);
+//                intent.putExtra(TAG_POSITION, position);
+//                startActivity(intent);
+//            }
+//        });
 
     }
 
     private void setAllXMLReferences() {
 
-        buttonFace = (Button) findViewById(R.id.buttonFace);
+//        buttonFace = (Button) view.findViewById(R.id.buttonFace);
 //      buttonSearchUser = (Button) findViewById(R.id.buttonSearchUser);
-        listViewNewsFeed = (ListView) findViewById(R.id.listViewNewsFeed);
+        listViewNewsFeed = (ListView) view.findViewById(R.id.listViewNewsFeed);
+        linearLayoutPost = (LinearLayout) view.findViewById(R.id.linearLayoutPost);
     }
 
     private void setAllButtonOnClickListeners() {
-        buttonFace.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, PostText.class));
-            }
-        });
+//        buttonFace.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), PostText.class));
+//            }
+//        });
 //        buttonSearchUser.setOnClickListener(new OnClickListener() {
 //
 //            @Override
@@ -120,11 +131,11 @@ public class NewsFeed extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
+            pDialog = new ProgressDialog(getActivity());
             pDialog.setMessage("Refreshing your Facings");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
-            pDialog.show();
+            // pDialog.show();
 
         }
 
@@ -167,17 +178,38 @@ public class NewsFeed extends Activity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            pDialog.dismiss();
+            //   pDialog.dismiss();
             if (result) {
-                runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        listViewNewsFeed.setAdapter(adapter);
+                        // listViewNewsFeed.setAdapter(adapter);
+                        CreateAndAppendPost();
                     }
                 });
             }
 
+        }
+    }
+
+    public void CreateAndAppendPost() {
+        LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for (int position = 0; position < post.size(); position++) {
+
+            View tempView = li.inflate(R.layout.linearlayout_post, null);
+
+            TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
+            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
+            TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
+            TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
+
+
+            textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(0));
+            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(1));
+            textViewItemListViewPostNewsFeed.setText(post.get(position).get(2));
+            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(3))));
+            linearLayoutPost.addView(tempView);
         }
     }
 
@@ -251,7 +283,7 @@ public class NewsFeed extends Activity {
     };
 
     private void showAlert(final String message) {
-        runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
@@ -297,7 +329,7 @@ public class NewsFeed extends Activity {
 
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         new RefreshFacings().execute(userid, "0", "20");
 
