@@ -339,7 +339,7 @@ public class SearchUser extends Fragment {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(getActivity(), Profile.class);
+                    Intent intent = new Intent(getActivity(), ProfileMain.class);
                     intent.putExtra("userid", arrayListUser.get(position).get(0));
                     startActivity(intent);
                 }

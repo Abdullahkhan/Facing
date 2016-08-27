@@ -38,12 +38,10 @@
             android:name=".Login"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".PlayFacing"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ShowFollowers"
             android:label="@string/app_name"
@@ -65,14 +63,11 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Profile"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".PostText"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".ProfileMain"></activity>
     </application>
 
 </manifest>

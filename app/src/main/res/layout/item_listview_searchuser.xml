@@ -5,14 +5,14 @@
     android:background="#ffffff"
     android:orientation="horizontal"
     android:padding="@dimen/activity_horizontal_margin"
-    android:weightSum="5">
+   >
 
     <LinearLayout
         android:id="@+id/linearLayoutItemListViewSearch"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_margin="10dp"
-        android:layout_weight="4">
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/textViewItemListViewFirstNameSearch"
