@@ -62,14 +62,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"></ListView>
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/linearLayoutPost"
+
+        <com.polygons.facingapp.tools.InteractiveScrollView
+            android:id="@+id/scrollViewNewsFeed"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout></ScrollView>
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutPost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+        </com.polygons.facingapp.tools.InteractiveScrollView>
 
     </LinearLayout>
 

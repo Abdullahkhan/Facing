@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPagerAdapter viewPagerAdapter;
     Button buttonFace;
     SharedPreferences sp;
-    int[] tabIcons = {R.drawable.ic_home_black_24dp, R.drawable.ic_notifications_black_48dp, R.drawable.ic_search_black_48dp, R.drawable.ic_account_circle_black_48dp};
+    int[] tabIcons = {R.drawable.ic_home_white_48dp, R.drawable.ic_notifications_white_48dp, R.drawable.ic_search_white_48dp, R.drawable.ic_account_circle_white_48dp};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+
 
         buttonFace.setOnClickListener(new View.OnClickListener() {
 

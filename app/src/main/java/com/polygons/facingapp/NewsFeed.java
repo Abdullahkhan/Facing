@@ -1,45 +1,38 @@
 package com.polygons.facingapp;
 
-import java.lang.reflect.Array;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.polygons.facingapp.tools.InteractiveScrollView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import com.polygons.facingapp.tools.ImageLoader;
 
 public class NewsFeed extends Fragment {
     Context context = getContext();
@@ -50,9 +43,13 @@ public class NewsFeed extends Fragment {
     Button buttonSearchUser;
     Button buttonShowFollowers;
     Button buttonShowFollowing;
+    InteractiveScrollView scrollViewNewsFeed;
     ListView listViewNewsFeed;
     LinearLayout linearLayoutPost;
     String userid;
+    String offset = "0";
+    String bucket = "5";
+    Boolean isBottomReached = false;
     ProgressDialog pDialog;
     static ArrayList<ArrayList<String>> facingsUrlArrayList;
     ArrayList<String> singleFacingURLArraylist;
@@ -68,6 +65,7 @@ public class NewsFeed extends Fragment {
     SharedPreferences sp;
 
     ArrayList<ArrayList<String>> post;
+    ArrayList<ArrayList<String>> bottomPost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -85,6 +83,22 @@ public class NewsFeed extends Fragment {
         sp = this.getActivity().getSharedPreferences("user", Activity.MODE_PRIVATE);
         userid = sp.getString("userid", "0");
         Log.i("userid", userid);
+
+        scrollViewNewsFeed.setOnBottomReachedListener(new InteractiveScrollView.OnBottomReachedListener() {
+            @Override
+            public void onBottomReached() {
+
+                if (!isBottomReached) {
+                    new RefreshBottomFacings().execute(userid, linearLayoutPost.getChildCount() + "", bucket);
+                    Toast.makeText(getActivity(), "Bottom reached", Toast.LENGTH_SHORT).show();
+                    Log.i("Bottom", "Bottom");
+                    isBottomReached = true;
+                }
+
+            }
+        });
+
+
 //        new RefreshFacings().execute(userid, "0", "20");
 
 
@@ -107,6 +121,7 @@ public class NewsFeed extends Fragment {
 //      buttonSearchUser = (Button) findViewById(R.id.buttonSearchUser);
         listViewNewsFeed = (ListView) view.findViewById(R.id.listViewNewsFeed);
         linearLayoutPost = (LinearLayout) view.findViewById(R.id.linearLayoutPost);
+        scrollViewNewsFeed = (InteractiveScrollView) view.findViewById(R.id.scrollViewNewsFeed);
     }
 
     private void setAllButtonOnClickListeners() {
@@ -124,6 +139,7 @@ public class NewsFeed extends Fragment {
 //                startActivity(new Intent(context, SearchUser.class));
 //            }
 //        });
+
 
     }
 
@@ -186,6 +202,77 @@ public class NewsFeed extends Fragment {
                     public void run() {
                         // listViewNewsFeed.setAdapter(adapter);
                         CreateAndAppendPost();
+                        Toast.makeText(getActivity(), "Newsfeed updated ", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+
+        }
+    }
+
+    class RefreshBottomFacings extends AsyncTask<String, String, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Refreshing your Facings");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            // pDialog.show();
+
+        }
+
+        @Override
+        protected Boolean doInBackground(String... args) {
+            bottomPost = new ArrayList<ArrayList<String>>();
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("userid", args[0]);
+            params.put("offset", args[1]);
+            params.put("bucket", args[2]);
+            json = jsonparser.makeHttpRequest(refreshFacings, "POST", params);
+            facingsUrlArrayList = new ArrayList<ArrayList<String>>();
+            JSONArray jsonArray;
+            try {
+                Boolean success = json.getBoolean(TAG_SUCCESS);
+                Log.i("newsfeed", json.toString());
+                if (success) {
+                    jsonArray = json.getJSONArray("message");
+                    Log.i("newsfeed", jsonArray.toString());
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        ArrayList<String> eachPost = new ArrayList<String>();
+                        JSONObject postObject = jsonArray.getJSONObject(i);
+                        eachPost.add(postObject.getString("_id"));
+                        eachPost.add(postObject.getString("user_id"));
+                        eachPost.add(postObject.getString("post"));
+                        eachPost.add(postObject.getString("time"));
+                        bottomPost.add(eachPost);
+                        Log.i("newsfeed", bottomPost.toString());
+
+                    }
+                }
+                return true;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            //   pDialog.dismiss();
+            if (result) {
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        // listViewNewsFeed.setAdapter(adapter);
+                        CreateAndAppendBottomPost();
+                        Toast.makeText(getActivity(), "Bottom Newsfeed updated ", Toast.LENGTH_SHORT).show();
+                        isBottomReached = false;
+
                     }
                 });
             }
@@ -195,9 +282,10 @@ public class NewsFeed extends Fragment {
 
     public void CreateAndAppendPost() {
         LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        linearLayoutPost.removeAllViews();
         for (int position = 0; position < post.size(); position++) {
-
             View tempView = li.inflate(R.layout.linearlayout_post, null);
+
 
             TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
             TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
@@ -210,6 +298,26 @@ public class NewsFeed extends Fragment {
             textViewItemListViewPostNewsFeed.setText(post.get(position).get(2));
             textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(3))));
             linearLayoutPost.addView(tempView);
+        }
+    }
+
+    public void CreateAndAppendBottomPost() {
+        LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for (int position = 0; position < bottomPost.size(); position++) {
+            View tempView = li.inflate(R.layout.linearlayout_post, null);
+
+
+            TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
+            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
+            TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
+            TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
+
+
+            textViewItemListViewPostIDPostNewsFeed.setText(bottomPost.get(position).get(0));
+            textViewItemListViewNamePostNewsFeed.setText(bottomPost.get(position).get(1));
+            textViewItemListViewPostNewsFeed.setText(bottomPost.get(position).get(2));
+            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(3))));
+            linearLayoutPost.addView(tempView, linearLayoutPost.getChildCount());
         }
     }
 
@@ -331,7 +439,7 @@ public class NewsFeed extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new RefreshFacings().execute(userid, "0", "20");
+        new RefreshFacings().execute(userid, offset, bucket);
 
     }
 }
