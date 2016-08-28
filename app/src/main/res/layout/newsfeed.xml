@@ -63,17 +63,25 @@
             android:layout_height="wrap_content"
             android:visibility="gone"></ListView>
 
-        <com.polygons.facingapp.tools.InteractiveScrollView
-            android:id="@+id/scrollViewNewsFeed"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/linearLayoutPost"
+            <com.polygons.facingapp.tools.InteractiveScrollView
+                android:id="@+id/scrollViewNewsFeed"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
-        </com.polygons.facingapp.tools.InteractiveScrollView>
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:orientation="vertical"></LinearLayout>
+            </com.polygons.facingapp.tools.InteractiveScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 

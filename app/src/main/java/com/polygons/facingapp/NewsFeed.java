@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,8 @@ public class NewsFeed extends Fragment {
     InteractiveScrollView scrollViewNewsFeed;
     ListView listViewNewsFeed;
     LinearLayout linearLayoutPost;
+    SwipeRefreshLayout swipeLayout;
+
     String userid;
     String offset = "0";
     String bucket = "5";
@@ -71,6 +74,16 @@ public class NewsFeed extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.newsfeed, container, false);
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
+
+                new RefreshFacings().execute(userid, offset, bucket);
+            }
+        });
 
         return view;
     }
@@ -201,7 +214,9 @@ public class NewsFeed extends Fragment {
                     @Override
                     public void run() {
                         // listViewNewsFeed.setAdapter(adapter);
+                        removeDuplicatePosts();
                         CreateAndAppendPost();
+                        swipeLayout.setRefreshing(false);
                         Toast.makeText(getActivity(), "Newsfeed updated ", Toast.LENGTH_SHORT).show();
 
                     }
@@ -282,8 +297,7 @@ public class NewsFeed extends Fragment {
 
     public void CreateAndAppendPost() {
         LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        linearLayoutPost.removeAllViews();
-        for (int position = 0; position < post.size(); position++) {
+        for (int position = post.size() - 1; position >= 0; position--) {
             View tempView = li.inflate(R.layout.linearlayout_post, null);
 
 
@@ -297,7 +311,7 @@ public class NewsFeed extends Fragment {
             textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(1));
             textViewItemListViewPostNewsFeed.setText(post.get(position).get(2));
             textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(3))));
-            linearLayoutPost.addView(tempView);
+            linearLayoutPost.addView(tempView, 0);
         }
     }
 
@@ -320,6 +334,28 @@ public class NewsFeed extends Fragment {
             linearLayoutPost.addView(tempView, linearLayoutPost.getChildCount());
         }
     }
+
+    void removeDuplicatePosts() {
+        for (int position = 0; position < linearLayoutPost.getChildCount(); position++) {
+            ViewGroup linearLayoutEachPost = (ViewGroup) linearLayoutPost.getChildAt(position);
+            TextView textViewPostId = (TextView) linearLayoutEachPost.getChildAt(0);
+            String postId = textViewPostId.getText().toString();
+
+            Log.i("PostId", postId);
+            for (int position2 = 0; position2 < post.size(); position2++) {
+                if (postId.equals(post.get(position2).get(0))) {
+
+                    post.remove(position2);
+                }
+
+
+            }
+
+
+        }
+    }
+
+    ;
 
     private BaseAdapter adapter = new BaseAdapter() {
         //        ImageView imageView;
