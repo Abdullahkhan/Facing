@@ -10,11 +10,7 @@
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 
-    <Button
-        android:id="@+id/buttonUploadImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Upload"/>
+
     <Button
         android:id="@+id/buttonFace"
         android:layout_width="wrap_content"

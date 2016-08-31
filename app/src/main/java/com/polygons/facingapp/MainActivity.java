@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     Button buttonFace;
-    Button buttonUploadImage;
+
 
 
     SharedPreferences sp;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolBar);
         buttonFace = (Button) findViewById(R.id.buttonFace);
-        buttonUploadImage=(Button)findViewById(R.id.buttonUploadImage);
+
         setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -73,14 +73,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonUploadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent=new Intent(MainActivity.this,ImageCptureCamera.class);
-                startActivity(intent);
-            }
-        });
 
     }
 

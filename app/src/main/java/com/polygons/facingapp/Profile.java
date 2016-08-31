@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ public class Profile extends Fragment {
 
     TextView textViewFirstNameProfile;
     TextView textViewLastNameProfile;
+    ImageView imageViewProfilePictureProfile;
     String userid;
     JSONParser jsonParser = new JSONParser();
     String profileURL = Login.myURL + "view_profile";
@@ -36,7 +38,6 @@ public class Profile extends Fragment {
                              Bundle savedInstanceState) {
         userid = getArguments().getString(Constant.TAG_USERID);
         view = inflater.inflate(R.layout.profile, container, false);
-
         return view;
     }
 
@@ -44,12 +45,24 @@ public class Profile extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setAllXMLReferences();
+        setAllClickListner();
         new ViewProfile().execute(userid);
     }
 
+    void setAllClickListner()
+    {
+        imageViewProfilePictureProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),ImageCptureCamera.class);
+                startActivity(intent);
+            }
+        });
+    }
     void setAllXMLReferences() {
         textViewFirstNameProfile = (TextView) view.findViewById(R.id.textViewFirstNameProfile);
         textViewLastNameProfile = (TextView) view.findViewById(R.id.textViewLastNameProfile);
+        imageViewProfilePictureProfile=(ImageView)view.findViewById(R.id.imageViewProfilePictureProfile);
     }
 
     class ViewProfile extends AsyncTask<String, String, Boolean>
