@@ -90,7 +90,7 @@ public class Login extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(Login.this);
+            pDialog = new ProgressDialog(context);
             pDialog.setMessage("Please wait while we logged you in...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);

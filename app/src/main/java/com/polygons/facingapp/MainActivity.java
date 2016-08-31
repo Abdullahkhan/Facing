@@ -26,6 +26,9 @@ public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     Button buttonFace;
+    Button buttonUploadImage;
+
+
     SharedPreferences sp;
     int[] tabIcons = {R.drawable.ic_home_white_48dp, R.drawable.ic_notifications_white_48dp, R.drawable.ic_search_white_48dp, R.drawable.ic_account_circle_white_48dp};
 
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolBar);
         buttonFace = (Button) findViewById(R.id.buttonFace);
+        buttonUploadImage=(Button)findViewById(R.id.buttonUploadImage);
         setSupportActionBar(toolbar);
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
@@ -66,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(context, PostText.class));
+            }
+        });
+
+        buttonUploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent=new Intent(MainActivity.this,ImageCptureCamera.class);
+                startActivity(intent);
             }
         });
 

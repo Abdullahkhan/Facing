@@ -28,4 +28,7 @@ public class Constant {
     //TAGS for SEARCH
     public static String TAG_SEARCH = "search";
 
+    //TAGS for Profile
+    public static String TAG_PICTURE="picture";
+
 }
