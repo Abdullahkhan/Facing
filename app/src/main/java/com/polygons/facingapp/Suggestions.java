@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.polygons.facingapp.tools.Constant;
 import com.polygons.facingapp.tools.ImageLoader;
 
 import org.json.JSONArray;
@@ -50,8 +51,8 @@ public class Suggestions extends Activity {
         setContentView(R.layout.suggestions);
         setAllXMLReferences();
         setAllClickListner();
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
-        userid = sp.getString("userid", "0");
+        sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        userid = sp.getString(Constant.TAG_USERID, "0");
         new GetSuggestions().execute(userid);
     }
 
@@ -66,7 +67,7 @@ public class Suggestions extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 Intent intent = new Intent(context, Profile.class);
-                intent.putExtra("userid", arrayListUserIdSuggestions.get(i));
+                intent.putExtra(Constant.TAG_USERID, arrayListUserIdSuggestions.get(i));
                 startActivity(intent);
             }
         });
@@ -86,16 +87,15 @@ public class Suggestions extends Activity {
         protected Boolean doInBackground(String... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
+            params.put(Constant.TAG_USERID, args[0]);
 
-            JSONObject json = jsonParser.makeHttpRequest(suggestionsURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(suggestionsURL, Constant.TAG_POST_METHOD, params);
 
             try {
                 boolean status = json.getBoolean(TAG_STATUS);
                 if (status) {
 
-                    // Log.i("Suggest", jsonParser.makeHttpRequest(suggestionsURL, "POST", params).toString());
-                    JSONArray jsonArray = json.getJSONArray("result");
+                    JSONArray jsonArray = json.getJSONArray(Constant.TAG_RESULT);
 
                     arrayListUsernameSuggestions = new ArrayList<String>();
                     arrayListUserIdSuggestions = new ArrayList<String>();
@@ -129,10 +129,10 @@ public class Suggestions extends Activity {
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
+            params.put(Constant.TAG_USERID, args[0]);
             params.put("friend_id", args[1]);
 
-            JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, Constant.TAG_POST_METHOD, params);
 
             try {
                 boolean status = json.getBoolean(TAG_STATUS);
@@ -193,7 +193,7 @@ public class Suggestions extends Activity {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(context, Profile.class);
-                    intent.putExtra("userid", arrayListUserIdSuggestions.get(position));
+                    intent.putExtra(Constant.TAG_USERID, arrayListUserIdSuggestions.get(position));
                     startActivity(intent);
                 }
             });

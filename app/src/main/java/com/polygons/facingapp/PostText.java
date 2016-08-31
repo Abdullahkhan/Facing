@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.polygons.facingapp.tools.Constant;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,15 +31,13 @@ public class PostText extends Activity {
     JSONObject json;
     JSONParser jsonparser = new JSONParser();
     String postURL = Login.myURL + "post";
-    String TAG_SUCCESS = "status";
-    String TAG_MESSAGE = "message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.posttext);
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
-        userid = sp.getString("userid", "0");
+        sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        userid = sp.getString(Constant.TAG_USERID, "0");
         editTextPostText = (EditText) findViewById(R.id.editTextPostText);
         buttonPostText = (Button) findViewById(R.id.buttonPostText);
 
@@ -65,12 +65,12 @@ public class PostText extends Activity {
         protected Boolean doInBackground(String... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
-            params.put("post", args[1]);
+            params.put(Constant.TAG_USERID, args[0]);
+            params.put(Constant.TAG_POST, args[1]);
 
-            json = jsonparser.makeHttpRequest(postURL, "POST", params);
+            json = jsonparser.makeHttpRequest(postURL, Constant.TAG_POST_METHOD, params);
             try {
-                Boolean success = json.getBoolean(TAG_SUCCESS);
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
                 if (success) {
 
                 }

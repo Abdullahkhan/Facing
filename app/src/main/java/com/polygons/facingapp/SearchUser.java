@@ -30,6 +30,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.polygons.facingapp.tools.Constant;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,10 +49,6 @@ public class SearchUser extends Fragment {
     JSONParser jsonParser = new JSONParser();
 
     ArrayList<ArrayList<String>> arrayListUser;
-    String TAG_USERID = "userid";
-    String TAG_STATUS = "status";
-    String TAG_MESSAGE = "message";
-    String TAG_SEARCH = "search";
     String TAG_FIRSTNAME = "firstName";
     String TAG_USERNAME_TO_BE_FOLLOWED = "targetUsername";
 
@@ -129,36 +127,14 @@ public class SearchUser extends Fragment {
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(TAG_SEARCH, args[0]);
-            params.put(TAG_USERID, args[1]);
-            JSONObject json = jsonParser.makeHttpRequest(searchUserURL, "POST",
+            params.put(Constant.TAG_SEARCH, args[0]);
+            params.put(Constant.TAG_USERID, args[1]);
+            JSONObject json = jsonParser.makeHttpRequest(searchUserURL, Constant.TAG_POST_METHOD,
                     params);
             try {
-//                JSONObject json = new JSONObject("{\n" +
-//                        "  \"status\": true,\n" +
-//                        "  \"message\": \"found\",\n" +
-//                        "  \"result'\": [\n" +
-//                        "    {\n" +
-//                        "      \"_id\": \"57bede74e2376003008d14b4\",\n" +
-//                        "      \"Name\": \"abd\",\n" +
-//                        "      \"Lname\": \"abd\"\n" +
-//                        "    },\n" +
-//                        "    {\n" +
-//                        "      \"_id\": \"57bf1b4544df340300f19ec7\",\n" +
-//                        "      \"Name\": \"abd1\",\n" +
-//                        "      \"Lname\": \"abd\"\n" +
-//                        "    },\n" +
-//                        "    {\n" +
-//                        "      \"_id\": \"57c0226bfd159c0300f937a5\",\n" +
-//                        "      \"Name\": \"abd123\",\n" +
-//                        "      \"Lname\": \"asfe\"\n" +
-//                        "    }\n" +
-//                        "  ]\n" +
-//                        "}");
-                Boolean success = json.getBoolean(TAG_STATUS);
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
                 arrayListUser = new ArrayList<ArrayList<String>>();
                 if (success) {
-                    Log.i("search", json.getString("message"));
                     JSONArray firstNameJSONArray = json.getJSONArray("result'");
                     for (int i = 0; i < firstNameJSONArray.length(); i++) {
                         JSONObject c = firstNameJSONArray.getJSONObject(i);
@@ -196,13 +172,13 @@ public class SearchUser extends Fragment {
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
+            params.put(Constant.TAG_USERID, args[0]);
             params.put("friend_id", args[1]);
 
-            JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, Constant.TAG_POST_METHOD, params);
 
             try {
-                boolean status = json.getBoolean(TAG_STATUS);
+                boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
                     return true;
                 }
@@ -232,7 +208,7 @@ public class SearchUser extends Fragment {
             JSONObject json = jsonParser.makeHttpRequest(unFollowTheUserURL, "POST", params);
 
             try {
-                boolean status = json.getBoolean(TAG_STATUS);
+                boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
                     return true;
                 }
@@ -258,12 +234,12 @@ public class SearchUser extends Fragment {
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
+            params.put(Constant.TAG_USERID, args[0]);
             params.put("friend_id", args[1]);
 
-            JSONObject json = jsonParser.makeHttpRequest(isFollowTheUserURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(isFollowTheUserURL, Constant.TAG_POST_METHOD, params);
             try {
-                boolean status = json.getBoolean(TAG_STATUS);
+                boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
                     Log.i("isFollow", json.toString());
                     return true;
@@ -340,7 +316,7 @@ public class SearchUser extends Fragment {
                 public void onClick(View v) {
 
                     Intent intent = new Intent(getActivity(), ProfileMain.class);
-                    intent.putExtra("userid", arrayListUser.get(position).get(0));
+                    intent.putExtra(Constant.TAG_USERID, arrayListUser.get(position).get(0));
                     startActivity(intent);
                 }
             });

@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.polygons.facingapp.tools.Constant;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -28,9 +30,7 @@ public class SignUp extends Activity {
     private ProgressDialog pDialog;
     Context context = this;
     String signUpURL = Login.myURL + "register";
-    private static final String TAG_STATUS = "status";
     SharedPreferences sp;
-    String TAG_ISLOGGEDIN = "isLoggedIn";
 
 
     @Override
@@ -89,22 +89,20 @@ public class SignUp extends Activity {
             // params.add(new BasicNameValuePair("username", username));
             // params.add(new BasicNameValuePair("password", password));
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("first_name", args[0]);
-            params.put("last_name", args[1]);
-            params.put("password", args[2]);
-
-            Log.d("request", "starting");
+            params.put(Constant.TAG_FIRST_NAME, args[0]);
+            params.put(Constant.TAG_SECOND_NAME, args[1]);
+            params.put(Constant.TAG_PASSWORD, args[2]);
 
 
             try {
-                JSONObject json = jsonParser.makeHttpRequest(signUpURL, "POST",
+                JSONObject json = jsonParser.makeHttpRequest(signUpURL, Constant.TAG_POST_METHOD,
                         params);
-                boolean status = json.getBoolean(TAG_STATUS);
+                boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
 
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putBoolean(TAG_ISLOGGEDIN, true);
-                    editor.putString("userid", json.getString("userid"));
+                    editor.putBoolean(Constant.TAG_ISLOGGEDIN, true);
+                    editor.putString(Constant.TAG_USERID, json.getString(Constant.TAG_USERID));
                     editor.commit();
 
                     startActivity(new Intent(context, Suggestions.class));
@@ -147,13 +145,13 @@ public class SignUp extends Activity {
     }
 
     void setUserid() {
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
-        userid = sp.getString("userid", "0");
+        sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        userid = sp.getString(Constant.TAG_USERID, "0");
 
     }
 
     boolean isLoggedIn() {
-        if (sp.getBoolean(TAG_ISLOGGEDIN, false)) {
+        if (sp.getBoolean(Constant.TAG_ISLOGGEDIN, false)) {
             return true;
         } else
             return false;

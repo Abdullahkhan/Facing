@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.polygons.facingapp.tools.Constant;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -28,12 +30,11 @@ public class Profile extends Fragment {
     String userid;
     JSONParser jsonParser = new JSONParser();
     String profileURL = Login.myURL + "view_profile";
-    private static final String TAG_STATUS = "status";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        userid = getArguments().getString("userid");
+        userid = getArguments().getString(Constant.TAG_USERID);
         view = inflater.inflate(R.layout.profile, container, false);
 
         return view;
@@ -60,14 +61,15 @@ public class Profile extends Fragment {
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
+            params.put(Constant.TAG_USERID, args[0]);
 
-            JSONObject json = jsonParser.makeHttpRequest(profileURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(profileURL, Constant.TAG_POST_METHOD, params);
 
             try {
-                boolean status = json.getBoolean(TAG_STATUS);
+                boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
-
+                    //TODO
+                    //constant name changing
                     firstName = json.getJSONObject("result").getString("Name");
                     lastName = json.getJSONObject("result").getString("Lname");
 

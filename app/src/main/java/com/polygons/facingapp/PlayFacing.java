@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import com.polygons.facingapp.tools.Constant;
+
 import java.util.ArrayList;
 
 public class PlayFacing extends Activity {
@@ -42,18 +44,16 @@ public class PlayFacing extends Activity {
             clonedfacingsUrlArrayList.add(al);
 
         }
-        position = getIntent().getExtras().getInt(NewsFeed.TAG_POSITION);
+        position = getIntent().getExtras().getInt(Constant.TAG_POSITION);
         startTheVideo();
     }
 
-    void setAllXMLReferences()
-    {
+    void setAllXMLReferences() {
         videoViewFacing = (VideoView) findViewById(R.id.videoViewFacing);
         buttonReply = (Button) findViewById(R.id.buttonReply);
     }
 
-    void  setAllClickListner()
-    {
+    void setAllClickListner() {
         buttonReply.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -79,6 +79,7 @@ public class PlayFacing extends Activity {
             }
         });
     }
+
     public void startTheVideo() {
         Log.d("set vid", clonedfacingsUrlArrayList.get(position).toString());
         System.out.println(clonedfacingsUrlArrayList.get(position)

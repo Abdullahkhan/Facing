@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.polygons.facingapp.tools.Constant;
 import com.polygons.facingapp.tools.ViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
-        userid = sp.getString("userid", "0");
+        sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        userid = sp.getString(Constant.TAG_USERID, "0");
 
         toolbar = (Toolbar) findViewById(R.id.toolBar);
         buttonFace = (Button) findViewById(R.id.buttonFace);
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.adFragments(new SearchUser(), "Search");
 
         Bundle bundle = new Bundle();
-        bundle.putString("userid", userid);
+        bundle.putString(Constant.TAG_USERID, userid);
         Profile profile = new Profile();
         profile.setArguments(bundle);
 

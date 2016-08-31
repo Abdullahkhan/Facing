@@ -22,6 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.polygons.facingapp.tools.Constant;
 import com.polygons.facingapp.tools.InteractiveScrollView;
 
 import org.json.JSONArray;
@@ -61,9 +62,6 @@ public class NewsFeed extends Fragment {
     JSONArray allFacingsURL = null;
     JSONParser jsonparser = new JSONParser();
     JSONObject json;
-    String TAG_SUCCESS = "status";
-    String TAG_MESSAGE = "message";
-    public static String TAG_POSITION = "position";
     String refreshFacings = Login.myURL + "newsfeed";
     SharedPreferences sp;
 
@@ -179,21 +177,18 @@ public class NewsFeed extends Fragment {
             facingsUrlArrayList = new ArrayList<ArrayList<String>>();
             JSONArray jsonArray;
             try {
-                Boolean success = json.getBoolean(TAG_SUCCESS);
-                Log.i("newsfeed", json.toString());
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
                 if (success) {
-                    jsonArray = json.getJSONArray("message");
-                    Log.i("newsfeed", jsonArray.toString());
+                    jsonArray = json.getJSONArray(Constant.TAG_MESSAGE);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         ArrayList<String> eachPost = new ArrayList<String>();
                         JSONObject postObject = jsonArray.getJSONObject(i);
-                        eachPost.add(postObject.getString("_id"));
-                        eachPost.add(postObject.getString("user_id"));
-                        eachPost.add(postObject.getString("post"));
-                        eachPost.add(postObject.getString("time"));
+                        eachPost.add(postObject.getString(Constant.TAG_POST_ID));
+                        eachPost.add(postObject.getString(Constant.TAG_POST_USERID));
+                        eachPost.add(postObject.getString(Constant.TAG_POST));
+                        eachPost.add(postObject.getString(Constant.TAG_TIME));
                         post.add(eachPost);
-                        Log.i("newsfeed", post.toString());
 
                     }
                 }
@@ -242,28 +237,25 @@ public class NewsFeed extends Fragment {
         protected Boolean doInBackground(String... args) {
             bottomPost = new ArrayList<ArrayList<String>>();
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
-            params.put("offset", args[1]);
-            params.put("bucket", args[2]);
-            json = jsonparser.makeHttpRequest(refreshFacings, "POST", params);
+            params.put(Constant.TAG_USERID, args[0]);
+            params.put(Constant.TAG_OFFSET, args[1]);
+            params.put(Constant.TAG_BUCKET, args[2]);
+            json = jsonparser.makeHttpRequest(refreshFacings, Constant.TAG_POST_METHOD, params);
             facingsUrlArrayList = new ArrayList<ArrayList<String>>();
             JSONArray jsonArray;
             try {
-                Boolean success = json.getBoolean(TAG_SUCCESS);
-                Log.i("newsfeed", json.toString());
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
                 if (success) {
-                    jsonArray = json.getJSONArray("message");
-                    Log.i("newsfeed", jsonArray.toString());
+                    jsonArray = json.getJSONArray(Constant.TAG_MESSAGE);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         ArrayList<String> eachPost = new ArrayList<String>();
                         JSONObject postObject = jsonArray.getJSONObject(i);
-                        eachPost.add(postObject.getString("_id"));
-                        eachPost.add(postObject.getString("user_id"));
-                        eachPost.add(postObject.getString("post"));
-                        eachPost.add(postObject.getString("time"));
+                        eachPost.add(postObject.getString(Constant.TAG_POST_ID));
+                        eachPost.add(postObject.getString(Constant.TAG_POST_USERID));
+                        eachPost.add(postObject.getString(Constant.TAG_POST));
+                        eachPost.add(postObject.getString(Constant.TAG_TIME));
                         bottomPost.add(eachPost);
-                        Log.i("newsfeed", bottomPost.toString());
 
                     }
                 }
@@ -341,7 +333,6 @@ public class NewsFeed extends Fragment {
             TextView textViewPostId = (TextView) linearLayoutEachPost.getChildAt(0);
             String postId = textViewPostId.getText().toString();
 
-            Log.i("PostId", postId);
             for (int position2 = 0; position2 < post.size(); position2++) {
                 if (postId.equals(post.get(position2).get(0))) {
 
