@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#ffffff</color>
+    <color name="white">#FFFF</color>
     <color name="topBar">#919ffa</color>
     <color name="bottomBar">#6c7ce4</color>
+    <color name="black">#000000</color>
+    <color name="gray">#d7d7d5</color>
 </resources>
