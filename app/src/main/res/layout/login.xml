@@ -28,19 +28,25 @@
 
 
         <EditText
-            android:id="@+id/editTextUsername"
-            android:layout_width="match_parent" android:padding="10dp" android:layout_margin="2dp"
-            android:layout_height="wrap_content" android:textColorHint="#918f8f"
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:background="@color/white"
-            android:hint="Username" />
+            android:hint="Username"
+            android:padding="10dp"
+            android:textColorHint="#918f8f" />
 
 
         <EditText
             android:id="@+id/editTextPassword"
-            android:layout_width="match_parent" android:padding="10dp" android:layout_margin="2dp"
-            android:layout_height="wrap_content" android:textColorHint="#918f8f"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:background="@color/white"
-            android:hint="Password" />
+            android:hint="Password"
+            android:padding="10dp"
+            android:textColorHint="#918f8f" />
 
         <Button
             android:id="@+id/buttonLogin"

@@ -2174,13 +2174,13 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0c0052;
         public static final int action_mode_bar_stub=0x7f0c0051;
         public static final int action_mode_close_button=0x7f0c003a;
-        public static final int action_settings=0x7f0c00b5;
+        public static final int action_settings=0x7f0c00b4;
         public static final int activity_chooser_view_content=0x7f0c003b;
         public static final int alertTitle=0x7f0c0045;
         public static final int always=0x7f0c0030;
         public static final int beginning=0x7f0c002e;
         public static final int bottom=0x7f0c001a;
-        public static final int buttonFace=0x7f0c00b3;
+        public static final int buttonFace=0x7f0c00b2;
         public static final int buttonGoToLogin=0x7f0c00ae;
         public static final int buttonItemListViewFollowSearch=0x7f0c0070;
         public static final int buttonItemListViewFollowSuggestion=0x7f0c0074;
@@ -2201,7 +2201,6 @@ containing a value of this type.
         public static final int buttonShowFollowing=0x7f0c0080;
         public static final int buttonSignUp=0x7f0c00ad;
         public static final int buttonSkipSuggestions=0x7f0c00b0;
-        public static final int buttonUploadImage=0x7f0c00b2;
         public static final int camera_preview=0x7f0c0064;
         public static final int cancel_action=0x7f0c0087;
         public static final int center=0x7f0c001b;
@@ -2218,13 +2217,13 @@ containing a value of this type.
         public static final int decor_content_parent=0x7f0c0053;
         public static final int default_activity_button=0x7f0c003e;
         public static final int disableHome=0x7f0c000d;
+        public static final int editTextEmail=0x7f0c0079;
         public static final int editTextFirstName=0x7f0c00aa;
         public static final int editTextLastName=0x7f0c00ab;
         public static final int editTextPassword=0x7f0c007a;
         public static final int editTextPostText=0x7f0c0096;
         public static final int editTextSearchField=0x7f0c00a3;
         public static final int editTextSignUpPassword=0x7f0c00ac;
-        public static final int editTextUsername=0x7f0c0079;
         public static final int edit_query=0x7f0c0057;
         public static final int end=0x7f0c001e;
         public static final int end_padder=0x7f0c0092;
@@ -2261,7 +2260,7 @@ containing a value of this type.
         public static final int listViewSuggestions=0x7f0c00af;
         public static final int list_item=0x7f0c003f;
         public static final int media_actions=0x7f0c0089;
-        public static final int menu_slow=0x7f0c00b4;
+        public static final int menu_slow=0x7f0c00b3;
         public static final int middle=0x7f0c002f;
         public static final int mini=0x7f0c002d;
         public static final int multiply=0x7f0c0024;

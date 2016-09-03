@@ -90,7 +90,7 @@ public class SignUp extends Activity {
             // params.add(new BasicNameValuePair("password", password));
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(Constant.TAG_FIRST_NAME, args[0]);
-            params.put(Constant.TAG_SECOND_NAME, args[1]);
+            params.put(Constant.TAG_LAST_NAME, args[1]);
             params.put(Constant.TAG_PASSWORD, args[2]);
 
 

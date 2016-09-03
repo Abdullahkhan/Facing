@@ -25,10 +25,10 @@ import com.polygons.facingapp.tools.Constant;
 
 public class Login extends Activity {
     String userid;
-    EditText editTextUsername;
+    EditText editTextEmail;
     EditText editTextPassword;
     Button buttonLogin;
-    public static String myURL = "http://facing-app.herokuapp.com/api/";
+    public static String myURL = "https://facing-app.herokuapp.com/api/";
     String loginURL = Login.myURL + "login";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
@@ -50,7 +50,7 @@ public class Login extends Activity {
     }
 
     void setAllXMLReferences() {
-        editTextUsername = (EditText) findViewById(R.id.editTextUsername);
+        editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
 
@@ -61,7 +61,7 @@ public class Login extends Activity {
 
             @Override
             public void onClick(View v) {
-                new LoginUser().execute(editTextUsername.getText().toString(),
+                new LoginUser().execute(editTextEmail.getText().toString(),
                         editTextPassword.getText().toString());
             }
         });
@@ -101,7 +101,7 @@ public class Login extends Activity {
         protected Boolean doInBackground(String... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_FIRST_NAME, args[0]);
+            params.put(Constant.TAG_EMAIL, args[0]);
             params.put(Constant.TAG_PASSWORD, args[1]);
 
 

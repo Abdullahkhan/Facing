@@ -73,8 +73,8 @@ public class SearchUser extends Fragment {
         super.onCreate(savedInstanceState);
         setAllXMLReferences();
         setAllClickListner();
-        sp = this.getActivity().getSharedPreferences("user", Activity.MODE_PRIVATE);
-        userid = sp.getString("userid", "0");
+        sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        userid = sp.getString(Constant.TAG_USERID, "0");
     }
 
     void setAllXMLReferences() {
@@ -135,14 +135,14 @@ public class SearchUser extends Fragment {
                 Boolean success = json.getBoolean(Constant.TAG_STATUS);
                 arrayListUser = new ArrayList<ArrayList<String>>();
                 if (success) {
-                    JSONArray firstNameJSONArray = json.getJSONArray("result'");
+                    JSONArray firstNameJSONArray = json.getJSONArray("result");
                     for (int i = 0; i < firstNameJSONArray.length(); i++) {
                         JSONObject c = firstNameJSONArray.getJSONObject(i);
 
                         ArrayList<String> eachUser = new ArrayList<String>();
                         eachUser.add(c.getString("_id"));
-                        eachUser.add(c.getString("Name"));
-                        eachUser.add(c.getString("Lname"));
+                        eachUser.add(c.getString(Constant.TAG_FIRST_NAME));
+                        eachUser.add(c.getString(Constant.TAG_LAST_NAME));
                         arrayListUser.add(eachUser);
 
 
@@ -173,7 +173,7 @@ public class SearchUser extends Fragment {
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(Constant.TAG_USERID, args[0]);
-            params.put("friend_id", args[1]);
+            params.put(Constant.TAG_FRIEND_ID, args[1]);
 
             JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, Constant.TAG_POST_METHOD, params);
 
@@ -205,7 +205,7 @@ public class SearchUser extends Fragment {
             params.put("userid", args[0]);
             params.put("friend_id", args[1]);
 
-            JSONObject json = jsonParser.makeHttpRequest(unFollowTheUserURL, "POST", params);
+            JSONObject json = jsonParser.makeHttpRequest(unFollowTheUserURL, Constant.TAG_POST_METHOD, params);
 
             try {
                 boolean status = json.getBoolean(Constant.TAG_STATUS);

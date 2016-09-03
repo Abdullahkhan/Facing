@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.polygons.facingapp.tools.CircleImageView;
 import com.polygons.facingapp.tools.Constant;
 
 import org.json.JSONObject;
@@ -28,7 +30,10 @@ public class Profile extends Fragment {
 
     TextView textViewFirstNameProfile;
     TextView textViewLastNameProfile;
-    ImageView imageViewProfilePictureProfile;
+    TextView textViewUsernameProfile;
+    CircleImageView imageViewProfilePictureProfile;
+    TextView textViewCountFollowerProfile;
+    TextView textViewCountFollowingProfile;
     String userid;
     JSONParser jsonParser = new JSONParser();
     String profileURL = Login.myURL + "view_profile";
@@ -49,20 +54,24 @@ public class Profile extends Fragment {
         new ViewProfile().execute(userid);
     }
 
-    void setAllClickListner()
-    {
+    void setAllClickListner() {
         imageViewProfilePictureProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getActivity(),ImageCptureCamera.class);
+                Intent intent = new Intent(context, ImageCptureCamera.class);
                 startActivity(intent);
             }
         });
     }
+
     void setAllXMLReferences() {
         textViewFirstNameProfile = (TextView) view.findViewById(R.id.textViewFirstNameProfile);
         textViewLastNameProfile = (TextView) view.findViewById(R.id.textViewLastNameProfile);
-        imageViewProfilePictureProfile=(ImageView)view.findViewById(R.id.imageViewProfilePictureProfile);
+        textViewUsernameProfile = (TextView) view.findViewById(R.id.textViewUsernameProfile);
+        imageViewProfilePictureProfile = (CircleImageView) view.findViewById(R.id.imageViewProfilePictureProfile);
+        textViewCountFollowerProfile = (TextView) view.findViewById(R.id.textViewCountFollowerProfile);
+        textViewCountFollowingProfile = (TextView) view.findViewById(R.id.textViewCountFollowingProfile);
+
     }
 
     class ViewProfile extends AsyncTask<String, String, Boolean>
@@ -70,21 +79,32 @@ public class Profile extends Fragment {
     {
         String firstName;
         String lastName;
+        String userName;
+        String profilePictureURL;
+        String coverPictureURL;
+        String totalCountFollower;
+        String totalCountFollowing;
 
         @Override
         protected Boolean doInBackground(String... args) {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(Constant.TAG_USERID, args[0]);
 
+
             JSONObject json = jsonParser.makeHttpRequest(profileURL, Constant.TAG_POST_METHOD, params);
 
             try {
                 boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
-                    //TODO
-                    //constant name changing
-                    firstName = json.getJSONObject("result").getString("Name");
-                    lastName = json.getJSONObject("result").getString("Lname");
+
+                    Log.i("Profile", json.toString());
+                    firstName = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_FIRST_NAME);
+                    lastName = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_LAST_NAME);
+                    userName = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_USERNAME);
+                    profilePictureURL = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_PROFILE_PICTURE_URL);
+                    coverPictureURL = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_COVER_PICTURE_URL);
+                    totalCountFollower = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_COUNT_TOTAL_FOLLOWER);
+                    totalCountFollowing = json.getJSONObject(Constant.TAG_RESULT).getString(Constant.TAG_COUNT_TOTAL_FOLLOWING);
 
 
                     return true;
@@ -100,9 +120,16 @@ public class Profile extends Fragment {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result) {
-                Toast.makeText(getActivity(), "Profile showed ", Toast.LENGTH_SHORT).show();
                 textViewFirstNameProfile.setText(firstName);
                 textViewLastNameProfile.setText(lastName);
+                textViewUsernameProfile.setText(userName);
+                if (!totalCountFollower.equals("")) {
+                    textViewCountFollowerProfile.setText(totalCountFollower);
+                }
+                if (!totalCountFollowing.equals("")) {
+
+                    textViewCountFollowingProfile.setText(totalCountFollowing);
+                }
 
 
             }
@@ -110,9 +137,4 @@ public class Profile extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getActivity().finish();
-    }
 }
