@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NewsFeed extends android.support.v4.app.Fragment {
     Context context = getContext();
-    Activity activity =getActivity();
+    Activity activity = getActivity();
     View view;
     //    Button buttonFace;
     Button buttonLogOut;
@@ -66,8 +66,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     String refreshFacings = Login.myURL + "newsfeed";
     SharedPreferences sp;
 
-    ArrayList<ArrayList<String>> post;
-    ArrayList<ArrayList<String>> bottomPost;
+    ArrayList<HashMap<String, String>> post;
+    ArrayList<HashMap<String, String>> bottomPost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,8 +93,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         setAllXMLReferences();
         setAllButtonOnClickListeners();
         sp = this.getActivity().getSharedPreferences("user", Activity.MODE_PRIVATE);
-        userid = sp.getString("userid", "0");
-        Log.i("userid", userid);
+        userid = sp.getString(Constant.TAG_USERID, "0");
+        Log.i(Constant.TAG_USERID, userid);
 
         scrollViewNewsFeed.setOnBottomReachedListener(new InteractiveScrollView.OnBottomReachedListener() {
             @Override
@@ -169,12 +169,12 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         @Override
         protected Boolean doInBackground(String... args) {
-            post = new ArrayList<ArrayList<String>>();
+            post = new ArrayList<HashMap<String, String>>();
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
-            params.put("offset", args[1]);
-            params.put("bucket", args[2]);
-            json = jsonparser.makeHttpRequest(refreshFacings, "POST", params);
+            params.put(Constant.TAG_USERID, args[0]);
+            params.put(Constant.TAG_OFFSET, args[1]);
+            params.put(Constant.TAG_BUCKET, args[2]);
+            json = jsonparser.makeHttpRequest(refreshFacings, Constant.TAG_POST_METHOD, params);
             facingsUrlArrayList = new ArrayList<ArrayList<String>>();
             JSONArray jsonArray;
             try {
@@ -183,12 +183,14 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     jsonArray = json.getJSONArray(Constant.TAG_MESSAGE);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        ArrayList<String> eachPost = new ArrayList<String>();
+                        HashMap<String, String> eachPost = new HashMap<String, String>();
                         JSONObject postObject = jsonArray.getJSONObject(i);
-                        eachPost.add(postObject.getString(Constant.TAG_POST_ID));
-                        eachPost.add(postObject.getString(Constant.TAG_POST_USERID));
-                        eachPost.add(postObject.getString(Constant.TAG_POST));
-                        eachPost.add(postObject.getString(Constant.TAG_TIME));
+                        eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
+                        eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
+                        eachPost.put(Constant.TAG_USER_FIRST_NAME, postObject.getString(Constant.TAG_USER_FIRST_NAME));
+                        eachPost.put(Constant.TAG_USER_LAST_NAME, postObject.getString(Constant.TAG_USER_LAST_NAME));
+                        eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
+                        eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
                         post.add(eachPost);
 
                     }
@@ -236,7 +238,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         @Override
         protected Boolean doInBackground(String... args) {
-            bottomPost = new ArrayList<ArrayList<String>>();
+            bottomPost = new ArrayList<HashMap<String, String>>();
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(Constant.TAG_USERID, args[0]);
             params.put(Constant.TAG_OFFSET, args[1]);
@@ -250,12 +252,12 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     jsonArray = json.getJSONArray(Constant.TAG_MESSAGE);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        ArrayList<String> eachPost = new ArrayList<String>();
+                        HashMap<String, String> eachPost = new HashMap<String, String>();
                         JSONObject postObject = jsonArray.getJSONObject(i);
-                        eachPost.add(postObject.getString(Constant.TAG_POST_ID));
-                        eachPost.add(postObject.getString(Constant.TAG_POST_USERID));
-                        eachPost.add(postObject.getString(Constant.TAG_POST));
-                        eachPost.add(postObject.getString(Constant.TAG_TIME));
+                        eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
+                        eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
+                        eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
+                        eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
                         bottomPost.add(eachPost);
 
                     }
@@ -295,15 +297,15 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
 
             TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
-            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
+            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
             TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
             TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
 
 
-            textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(0));
-            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(1));
-            textViewItemListViewPostNewsFeed.setText(post.get(position).get(2));
-            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(3))));
+            textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST_ID));
+            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));//// TODO: 9/4/2016
+            textViewItemListViewPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST));
+            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
             linearLayoutPost.addView(tempView, 0);
         }
     }
@@ -315,15 +317,15 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
 
             TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
-            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
+            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
             TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
             TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
 
 
-            textViewItemListViewPostIDPostNewsFeed.setText(bottomPost.get(position).get(0));
-            textViewItemListViewNamePostNewsFeed.setText(bottomPost.get(position).get(1));
-            textViewItemListViewPostNewsFeed.setText(bottomPost.get(position).get(2));
-            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(3))));
+            textViewItemListViewPostIDPostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_POST_ID));
+            textViewItemListViewNamePostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_USER_FIRST_NAME + " " + Constant.TAG_USER_LAST_NAME));// TODO: 9/4/2016
+            textViewItemListViewPostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_POST));
+            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(Constant.TAG_TIME))));
             linearLayoutPost.addView(tempView, linearLayoutPost.getChildCount());
         }
     }
@@ -335,7 +337,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             String postId = textViewPostId.getText().toString();
 
             for (int position2 = 0; position2 < post.size(); position2++) {
-                if (postId.equals(post.get(position2).get(0))) {
+                if (postId.equals(post.get(position2).get(Constant.TAG_POST_ID))) {
 
                     post.remove(position2);
                 }
@@ -369,7 +371,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
 
             textViewItemListViewPostIDPostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
-            textViewItemListViewNamePostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewNamePostNewsFeed);
+            textViewItemListViewNamePostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
             textViewItemListViewPostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewPostNewsFeed);
             textViewItemListViewTimePostNewsFeed = (TextView) retval.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
 
@@ -444,7 +446,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             TimeUnit.HOURS.toMillis(1),
             TimeUnit.MINUTES.toMillis(1),
             TimeUnit.SECONDS.toMillis(1));
-    public static final List<String> timesString = Arrays.asList("year", "month", "day", "hour", "minute", "second");
+    public static final List<String> timesString = Arrays.asList("year", "month", "d", "h", "m", "s");
 
     public static String toDuration(long duration) {
 
@@ -453,7 +455,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             Long current = NewsFeed.times.get(i);
             long temp = duration / current;
             if (temp > 0) {
-                res.append(temp).append(" ").append(NewsFeed.timesString.get(i)).append(temp > 1 ? "s" : "").append(" ago");
+                res.append(temp).append(" ")
+                        .append(NewsFeed.timesString.get(i))
+                        .append(timesString.get(i).equals("year") || timesString.get(i).equals("month") ? "s" : "");
                 break;
             }
         }

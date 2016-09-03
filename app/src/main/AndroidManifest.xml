@@ -78,7 +78,7 @@
             android:name=".ProfileMain"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-        <activity android:name=".ImageCptureCamera"></activity>
+        <activity android:name=".ImageCaptureCamera"></activity>
     </application>
 
 </manifest>

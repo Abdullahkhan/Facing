@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.polygons.facingapp.tools.Constant;
@@ -36,28 +34,30 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 
-public class ImageCptureCamera extends AppCompatActivity {
+public class ImageCaptureCamera extends AppCompatActivity {
 
     private Camera mCamera;
     private CameraPreview mCameraPreview;
-    Context context=this;
+    Context context = this;
     String imageUploadURL = Login.myURL + "set_profilepicture";
     ProgressBar progressBar;
     private long totalSize = 0;
     String userid;
     SharedPreferences sp;
-   // ImageView clickedimage;
-    /** Called when the activity is first created. */
+    // ImageView clickedimage;
+
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_cpture_camera);
+        setContentView(R.layout.image_capture_camera);
         mCamera = getCameraInstance();
         mCameraPreview = new CameraPreview(this, mCamera);
         mCameraPreview.setMinimumHeight(mCameraPreview.getWidth());
-     //   clickedimage=(ImageView)findViewById(R.id.imgview);
+        //   clickedimage=(ImageView)findViewById(R.id.imgview);
 
         sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
@@ -105,12 +105,12 @@ public class ImageCptureCamera extends AppCompatActivity {
                 fos.write(data);
                 fos.close();
 
-                new UploadFacingToServer().execute(pictureFile,userid);
+                new UploadFacingToServer().execute(pictureFile, userid);
 
-    //            Intent in1 = new Intent(ImageCptureCamera.this, MainActivity.class);
-      //          in1.putExtra("image",data);
-        //        startActivity(in1);
-              //  ImageCptureCamera.this.finish();
+                //            Intent in1 = new Intent(ImageCaptureCamera.this, MainActivity.class);
+                //          in1.putExtra("image",data);
+                //        startActivity(in1);
+                //  ImageCaptureCamera.this.finish();
                 // clickedimage.setImageBitmap(bitmap);
 
                 mCamera.startPreview();
@@ -159,15 +159,13 @@ public class ImageCptureCamera extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             // setting progress bar to zero
-      //      progressBar.setProgress(0);
+            //      progressBar.setProgress(0);
             super.onPreExecute();
         }
 
 
-
         @Override
         protected Boolean doInBackground(Object... arg) {
-
 
 
             String responseString = null;
@@ -186,7 +184,7 @@ public class ImageCptureCamera extends AppCompatActivity {
                         });
 
 
-            //    File sourceFile = new File(filePath);
+                //    File sourceFile = new File(filePath);
 
                 // Adding file data to http body
                 entity.addPart(Constant.TAG_PICTURE, new FileBody((File) arg[0]));
@@ -208,15 +206,15 @@ public class ImageCptureCamera extends AppCompatActivity {
 
                     try {
                         JSONObject result = new JSONObject(EntityUtils.toString(r_entity));
-                        if(result.getBoolean(Constant.TAG_STATUS)){
+                        if (result.getBoolean(Constant.TAG_STATUS)) {
                             return true;
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
                     return false;
                     // Server response
-                 //   responseString = EntityUtils.toString(r_entity);
+                    //   responseString = EntityUtils.toString(r_entity);
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
@@ -234,11 +232,9 @@ public class ImageCptureCamera extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if(result)
-            {
-                 showAlert("Successfulllu Uploaded Picture");
-            }
-            else{
+            if (result) {
+                showAlert("Successfullly Uploaded Picture");
+            } else {
                 showAlert("Failed");
             }
             // pDialog.dismiss();

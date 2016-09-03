@@ -1,3 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\exploded-aar\com.android.support\design\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="e5c61a3169221a89654ffcaaed47bba51cf071ad">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-design-23.0.1_76f296531a53f70bdf148b93f1457abb65993716.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\libs\httpcore-4.3.3.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="f91b7a4aadc5cf486df6e4634748d7dd7a73f06d">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\httpcore-4.3.3_f43dd15a6235b14b8004b7f7da6e63bad158584d.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\libs\httpclient-4.3.6.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="f3cf3b25e14d3bca47773e95aa85ea8fefbf8e81">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\httpclient-4.3.6_efe2c8b20e241fd5d51a23849129a914a13bec80.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.0.1_fb667c96fcb49b9d34e743d07a50f05c4f78223c.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="4f8c996d1d4e9a5d3ede3e436fc200844ff74442">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\instant-run_45904a2957b9f7dba6fb4bb369a1b35b715f249c.jar" />
+    </item>
+    <item
+        jar="E:\android\adt-bundle-windows-x86_64-20140702\adt-bundle-windows-x86_64-20140702\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1_45b8489cccb6724d82c6e23d474b1c873c865fcb.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\libs\httpmime-4.3.6.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="66a39a5e37d5da40fdad6176fc24ef4316e74702">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\httpmime-4.3.6_e5f05755eff038d8ed6615b65aa9394f372f6a14.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1_1858b1e141e6e621c419e28a945a0eb683ee34dc.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="c833d5359b35169c63440af4b153b555d350a051">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_b96289fdc42d558dcd0083fd08906a11b127a88e.jar" />
+    </item>
+    <item
+        jar="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="C:\Users\Abdullah\StudioProjects\Facing\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.0.1_c16d6cc7aa401018f4f62ac8d59dd48b1f8e40de.jar" />
+    </item>
+
+</items>

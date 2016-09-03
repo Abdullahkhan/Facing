@@ -29,6 +29,9 @@ public class Constant {
     public static String TAG_TIME = "time";
     public static String TAG_POSITION = "position";
 
+    public static String TAG_USER_FIRST_NAME = "user_first_name";
+    public static String TAG_USER_LAST_NAME = "user_last_name";
+
     //TAGS for NEWSFEED
     public static String TAG_OFFSET = "offset";
     public static String TAG_BUCKET = "bucket";

@@ -9,9 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.polygons.facingapp.tools.Constant;
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
 
         sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");

@@ -26,7 +26,7 @@ public class ProfileMain extends FragmentActivity {
                 .beginTransaction();
         Profile profile = new Profile();
         Bundle bundle = new Bundle();
-        bundle.putString(Constant.TAG_USERID, getIntent().getStringExtra(Constant.TAG_POST_USERID));
+        bundle.putString(Constant.TAG_USERID, getIntent().getStringExtra(Constant.TAG_USERID));
         profile.setArguments(bundle);
 
         ft.replace(R.id.linearLayoutProfileContainer, profile,
