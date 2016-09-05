@@ -60,7 +60,8 @@
                 android:text="0" />
 
             <TextView
-                style="@style/ProfileTexttFollowerFollowing"
+                android:id="@+id/textViewFollowerProfile"
+                style="@style/ProfileTextFollowerFollowing"
                 android:text="Followers" />
 
             <TextView
@@ -69,7 +70,8 @@
                 android:text="0" />
 
             <TextView
-                style="@style/ProfileTexttFollowerFollowing"
+                android:id="@+id/textViewFollowingProfile"
+                style="@style/ProfileTextFollowerFollowing"
                 android:text="Followings" />
 
         </LinearLayout>

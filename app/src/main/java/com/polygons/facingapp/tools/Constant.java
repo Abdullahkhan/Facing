@@ -22,6 +22,12 @@ public class Constant {
 
     public static String TAG_FRIEND_ID = "friend_id";
 
+    //TAGS for Followers and Following
+    public static String TAG_FOLLOWER_ID = "follower_id";
+    public static String TAG_FOLLOWER_FIRST_NAME = "follower_first_name";
+    public static String TAG_FOLLOWER_LAST_NAME = "follower_last_name";
+    public static String TAG_FOLLOWER_PROFILE_PICTURE_URL = "follower_profile_picture_url";
+
     //TAGS for POSTs
     public static String TAG_POST_ID = "_id";
     public static String TAG_POST_USERID = "user_id";

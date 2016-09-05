@@ -8,124 +8,110 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.polygons.facingapp.tools.CircleImageView;
+import com.polygons.facingapp.tools.Constant;
 
 public class ShowFollowers extends Activity {
-	Button buttonRefreshShowFollowers;
-	ListView listViewShowFollowers;
-	Context context = this;
-	JSONParser jsonparser = new JSONParser();
-	JSONArray findFollowers = null;
+    Context context = this;
+    LinearLayout linearLayoutShowFollowers;
+    JSONParser jsonparser = new JSONParser();
 
-	public static ArrayList<HashMap<String, String>> userArrayList;
+    public static ArrayList<HashMap<String, String>> arrayListFollowers;
 
-	String showFollowersURL = Login.myURL + "/facing/show_followers.php";
+    String showFollowersURL = Login.myURL + "see_follower";
 
-	String TAG_USERNAME = "username";
-	String TAG_SUCCESS = "success";
-	String TAG_MESSAGE = "message";
-	ProgressDialog pDialog;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.show_followers);
-		setAllXMLReferences();
-		setAllClickListner();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.show_followers);
+        setAllXMLReferences();
+        setAllClickListner();
+        new AllFollowers().execute(getIntent().getStringExtra(Constant.TAG_USERID));
+    }
 
-	void setAllXMLReferences()
-	{
-		buttonRefreshShowFollowers = (Button) findViewById(R.id.buttonRefreshShowFollowers);
-		listViewShowFollowers = (ListView) findViewById(R.id.listViewShowFollowers);
-	}
+    void setAllXMLReferences() {
+        linearLayoutShowFollowers = (LinearLayout) findViewById(R.id.linearLayoutShowFollowers);
+    }
 
-	void setAllClickListner()
-	{
-		buttonRefreshShowFollowers
-				.setOnClickListener(new View.OnClickListener() {
+    void setAllClickListner() {
+    }
 
-					@Override
-					public void onClick(View v) {
-						new AllFollowers().execute(Login.user.getUsername());
-					}
-				});
-	}
-	class AllFollowers extends AsyncTask<String, String, String> {
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pDialog = new ProgressDialog(context);
-			pDialog.setMessage("Refreshing your notifications");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
-			pDialog.show();
+    class AllFollowers extends AsyncTask<String, String, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-		}
+        }
 
-		@Override
-		protected String doInBackground(String... args) {
+        @Override
+        protected Boolean doInBackground(String... args) {
 
-			HashMap<String, String> params = new HashMap<String, String>();
-			params.put(TAG_USERNAME, args[0]);
-			JSONObject json = jsonparser.makeHttpRequest(showFollowersURL,
-					"POST", params);
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(Constant.TAG_USERID, args[0]);
+            JSONObject json = jsonparser.makeHttpRequest(showFollowersURL, Constant.TAG_POST_METHOD, params);
 
-			try {
-				userArrayList = new ArrayList<HashMap<String, String>>();
+            try {
+                arrayListFollowers = new ArrayList<HashMap<String, String>>();
 
-				int success = json.getInt(TAG_SUCCESS);
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
+                JSONArray jsonArray;
+                if (success) {
+                    jsonArray = json.getJSONArray(Constant.TAG_RESULT);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        HashMap<String, String> hashMap = new HashMap<String, String>();
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-				if (success == 1) {
-					findFollowers = json.getJSONArray("followers");
-					for (int i = 0; i < findFollowers.length(); i++) {
-						JSONObject c = findFollowers.getJSONObject(i);
+                        hashMap.put(Constant.TAG_FOLLOWER_ID, jsonObject.getString(Constant.TAG_FOLLOWER_ID));
+                        hashMap.put(Constant.TAG_FOLLOWER_FIRST_NAME, jsonObject.getString(Constant.TAG_FOLLOWER_FIRST_NAME));
+                        hashMap.put(Constant.TAG_FOLLOWER_LAST_NAME, jsonObject.getString(Constant.TAG_FOLLOWER_LAST_NAME));
+                        hashMap.put(Constant.TAG_FOLLOWER_PROFILE_PICTURE_URL, jsonObject.getString(Constant.TAG_FOLLOWER_PROFILE_PICTURE_URL));
 
-						// String FirstName = c.getString("FirstName");
-						String follower = c.getString("followers");
 
-						HashMap<String, String> map = new HashMap<String, String>();
-						// Log.d("Noti", username);
-						map.put("FirstName", "FirstName");
-						map.put("follower", follower);
+                        arrayListFollowers.add(hashMap);
+                    }
+                    return true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-						userArrayList.add(map);
-					}
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+            return false;
+        }
 
-			return null;
-		}
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                CreateAndAppendFollowers();
+            }
 
-		protected void onPostExecute(String file_url) {
-			pDialog.dismiss();
+        }
+    }
 
-//			runOnUiThread(new Runnable() {
-//				public void run() {
-//					ListAdapter adapter = new SimpleAdapter(
-//							context,
-//							userArrayList,
-//							R.layout.item_listview_searchuser,// temporary item
-//																// layout
-//							new String[] { "FirstName", "follower" },
-//							new int[] { R.id.pid, R.id.name });
-//
-//					listViewShowFollowers.setAdapter(adapter);
-//
-//				}
-//			});
+    public void CreateAndAppendFollowers() {
+        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for (int position = arrayListFollowers.size() - 1; position >= 0; position--) {
+            View tempView = li.inflate(R.layout.linearlayout_follower_following, null);
 
-		}
-	}
+
+            CircleImageView circleImageViewItemLinearLayoutFollowerFollowing = (CircleImageView) tempView.findViewById(R.id.circleImageViewItemLinearLayoutFollowerFollowing);
+            TextView textViewItemLinearLayoutFullNameFollowerFollowing = (TextView) tempView.findViewById(R.id.textViewItemLinearLayoutFullNameFollowerFollowing);
+            Button buttonItemLinearLayoutFollowFollowerFollowing = (Button) tempView.findViewById(R.id.buttonItemLinearLayoutFollowFollowerFollowing);
+
+            //circleImageViewItemLinearLayoutFollowerFollowing.setText(post.get(position).get(Constant.TAG_POST_ID));
+            textViewItemLinearLayoutFullNameFollowerFollowing.setText(arrayListFollowers.get(position).get(Constant.TAG_FOLLOWER_FIRST_NAME) + " " + arrayListFollowers.get(position).get(Constant.TAG_FOLLOWER_LAST_NAME));
+            linearLayoutShowFollowers.addView(tempView, 0);
+        }
+    }
 
 }

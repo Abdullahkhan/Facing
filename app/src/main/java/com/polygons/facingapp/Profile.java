@@ -2,6 +2,7 @@ package com.polygons.facingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,9 @@ public class Profile extends Fragment {
     CircleImageView imageViewProfilePictureProfile;
     TextView textViewCountFollowerProfile;
     TextView textViewCountFollowingProfile;
+
+    TextView textViewFollowerProfile;
+    TextView textViewFollowingProfile;
     String userid;
     JSONParser jsonParser = new JSONParser();
     String profileURL = Login.myURL + "view_profile";
@@ -58,32 +62,49 @@ public class Profile extends Fragment {
         imageViewProfilePictureProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, ImageCaptureCamera.class);
+                Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
                 startActivity(intent);
+            }
+        });
+
+        textViewFollowerProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ShowFollowers.class);
+                intent.putExtra(Constant.TAG_USERID, userid);
+                startActivity(intent);
+
+            }
+        });
+        textViewFollowingProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ShowFollowing.class);
+                intent.putExtra(Constant.TAG_USERID, userid);
+                startActivity(intent);
+
             }
         });
     }
 
     void setAllXMLReferences() {
+
         textViewFirstNameProfile = (TextView) view.findViewById(R.id.textViewFirstNameProfile);
         textViewLastNameProfile = (TextView) view.findViewById(R.id.textViewLastNameProfile);
         textViewUsernameProfile = (TextView) view.findViewById(R.id.textViewUsernameProfile);
         imageViewProfilePictureProfile = (CircleImageView) view.findViewById(R.id.imageViewProfilePictureProfile);
         textViewCountFollowerProfile = (TextView) view.findViewById(R.id.textViewCountFollowerProfile);
         textViewCountFollowingProfile = (TextView) view.findViewById(R.id.textViewCountFollowingProfile);
+        textViewFollowerProfile = (TextView) view.findViewById(R.id.textViewFollowerProfile);
+        textViewFollowingProfile = (TextView) view.findViewById(R.id.textViewFollowingProfile);
 
     }
 
     class ViewProfile extends AsyncTask<String, String, Boolean>
 
     {
-        String firstName;
-        String lastName;
-        String userName;
-        String profilePictureURL;
-        String coverPictureURL;
-        String totalCountFollower;
-        String totalCountFollowing;
+
+        Bitmap profile_picture;
 
         @Override
         protected Boolean doInBackground(String... args) {
@@ -105,7 +126,15 @@ public class Profile extends Fragment {
                     userData.put(Constant.TAG_COVER_PICTURE_URL, result.getString(Constant.TAG_COVER_PICTURE_URL));
                     userData.put(Constant.TAG_COUNT_TOTAL_FOLLOWER, result.getString(Constant.TAG_COUNT_TOTAL_FOLLOWER));
                     userData.put(Constant.TAG_COUNT_TOTAL_FOLLOWING, result.getString(Constant.TAG_COUNT_TOTAL_FOLLOWING));
+                    try {
 
+                        Log.i("ImageURL", userData.get(Constant.TAG_PROFILE_PICTURE_URL));
+                        URL imageURL = new URL("https://facing-app.herokuapp.com/" + "uploads/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
+                        Log.i("ImageURL", imageURL.toString());
+                        profile_picture = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     return true;
                 }
@@ -122,12 +151,11 @@ public class Profile extends Fragment {
             if (result) {
                 try {
 
-                    Log.i("ImageURL", userData.get(Constant.TAG_PROFILE_PICTURE_URL).substring(15));
-                    URL imageURL = new URL(Login.myURL + "uploads/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL.substring(15)));
-                    imageViewProfilePictureProfile.setImageBitmap(BitmapFactory.decodeStream(imageURL.openConnection().getInputStream()));
+                    imageViewProfilePictureProfile.setImageBitmap(profile_picture);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
                 textViewFirstNameProfile.setText(userData.get(Constant.TAG_FIRST_NAME));
                 textViewLastNameProfile.setText(userData.get(Constant.TAG_LAST_NAME));
                 textViewUsernameProfile.setText(userData.get(Constant.TAG_USERNAME));

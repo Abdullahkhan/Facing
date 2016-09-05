@@ -174,10 +174,10 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             params.put(Constant.TAG_USERID, args[0]);
             params.put(Constant.TAG_OFFSET, args[1]);
             params.put(Constant.TAG_BUCKET, args[2]);
-            json = jsonparser.makeHttpRequest(refreshFacings, Constant.TAG_POST_METHOD, params);
-            facingsUrlArrayList = new ArrayList<ArrayList<String>>();
-            JSONArray jsonArray;
             try {
+                json = jsonparser.makeHttpRequest(refreshFacings, Constant.TAG_POST_METHOD, params);
+                facingsUrlArrayList = new ArrayList<ArrayList<String>>();
+                JSONArray jsonArray;
                 Boolean success = json.getBoolean(Constant.TAG_STATUS);
                 if (success) {
                     jsonArray = json.getJSONArray(Constant.TAG_MESSAGE);

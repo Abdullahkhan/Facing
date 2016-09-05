@@ -105,9 +105,9 @@ public class Login extends Activity {
             params.put(Constant.TAG_PASSWORD, args[1]);
 
 
-            JSONObject json = jsonParser.makeHttpRequest(loginURL, Constant.TAG_POST_METHOD,
-                    params);
             try {
+                JSONObject json = jsonParser.makeHttpRequest(loginURL, Constant.TAG_POST_METHOD,
+                        params);
                 boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
 
@@ -116,8 +116,8 @@ public class Login extends Activity {
                     editor.putString(Constant.TAG_USERID, json.getString(Constant.TAG_USERID));
                     editor.commit();
 
+                    return true;
                 }
-                return true;
             } catch (Exception e) {
             }
             return false;
