@@ -3,6 +3,7 @@ package com.polygons.facingapp;
 /**
  * Created by Zeeshan Ali on 8/29/2016.
  */
+
 import android.content.Context;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;

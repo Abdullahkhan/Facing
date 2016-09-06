@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -12,7 +15,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.polygons.facingapp.tools.Constant;
@@ -28,6 +35,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,6 +53,7 @@ public class ImageCaptureCamera extends AppCompatActivity {
     private long totalSize = 0;
     String userid;
     SharedPreferences sp;
+    LinearLayout linearLayoutBottoHider;
     // ImageView clickedimage;
 
     /**
@@ -62,7 +71,25 @@ public class ImageCaptureCamera extends AppCompatActivity {
         sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
 
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        final FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        linearLayoutBottoHider = (LinearLayout) findViewById(R.id.linearLayoutBottoHider);
+
+
+        final ViewGroup.LayoutParams params = (android.view.ViewGroup.LayoutParams) linearLayoutBottoHider
+                .getLayoutParams();
+
+        final View view = (View) findViewById(R.id.camera_preview);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                preview.getViewTreeObserver();
+                // int width = view.getMeasuredWidth();
+                int height = view.getMeasuredHeight();
+                params.height = view.getMeasuredWidth();
+
+            }
+        });
         preview.addView(mCameraPreview);
 
         //  Button captureButton = (Button) findViewById(R.id.button_capture);
@@ -101,9 +128,18 @@ public class ImageCaptureCamera extends AppCompatActivity {
             }
             try {
 
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                Log.i("Image", bitmap.getHeight() + " " + bitmap.getWidth());
+
                 FileOutputStream fos = new FileOutputStream(pictureFile);
-                fos.write(data);
+
+                Bitmap profile = resizePicture(squareCropPicture(rotateBitmap(bitmap, 90)));
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                profile.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+                fos.write(stream.toByteArray());
                 fos.close();
+
 
                 new UploadFacingToServer().execute(pictureFile, userid);
 
@@ -144,6 +180,23 @@ public class ImageCaptureCamera extends AppCompatActivity {
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
 
         return mediaFile;
+    }
+
+    private Bitmap squareCropPicture(Bitmap bitmap) {
+
+        Bitmap bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getWidth());
+
+        return bitmap2;
+    }
+
+    private Bitmap resizePicture(Bitmap bitmap) {
+        return Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+    }
+
+    private Bitmap rotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     private class UploadFacingToServer extends AsyncTask<Object, Integer, Boolean> {
