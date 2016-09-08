@@ -1,23 +1,30 @@
 package com.polygons.facingapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.polygons.facingapp.tools.CircleImageView;
 import com.polygons.facingapp.tools.Constant;
+import com.soundcloud.android.crop.Crop;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -39,6 +46,7 @@ public class Profile extends Fragment {
     String userid;
     JSONParser jsonParser = new JSONParser();
     String profileURL = Login.myURL + "view_profile";
+    SwipeRefreshLayout swipeLayout;
 
     HashMap<String, String> userData;
 
@@ -47,6 +55,18 @@ public class Profile extends Fragment {
                              Bundle savedInstanceState) {
         userid = getArguments().getString(Constant.TAG_USERID);
         view = inflater.inflate(R.layout.profile, container, false);
+
+        swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
+
+                new ViewProfile().execute(userid);
+            }
+        });
+
         return view;
     }
 
@@ -58,14 +78,39 @@ public class Profile extends Fragment {
         new ViewProfile().execute(userid);
     }
 
+
+
     void setAllClickListner() {
         imageViewProfilePictureProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
-                startActivity(intent);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you want to exit?")
+                        .setCancelable(false)
+                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                Intent intent=new Intent(getActivity(),ProfilePicturePreview.class);
+                                startActivity(intent);
+
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
+
             }
         });
+
+
+
 
         textViewFollowerProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +131,8 @@ public class Profile extends Fragment {
             }
         });
     }
+
+
 
     void setAllXMLReferences() {
 

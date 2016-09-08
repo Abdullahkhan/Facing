@@ -23,6 +23,7 @@ public class SignUp extends Activity {
     String userid;
     EditText editTextFirstName;
     EditText editTextLastName;
+    EditText editTextEmail;
     EditText editTextSignUpPassword;
     JSONParser jsonParser = new JSONParser();
     Button buttonSignUp;
@@ -48,6 +49,7 @@ public class SignUp extends Activity {
     void setAllXMLReferences() {
         editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextLastName = (EditText) findViewById(R.id.editTextLastName);
+        editTextEmail=(EditText)findViewById(R.id.editTextEmail);
         editTextSignUpPassword = (EditText) findViewById(R.id.editTextSignUpPassword);
         buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
         buttonGoToLogin = (Button) findViewById(R.id.buttonGoToLogin);
@@ -57,7 +59,7 @@ public class SignUp extends Activity {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SignUpUser().execute(editTextFirstName.getText().toString(), editTextLastName.getText().toString(), editTextSignUpPassword.getText().toString());
+                new SignUpUser().execute(editTextFirstName.getText().toString(), editTextLastName.getText().toString(),editTextEmail.getText().toString(), editTextSignUpPassword.getText().toString());
 
             }
         });
@@ -91,7 +93,8 @@ public class SignUp extends Activity {
             HashMap<String, String> params = new HashMap<String, String>();
             params.put(Constant.TAG_FIRST_NAME, args[0]);
             params.put(Constant.TAG_LAST_NAME, args[1]);
-            params.put(Constant.TAG_PASSWORD, args[2]);
+            params.put(Constant.TAG_EMAIL, args[2]);
+            params.put(Constant.TAG_PASSWORD, args[3]);
 
 
             try {

@@ -130,10 +130,10 @@ public class ImageCaptureCamera extends AppCompatActivity {
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 Log.i("Image", bitmap.getHeight() + " " + bitmap.getWidth());
+                Bitmap profile = resizePicture(squareCropPicture(rotateBitmap(bitmap, 90)));
 
                 FileOutputStream fos = new FileOutputStream(pictureFile);
 
-                Bitmap profile = resizePicture(squareCropPicture(rotateBitmap(bitmap, 90)));
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 profile.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
@@ -162,7 +162,7 @@ public class ImageCaptureCamera extends AppCompatActivity {
         }
     };
 
-    private static File getOutputMediaFile() {
+    public static File getOutputMediaFile() {
         File mediaStorageDir = new File(
                 Environment
                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
@@ -189,7 +189,7 @@ public class ImageCaptureCamera extends AppCompatActivity {
         return bitmap2;
     }
 
-    private Bitmap resizePicture(Bitmap bitmap) {
+    public static Bitmap resizePicture(Bitmap bitmap) {
         return Bitmap.createScaledBitmap(bitmap, 300, 300, false);
     }
 
