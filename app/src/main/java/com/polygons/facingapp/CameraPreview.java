@@ -1,19 +1,11 @@
 package com.polygons.facingapp;
 
-/**
- * Created by Zeeshan Ali on 8/29/2016.
- */
-
 import android.content.Context;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
-
-/**
- * Created by Zeeshan Ali on 8/18/2016.
- */
 public class CameraPreview extends SurfaceView implements
         SurfaceHolder.Callback {
     private SurfaceHolder mSurfaceHolder;

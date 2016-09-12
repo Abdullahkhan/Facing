@@ -40,14 +40,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     Context context = getContext();
     Activity activity = getActivity();
     View view;
-    //    Button buttonFace;
-    Button buttonLogOut;
-    Button buttonRefreshFacings;
-    Button buttonSearchUser;
-    Button buttonShowFollowers;
-    Button buttonShowFollowing;
     InteractiveScrollView scrollViewNewsFeed;
-    ListView listViewNewsFeed;
     LinearLayout linearLayoutPost;
     SwipeRefreshLayout swipeLayout;
 
@@ -129,9 +122,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
     private void setAllXMLReferences() {
 
-//        buttonFace = (Button) view.findViewById(R.id.buttonFace);
-//      buttonSearchUser = (Button) findViewById(R.id.buttonSearchUser);
-        listViewNewsFeed = (ListView) view.findViewById(R.id.listViewNewsFeed);
         linearLayoutPost = (LinearLayout) view.findViewById(R.id.linearLayoutPost);
         scrollViewNewsFeed = (InteractiveScrollView) view.findViewById(R.id.scrollViewNewsFeed);
     }

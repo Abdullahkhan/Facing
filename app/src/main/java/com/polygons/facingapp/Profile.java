@@ -61,6 +61,7 @@ public class Profile extends Fragment {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                swipeLayout.setRefreshing(true);
                 Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
 
                 new ViewProfile().execute(userid);
@@ -86,8 +87,8 @@ public class Profile extends Fragment {
             public void onClick(View view) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Are you sure you want to exit?")
-                        .setCancelable(false)
+                builder.setMessage("Please choose desired option")
+                        .setCancelable(true)
                         .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
@@ -213,6 +214,8 @@ public class Profile extends Fragment {
 
                     textViewCountFollowingProfile.setText(userData.get(Constant.TAG_COUNT_TOTAL_FOLLOWING));
                 }
+
+                swipeLayout.setRefreshing(false);
 
 
             }

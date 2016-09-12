@@ -286,7 +286,9 @@ public class ImageCaptureCamera extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                showAlert("Successfullly Uploaded Picture");
+
+//               showAlert("Successfullly Uploaded Picture");
+                finish();
             } else {
                 showAlert("Failed");
             }
