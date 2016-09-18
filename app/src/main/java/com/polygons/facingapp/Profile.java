@@ -111,6 +111,7 @@ public class Profile extends Fragment {
 
 
 
+
         textViewFollowerProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,7 +165,7 @@ public class Profile extends Fragment {
                 boolean status = json.getBoolean(Constant.TAG_STATUS);
                 if (status) {
                     JSONObject result = json.getJSONObject(Constant.TAG_RESULT);
-                    userData = new HashMap<String,String>();
+                    userData = new HashMap<String, String>();
                     userData.put(Constant.TAG_FIRST_NAME, result.getString(Constant.TAG_FIRST_NAME));
                     userData.put(Constant.TAG_LAST_NAME, result.getString(Constant.TAG_LAST_NAME));
                     userData.put(Constant.TAG_USERNAME, result.getString(Constant.TAG_USERNAME));
@@ -173,11 +174,11 @@ public class Profile extends Fragment {
                     userData.put(Constant.TAG_COUNT_TOTAL_FOLLOWER, result.getString(Constant.TAG_COUNT_TOTAL_FOLLOWER));
                     userData.put(Constant.TAG_COUNT_TOTAL_FOLLOWING, result.getString(Constant.TAG_COUNT_TOTAL_FOLLOWING));
                     try {
+
                         Log.i("ImageURL", userData.get(Constant.TAG_PROFILE_PICTURE_URL));
                         URL imageURL = new URL("https://facing-app.herokuapp.com/" + "uploads/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
                         Log.i("ImageURL", imageURL.toString());
                         profile_picture = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -212,7 +213,10 @@ public class Profile extends Fragment {
 
                     textViewCountFollowingProfile.setText(userData.get(Constant.TAG_COUNT_TOTAL_FOLLOWING));
                 }
+
+
             }
+
         }
     }
 

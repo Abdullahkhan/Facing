@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +33,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 
@@ -40,14 +45,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     Context context = getContext();
     Activity activity = getActivity();
     View view;
-    //    Button buttonFace;
-    Button buttonLogOut;
-    Button buttonRefreshFacings;
-    Button buttonSearchUser;
-    Button buttonShowFollowers;
-    Button buttonShowFollowing;
     InteractiveScrollView scrollViewNewsFeed;
-    ListView listViewNewsFeed;
     LinearLayout linearLayoutPost;
     SwipeRefreshLayout swipeLayout;
 
@@ -92,7 +90,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
         setAllXMLReferences();
         setAllButtonOnClickListeners();
-        sp = this.getActivity().getSharedPreferences("user", Activity.MODE_PRIVATE);
+        sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
         Log.i(Constant.TAG_USERID, userid);
 
@@ -129,9 +127,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
     private void setAllXMLReferences() {
 
-//        buttonFace = (Button) view.findViewById(R.id.buttonFace);
-//      buttonSearchUser = (Button) findViewById(R.id.buttonSearchUser);
-        listViewNewsFeed = (ListView) view.findViewById(R.id.listViewNewsFeed);
         linearLayoutPost = (LinearLayout) view.findViewById(R.id.linearLayoutPost);
         scrollViewNewsFeed = (InteractiveScrollView) view.findViewById(R.id.scrollViewNewsFeed);
     }
@@ -215,6 +210,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                         removeDuplicatePosts();
                         CreateAndAppendPost();
                         swipeLayout.setRefreshing(false);
+                         rearrangePosts();
                         // Toast.makeText(getActivity(), "Newsfeed updated ", Toast.LENGTH_SHORT).show();
 
                     }
@@ -282,10 +278,40 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                         CreateAndAppendBottomPost();
                         Toast.makeText(getActivity(), "Bottom Newsfeed updated ", Toast.LENGTH_SHORT).show();
                         isBottomReached = false;
+                         rearrangePosts();
+
 
                     }
                 });
             }
+
+        }
+    }
+
+    private void rearrangePosts() {
+        HashMap<Long, LinearLayout> hashMap = new HashMap<Long, LinearLayout>();
+
+        for (int position = 0; position < linearLayoutPost.getChildCount(); position++) {
+            ViewGroup linearLayoutEachPost = (ViewGroup) linearLayoutPost.getChildAt(position);
+            LinearLayout linearLayout = (LinearLayout) linearLayoutEachPost.getChildAt(1);
+            TextView textViewPostTime = (TextView) linearLayout.getChildAt(2);
+
+            hashMap.put(Long.parseLong(textViewPostTime.getText().toString()), (LinearLayout) linearLayoutPost.getChildAt(position));
+
+
+        }
+
+        linearLayoutPost.removeAllViews();
+
+        Map<Long, LinearLayout> map = new TreeMap<Long, LinearLayout>(hashMap);
+        System.out.println("After Sorting:");
+        Set set2 = map.entrySet();
+        Iterator iterator2 = set2.iterator();
+        while (iterator2.hasNext()) {
+            Map.Entry me2 = (Map.Entry) iterator2.next();
+//            System.out.print(me2.getKey() + ": ");
+//            System.out.println(me2.getValue());
+            linearLayoutPost.addView(hashMap.get(me2.getKey()));
 
         }
     }
@@ -301,11 +327,26 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
             TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
 
+//            Button buttonLike = (Button) tempView.findViewById(R.id.buttonLike);
+//            Button buttonUnLike = (Button) tempView.findViewById(R.id.buttonUnLike);
+//            Button buttonShare = (Button) tempView.findViewById(R.id.buttonShare);
+//
+//
+//            String post_id=post.get(position).get(Constant.TAG_POST_ID);
+//
+//            buttonLike.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    new LikeThisPost.execute(post);
+//                }
+//            });
+
 
             textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST_ID));
-            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));//// TODO: 9/4/2016
+            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));
             textViewItemListViewPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST));
-            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+//            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+            textViewItemListViewTimePostNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
             linearLayoutPost.addView(tempView, 0);
         }
     }
@@ -325,7 +366,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             textViewItemListViewPostIDPostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_POST_ID));
             textViewItemListViewNamePostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_USER_FIRST_NAME + " " + Constant.TAG_USER_LAST_NAME));// TODO: 9/4/2016
             textViewItemListViewPostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_POST));
-            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(Constant.TAG_TIME))));
+//            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(Constant.TAG_TIME))));
+            textViewItemListViewTimePostNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(Constant.TAG_TIME))));
             linearLayoutPost.addView(tempView, linearLayoutPost.getChildCount());
         }
     }
