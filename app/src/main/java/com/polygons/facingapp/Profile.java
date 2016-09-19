@@ -86,8 +86,8 @@ public class Profile extends Fragment {
             public void onClick(View view) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Are you sure you want to exit?")
-                        .setCancelable(false)
+                builder.setMessage("Choose your desired option")
+                        .setCancelable(true)
                         .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
@@ -213,7 +213,7 @@ public class Profile extends Fragment {
 
                     textViewCountFollowingProfile.setText(userData.get(Constant.TAG_COUNT_TOTAL_FOLLOWING));
                 }
-
+                swipeLayout.setRefreshing(false);
 
             }
 

@@ -6,12 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.polygons.facingapp.tools.Constant;
 
@@ -27,7 +26,7 @@ public class SignUp extends Activity {
     EditText editTextSignUpPassword;
     JSONParser jsonParser = new JSONParser();
     Button buttonSignUp;
-    Button buttonGoToLogin;
+    TextView textViewGoToLogin;
     private ProgressDialog pDialog;
     Context context = this;
     String signUpURL = Login.myURL + "register";
@@ -52,7 +51,7 @@ public class SignUp extends Activity {
         editTextEmail=(EditText)findViewById(R.id.editTextEmail);
         editTextSignUpPassword = (EditText) findViewById(R.id.editTextSignUpPassword);
         buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
-        buttonGoToLogin = (Button) findViewById(R.id.buttonGoToLogin);
+        textViewGoToLogin = (TextView) findViewById(R.id.textViewGoToLogin);
     }
 
     void setAllClickListner() {
@@ -63,7 +62,7 @@ public class SignUp extends Activity {
 
             }
         });
-        buttonGoToLogin.setOnClickListener(new View.OnClickListener() {
+        textViewGoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(context, Login.class));

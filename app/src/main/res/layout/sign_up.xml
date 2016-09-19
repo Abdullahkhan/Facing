@@ -8,13 +8,20 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/back"
+    android:background="@drawable/background"
     tools:context="com.polygons.facingapp.SignUp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textSize="30dp"
+        android:textSize="22dp"
         android:layout_marginBottom="50dp"
         android:layout_marginTop="30dp"
         android:textColor="@color/white"
@@ -23,71 +30,42 @@
 
     <EditText
         android:id="@+id/editTextFirstName"
-        android:hint="Username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext"
-        android:gravity="center_horizontal"
-        android:alpha="0.5"
-        android:padding="10dp"
-        android:textColorHint="#918f8f"
-        android:layout_marginBottom="10dp"/>
+        android:hint="First Name"
+        style="@style/SignUpLogInEditFields"/>
 
-   <!-- <EditText
+    <EditText
         android:id="@+id/editTextLastName"
         android:hint="Last Name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext"
-        android:gravity="center_horizontal"
-        android:alpha="0.5"
-        android:padding="10dp"
-        android:textColorHint="#918f8f"
-        android:layout_marginBottom="10dp"/>-->
+        style="@style/SignUpLogInEditFields"/>
 
     <EditText
         android:id="@+id/editTextEmail"
         android:hint="Enter your Email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext"
-        android:gravity="center_horizontal"
-        android:alpha="0.5"
-        android:padding="10dp"
-        android:textColorHint="#918f8f"
-        android:layout_marginBottom="10dp"/>
+        style="@style/SignUpLogInEditFields"/>
 
 
     <EditText
         android:id="@+id/editTextSignUpPassword"
-        android:layout_width="match_parent"
         android:hint="Password"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_edittext"
-        android:gravity="center_horizontal"
-        android:alpha="0.5"
-        android:padding="10dp"
-        android:textColorHint="#918f8f"
-        android:layout_marginBottom="10dp"/>
+        style="@style/SignUpLogInEditFields"/>
 
 
     <Button
         android:id="@+id/buttonSignUp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_login"
-        android:textColor="@color/white"
-        android:textStyle="bold"
+        style="@style/SignUpLogInButtons"
         android:text="Sign Up" />
 
-    <Button
-        android:id="@+id/buttonGoToLogin"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewGoToLogin"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       android:background="@android:color/transparent"
         android:layout_marginTop="40dp"
         android:textColor="@color/white"
         android:textStyle="bold"
+        android:padding="10dp"
+        android:layout_gravity="center_horizontal"
         android:text="Login" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
