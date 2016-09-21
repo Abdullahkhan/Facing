@@ -30,10 +30,12 @@ public class Constant {
 
     //TAGS for POSTs
     public static String TAG_POST_ID = "_id";
+    public static String TAG_POST_ID_SEND="post_id";
     public static String TAG_POST_USERID = "user_id";
     public static String TAG_POST = "post";
     public static String TAG_TIME = "time";
     public static String TAG_POSITION = "position";
+    public static String TAG_USER_PROFILE_PICTURE_URL = "user_profile_picture_url";
 
     public static String TAG_USER_FIRST_NAME = "user_first_name";
     public static String TAG_USER_LAST_NAME = "user_last_name";
@@ -47,5 +49,6 @@ public class Constant {
 
     //TAGS for Profile
     public static String TAG_PICTURE = "picture";
+
 
 }

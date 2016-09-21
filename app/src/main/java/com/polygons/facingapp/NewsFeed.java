@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,12 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
+import com.polygons.facingapp.tools.CircleImageView;
 import com.polygons.facingapp.tools.Constant;
 import com.polygons.facingapp.tools.InteractiveScrollView;
 
@@ -30,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,6 +70,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     JSONParser jsonparser = new JSONParser();
     JSONObject json;
     String refreshFacings = Login.myURL + "newsfeed";
+    String likeThisPost = Login.myURL + "likepost";
+    String unlikeThisPost = Login.myURL + "unlike_post";
+    String shareThisPost = Login.myURL + "share_post";
+
+
     SharedPreferences sp;
 
     ArrayList<HashMap<String, String>> post;
@@ -184,6 +197,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                         eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
                         eachPost.put(Constant.TAG_USER_FIRST_NAME, postObject.getString(Constant.TAG_USER_FIRST_NAME));
                         eachPost.put(Constant.TAG_USER_LAST_NAME, postObject.getString(Constant.TAG_USER_LAST_NAME));
+                        eachPost.put(Constant.TAG_USER_PROFILE_PICTURE_URL,postObject.getString(Constant.TAG_USER_PROFILE_PICTURE_URL));
                         eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
                         eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
                         post.add(eachPost);
@@ -220,6 +234,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     }
 
+
     class RefreshBottomFacings extends AsyncTask<String, String, Boolean> {
         @Override
         protected void onPreExecute() {
@@ -252,6 +267,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                         JSONObject postObject = jsonArray.getJSONObject(i);
                         eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
                         eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
+                        eachPost.put(Constant.TAG_USER_FIRST_NAME, postObject.getString(Constant.TAG_USER_FIRST_NAME));
+                        eachPost.put(Constant.TAG_USER_LAST_NAME, postObject.getString(Constant.TAG_USER_LAST_NAME));
+                        eachPost.put(Constant.TAG_USER_PROFILE_PICTURE_URL,postObject.getString(Constant.TAG_USER_PROFILE_PICTURE_URL));
                         eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
                         eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
                         bottomPost.add(eachPost);
@@ -288,13 +306,205 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     }
 
+    class LikeThisPost extends AsyncTask<Object, String, Boolean> {
+
+        Button like;
+        Button unlike;
+        @Override
+        protected Boolean doInBackground(Object... args) {
+            post = new ArrayList<HashMap<String, String>>();
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put(Constant.TAG_POST_ID_SEND, (String) args[1]);
+            like=(Button) args[2];
+            unlike=(Button) args[3];
+            try {
+                json = jsonparser.makeHttpRequest(likeThisPost, Constant.TAG_POST_METHOD, params);
+
+
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
+                if (success) {
+                    Log.i("liked",json.toString());
+                    return true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            //   pDialog.dismiss();
+            if (result) {
+                like.setVisibility(View.GONE);
+                unlike.setVisibility(View.VISIBLE);
+            }
+
+        }
+    }
+
+    class UnLikeThisPost extends AsyncTask<Object, String, Boolean> {
+
+        Button like;
+        Button unlike;
+        @Override
+        protected Boolean doInBackground(Object... args) {
+            post = new ArrayList<HashMap<String, String>>();
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put(Constant.TAG_POST_ID_SEND, (String) args[1]);
+            like=(Button) args[2];
+            unlike=(Button) args[3];
+            try {
+                json = jsonparser.makeHttpRequest(unlikeThisPost, Constant.TAG_POST_METHOD, params);
+
+
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
+                if (success) {
+                    Log.i("liked",json.toString());
+                    return true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            //   pDialog.dismiss();
+            if (result) {
+                like.setVisibility(View.VISIBLE);
+                unlike.setVisibility(View.GONE);
+            }
+
+        }
+    }
+
+    class ShareThisPost extends AsyncTask<String, String, Boolean> {
+
+
+        @Override
+        protected Boolean doInBackground(String... args) {
+            post = new ArrayList<HashMap<String, String>>();
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put(Constant.TAG_POST_ID_SEND, (String) args[1]);
+
+            try {
+                json = jsonparser.makeHttpRequest(shareThisPost, Constant.TAG_POST_METHOD, params);
+
+
+                Boolean success = json.getBoolean(Constant.TAG_STATUS);
+                if (success) {
+                    Log.i("liked",json.toString());
+                    return true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            //   pDialog.dismiss();
+            if (result) {
+              Toast.makeText(getActivity(),"Shared Successfully",Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(getActivity(),"UnSuccessfull",Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    class SetUserProfilePicture extends AsyncTask<Object, String, Boolean> {
+        Bitmap profile_picture;
+        CircleImageView circleImageView;
+        @Override
+        protected Boolean doInBackground(Object... args) {
+
+
+            try {
+                circleImageView=(CircleImageView)args[1];
+                profile_picture = BitmapFactory.decodeStream(new URL((String) args[0]).openConnection().getInputStream());
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            //   pDialog.dismiss();
+            if (result) {
+               circleImageView.setImageBitmap(profile_picture);
+            }
+            else
+                Toast.makeText(getActivity(),"UnSuccessfull",Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+
+
     private void rearrangePosts() {
         HashMap<Long, LinearLayout> hashMap = new HashMap<Long, LinearLayout>();
 
         for (int position = 0; position < linearLayoutPost.getChildCount(); position++) {
             ViewGroup linearLayoutEachPost = (ViewGroup) linearLayoutPost.getChildAt(position);
+
             LinearLayout linearLayout = (LinearLayout) linearLayoutEachPost.getChildAt(1);
             TextView textViewPostTime = (TextView) linearLayout.getChildAt(2);
+
+
+            TextView textViewPostId=(TextView)linearLayoutEachPost.getChildAt(0);
+            final String postid=textViewPostId.getText().toString();
+
+            LinearLayout linearLayoutbuttons=(LinearLayout)linearLayoutEachPost.getChildAt(3);
+            final Button like=(Button)linearLayoutbuttons.getChildAt(0);
+            final Button unlike=(Button)linearLayoutbuttons.getChildAt(1);
+            Button share=(Button)linearLayoutbuttons.getChildAt(2);
+
+
+            CircleImageView circleImageView=(CircleImageView)linearLayout.getChildAt(0);
+//            if(circleImageView.getDrawable()==getResources().getDrawable(R.drawable.thumbnail))
+
+                new SetUserProfilePicture().execute("http://image.made-in-china.com/3f2j00zFwaHifcbtqy/2015-Best-Selling-CDMA-Mobile-Phone.jpg",circleImageView);
+
+
+            like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Log.i("postid",postid);
+                   new LikeThisPost().execute(userid,postid,like,unlike);
+                }
+            });
+
+            unlike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.i("postid",postid+" Unlike");
+                    new UnLikeThisPost().execute(userid,postid,like,unlike);
+                }
+            });
+
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    new ShareThisPost().execute(userid,postid);
+                }
+            });
+
+
+
 
             hashMap.put(Long.parseLong(textViewPostTime.getText().toString()), (LinearLayout) linearLayoutPost.getChildAt(position));
 
@@ -314,8 +524,14 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             linearLayoutPost.addView(hashMap.get(me2.getKey()));
 
         }
+
+        setLikeShareButtonListener();
     }
 
+    public void setLikeShareButtonListener()
+    {
+
+    }
     public void CreateAndAppendPost() {
         LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int position = post.size() - 1; position >= 0; position--) {
@@ -325,7 +541,21 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
             TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
             TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
+            TextView textViewItemListViewTimePostGoneNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostGoneNewsFeed);
             TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
+            final VideoView videoView=(VideoView)tempView.findViewById(R.id.videoView);
+
+            final ViewGroup.LayoutParams params=videoView.getLayoutParams();
+            videoView.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    params.height=videoView.getWidth();
+                    videoView.setLayoutParams(params);
+                }
+            });
+
+
 
 //            Button buttonLike = (Button) tempView.findViewById(R.id.buttonLike);
 //            Button buttonUnLike = (Button) tempView.findViewById(R.id.buttonUnLike);
@@ -345,8 +575,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST_ID));
             textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));
             textViewItemListViewPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST));
-//            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
-            textViewItemListViewTimePostNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+            textViewItemListViewTimePostGoneNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
             linearLayoutPost.addView(tempView, 0);
         }
     }
@@ -371,6 +601,32 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             linearLayoutPost.addView(tempView, linearLayoutPost.getChildCount());
         }
     }
+
+    /*public void startTheVideo(ArrayList<String> comments) {
+
+        videoViewFacing.setVideoPath(clonedfacingsUrlArrayList.get(position)
+                .get(i));
+        videoViewFacing.setMediaController(new MediaController(this));
+        videoViewFacing.start();
+        videoViewFacing
+                .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.setDisplay(null);
+                        mp.reset();
+                        mp.setDisplay(videoViewFacing.getHolder());
+                        i = (i + 1)
+                                % clonedfacingsUrlArrayList.get(position)
+                                .size();
+                        videoViewFacing
+                                .setVideoPath(clonedfacingsUrlArrayList.get(
+                                        position).get(i));
+                        videoViewFacing.start();
+                    }
+                });
+    }*/
+
 
     void removeDuplicatePosts() {
         for (int position = 0; position < linearLayoutPost.getChildCount(); position++) {

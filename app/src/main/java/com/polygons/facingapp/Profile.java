@@ -176,7 +176,7 @@ public class Profile extends Fragment {
                     try {
 
                         Log.i("ImageURL", userData.get(Constant.TAG_PROFILE_PICTURE_URL));
-                        URL imageURL = new URL("https://facing-app.herokuapp.com/" + "uploads/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
+                        URL imageURL = new URL("https://facing-app.herokuapp.com/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
                         Log.i("ImageURL", imageURL.toString());
                         profile_picture = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
                     } catch (Exception e) {
