@@ -36,6 +36,7 @@ public class Constant {
     public static String TAG_TIME = "time";
     public static String TAG_POSITION = "position";
     public static String TAG_USER_PROFILE_PICTURE_URL = "user_profile_picture_url";
+    public static String TAG_VIDEO_PATH = "/sdcard/videocapture.mp4";
 
     public static String TAG_USER_FIRST_NAME = "user_first_name";
     public static String TAG_USER_LAST_NAME = "user_last_name";

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +26,10 @@ public class MainActivity extends AppCompatActivity {
     ViewPagerAdapter viewPagerAdapter;
     Button buttonFace;
 
+    public static Fragment videoCapture=new VideoCapture();
 
     SharedPreferences sp;
-    int[] tabIcons = {R.drawable.ic_home_white_48dp, R.drawable.ic_notifications_white_48dp, R.drawable.ic_search_white_48dp, R.drawable.ic_account_circle_white_48dp};
+    int[] tabIcons = {R.drawable.ic_home_white_48dp, R.drawable.ic_notifications_white_48dp, R.drawable.ic_search_white_48dp, R.drawable.ic_account_circle_white_48dp,R.drawable.ic_home_white_48dp};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewPagerAdapter.adFragments(new NewsFeed(), "NewsFeed");
         viewPagerAdapter.adFragments(new Notifications(), "Notifications");
+        viewPagerAdapter.adFragments(videoCapture, "Camera");
         viewPagerAdapter.adFragments(new SearchUser(), "Search");
 
         Bundle bundle = new Bundle();
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewPagerAdapter.adFragments(profile, "Profile");
         viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(4);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
 
@@ -66,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(context, PostText.class));
+             //   startActivity(new Intent(context, PostText.class));
+                startActivity(new Intent(context, VideoCapture.class));
             }
         });
 
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
         tabLayout.getTabAt(3).setIcon(tabIcons[3]);
+        tabLayout.getTabAt(4).setIcon(tabIcons[4]);
     }
 
 
