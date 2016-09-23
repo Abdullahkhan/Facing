@@ -40,6 +40,11 @@ public class Constant {
 
     public static String TAG_USER_FIRST_NAME = "user_first_name";
     public static String TAG_USER_LAST_NAME = "user_last_name";
+    public static String TAG_TOTAL_LIKES="total_likes";
+    public static String TAG_TOTAL_SHARE="total_share";
+    public static String TAG_TOTAL_COMMENT="total_comment";
+    public static String TAG_ISLIKE="islike";
+
 
     //TAGS for NEWSFEED
     public static String TAG_OFFSET = "offset";

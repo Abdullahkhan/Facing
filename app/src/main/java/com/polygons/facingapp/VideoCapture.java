@@ -1,13 +1,17 @@
 package com.polygons.facingapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.ThumbnailUtils;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
@@ -20,10 +24,23 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.polygons.facingapp.tools.Constant;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
 
 
@@ -39,6 +56,10 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     Button buttonCancelVideo;
     SurfaceView cameraView;
     View view;
+    String userid;
+    SharedPreferences sp;
+    private long totalSize = 0;
+    String postVideoURL = Login.myURL + "post";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,7 +71,8 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-
+            sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+            userid = sp.getString(Constant.TAG_USERID, "0");
         start=(Button)view.findViewById(R.id.start);
 
         linearLayoutVideoCapture =(LinearLayout)view.findViewById(R.id.linearLayoutVideoCapture);
@@ -64,6 +86,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
             @Override
             public void onClick(View view) {
 
+                new PostThisVideo().execute(new File(Constant.TAG_VIDEO_PATH),userid);
             }
         });
 
@@ -191,4 +214,107 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         recorder.release();
 
     }
+
+    private class PostThisVideo extends AsyncTask<Object, Integer, Boolean> {
+        // @Override
+        // protected void onPreExecute() {
+        // super.onPreExecute();
+        // pDialog = new ProgressDialog(context);
+        // pDialog.setMessage("Please wait while we upload your video...");
+        // pDialog.setIndeterminate(false);
+        // pDialog.setCancelable(true);
+        // pDialog.show();
+        // }
+        @Override
+        protected void onPreExecute() {
+            // setting progress bar to zero
+            //      progressBar.setProgress(0);
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected Boolean doInBackground(Object... arg) {
+
+
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(postVideoURL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+
+                //    File sourceFile = new File(filePath);
+
+                // Adding file data to http body
+                entity.addPart(Constant.TAG_POST, new FileBody((File) arg[0]));
+
+                // Extra parameters if you want to pass to server
+                entity.addPart(Constant.TAG_USERID,
+                        new StringBody(userid));
+                // entity.addPart("email", new StringBody("abc@gmail.com"));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+
+                    try {
+                        JSONObject result = new JSONObject(EntityUtils.toString(r_entity));
+                        if (result.getBoolean(Constant.TAG_STATUS)) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+
+                    }
+                    return false;
+                    // Server response
+                    //   responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return false;
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+
+                Toast.makeText(getActivity(),"Post Successfully",Toast.LENGTH_SHORT).show();
+                FragmentTransaction ft=getFragmentManager().beginTransaction();
+                ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
+
+                MainActivity.viewPager.setCurrentItem(0);
+            } else {
+                Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
+
+            }
+            // pDialog.dismiss();
+
+        }
+    }
+
 }

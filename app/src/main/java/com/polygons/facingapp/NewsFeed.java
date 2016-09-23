@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -97,10 +98,10 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         return view;
     }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setAllXMLReferences();
         setAllButtonOnClickListeners();
         sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
@@ -163,6 +164,24 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
     }
 
+    private HashMap<String,String> addPostParameters(HashMap<String,String> eachPost,JSONObject postObject)throws JSONException
+    {
+        eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
+        eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
+        eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
+        eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
+        eachPost.put(Constant.TAG_USER_FIRST_NAME, postObject.getString(Constant.TAG_USER_FIRST_NAME));
+        eachPost.put(Constant.TAG_USER_LAST_NAME, postObject.getString(Constant.TAG_USER_LAST_NAME));
+        eachPost.put(Constant.TAG_USER_PROFILE_PICTURE_URL,postObject.getString(Constant.TAG_USER_PROFILE_PICTURE_URL));
+        eachPost.put(Constant.TAG_TOTAL_LIKES, postObject.getString(Constant.TAG_TOTAL_LIKES));
+        eachPost.put(Constant.TAG_TOTAL_SHARE, postObject.getString(Constant.TAG_TOTAL_SHARE));
+       eachPost.put(Constant.TAG_ISLIKE,String.valueOf(postObject.getBoolean(Constant.TAG_ISLIKE)));
+        eachPost.put(Constant.TAG_TOTAL_COMMENT, postObject.getString(Constant.TAG_TOTAL_COMMENT));
+
+
+
+        return eachPost;
+    }
     class RefreshFacings extends AsyncTask<String, String, Boolean> {
         @Override
         protected void onPreExecute() {
@@ -193,14 +212,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         HashMap<String, String> eachPost = new HashMap<String, String>();
                         JSONObject postObject = jsonArray.getJSONObject(i);
-                        eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
-                        eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
-                        eachPost.put(Constant.TAG_USER_FIRST_NAME, postObject.getString(Constant.TAG_USER_FIRST_NAME));
-                        eachPost.put(Constant.TAG_USER_LAST_NAME, postObject.getString(Constant.TAG_USER_LAST_NAME));
-                        eachPost.put(Constant.TAG_USER_PROFILE_PICTURE_URL,postObject.getString(Constant.TAG_USER_PROFILE_PICTURE_URL));
-                        eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
-                        eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
-                        post.add(eachPost);
+
+                        post.add(addPostParameters(eachPost,postObject));
 
                     }
                 }
@@ -265,14 +278,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         HashMap<String, String> eachPost = new HashMap<String, String>();
                         JSONObject postObject = jsonArray.getJSONObject(i);
-                        eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
-                        eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
-                        eachPost.put(Constant.TAG_USER_FIRST_NAME, postObject.getString(Constant.TAG_USER_FIRST_NAME));
-                        eachPost.put(Constant.TAG_USER_LAST_NAME, postObject.getString(Constant.TAG_USER_LAST_NAME));
-                        eachPost.put(Constant.TAG_USER_PROFILE_PICTURE_URL,postObject.getString(Constant.TAG_USER_PROFILE_PICTURE_URL));
-                        eachPost.put(Constant.TAG_POST, postObject.getString(Constant.TAG_POST));
-                        eachPost.put(Constant.TAG_TIME, postObject.getString(Constant.TAG_TIME));
-                        bottomPost.add(eachPost);
+                         bottomPost.add(addPostParameters(eachPost,postObject));
 
                     }
                 }
@@ -310,6 +316,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         Button like;
         Button unlike;
+
         @Override
         protected Boolean doInBackground(Object... args) {
             post = new ArrayList<HashMap<String, String>>();
@@ -318,6 +325,15 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             params.put(Constant.TAG_POST_ID_SEND, (String) args[1]);
             like=(Button) args[2];
             unlike=(Button) args[3];
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    like.setVisibility(View.GONE);
+                    unlike.setVisibility(View.VISIBLE);
+                }
+            });
+
             try {
                 json = jsonparser.makeHttpRequest(likeThisPost, Constant.TAG_POST_METHOD, params);
 
@@ -341,6 +357,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 like.setVisibility(View.GONE);
                 unlike.setVisibility(View.VISIBLE);
             }
+            else
+            {
+                like.setVisibility(View.VISIBLE);
+                unlike.setVisibility(View.GONE);
+            }
 
         }
     }
@@ -357,6 +378,15 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             params.put(Constant.TAG_POST_ID_SEND, (String) args[1]);
             like=(Button) args[2];
             unlike=(Button) args[3];
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    like.setVisibility(View.VISIBLE);
+                    unlike.setVisibility(View.GONE);
+                }
+            });
+
             try {
                 json = jsonparser.makeHttpRequest(unlikeThisPost, Constant.TAG_POST_METHOD, params);
 
@@ -379,6 +409,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             if (result) {
                 like.setVisibility(View.VISIBLE);
                 unlike.setVisibility(View.GONE);
+            }
+            else
+            {
+                like.setVisibility(View.GONE);
+                unlike.setVisibility(View.VISIBLE);
             }
 
         }
@@ -470,7 +505,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             LinearLayout linearLayoutbuttons=(LinearLayout)linearLayoutEachPost.getChildAt(3);
             final Button like=(Button)linearLayoutbuttons.getChildAt(0);
             final Button unlike=(Button)linearLayoutbuttons.getChildAt(1);
-            Button share=(Button)linearLayoutbuttons.getChildAt(2);
+            Button share=(Button)linearLayoutbuttons.getChildAt(3);
 
 
             CircleImageView circleImageView=(CircleImageView)linearLayout.getChildAt(0);
@@ -532,29 +567,33 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     {
 
     }
-    public void CreateAndAppendPost() {
-        LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for (int position = post.size() - 1; position >= 0; position--) {
-            View tempView = li.inflate(R.layout.linearlayout_post, null);
+
+    private View creatingPost(View tempView,ArrayList<HashMap<String,String>> post ,int position)
+    {
+
+        TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
+        TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
+        TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
+        TextView textViewItemListViewTimePostGoneNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostGoneNewsFeed);
+        TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
+        Button buttonPostLike=(Button)tempView.findViewById(R.id.buttonPostLike);
+        Button buttonPostUnLike=(Button)tempView.findViewById(R.id.buttonPostUnLike);
 
 
-            TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
-            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
-            TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
-            TextView textViewItemListViewTimePostGoneNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostGoneNewsFeed);
-            TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
-            final VideoView videoView=(VideoView)tempView.findViewById(R.id.videoView);
+        final VideoView videoView=(VideoView)tempView.findViewById(R.id.videoView);
 
-            final ViewGroup.LayoutParams params=videoView.getLayoutParams();
-            videoView.post(new Runnable() {
-                @Override
-                public void run() {
+        final ViewGroup.LayoutParams params=videoView.getLayoutParams();
+        videoView.post(new Runnable() {
+            @Override
+            public void run() {
 
-                    params.height=videoView.getWidth();
-                    videoView.setLayoutParams(params);
-                }
-            });
+                params.height=videoView.getWidth();
+                videoView.setLayoutParams(params);
+            }
+        });
 
+
+      //  videoView.start();
 
 
 //            Button buttonLike = (Button) tempView.findViewById(R.id.buttonLike);
@@ -572,35 +611,46 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 //            });
 
 
-            textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST_ID));
-            textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));
-            textViewItemListViewPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST));
-            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
-            textViewItemListViewTimePostGoneNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
-            linearLayoutPost.addView(tempView, 0);
+        textViewItemListViewPostIDPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST_ID));
+        textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));
+        textViewItemListViewPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST));
+        textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+        textViewItemListViewTimePostGoneNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+
+        if(Boolean.parseBoolean(post.get(position).get(Constant.TAG_ISLIKE)))
+        {
+            buttonPostLike.setVisibility(View.GONE);
+            buttonPostUnLike.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            buttonPostLike.setVisibility(View.VISIBLE);
+            buttonPostUnLike.setVisibility(View.GONE);
+        }
+        return tempView;
+    }
+
+    public void CreateAndAppendPost() {
+        LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for (int position = post.size() - 1; position >= 0; position--) {
+            View tempView = li.inflate(R.layout.linearlayout_post, null);
+
+            linearLayoutPost.addView(creatingPost(tempView,post,position), 0);
         }
     }
+
 
     public void CreateAndAppendBottomPost() {
         LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int position = 0; position < bottomPost.size(); position++) {
             View tempView = li.inflate(R.layout.linearlayout_post, null);
 
-
-            TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
-            TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
-            TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
-            TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
-
-
-            textViewItemListViewPostIDPostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_POST_ID));
-            textViewItemListViewNamePostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_USER_FIRST_NAME + " " + Constant.TAG_USER_LAST_NAME));// TODO: 9/4/2016
-            textViewItemListViewPostNewsFeed.setText(bottomPost.get(position).get(Constant.TAG_POST));
-//            textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(Constant.TAG_TIME))));
-            textViewItemListViewTimePostNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(bottomPost.get(position).get(Constant.TAG_TIME))));
-            linearLayoutPost.addView(tempView, linearLayoutPost.getChildCount());
+            linearLayoutPost.addView(creatingPost(tempView,bottomPost,position), linearLayoutPost.getChildCount());
         }
     }
+
+
+
 
     /*public void startTheVideo(ArrayList<String> comments) {
 

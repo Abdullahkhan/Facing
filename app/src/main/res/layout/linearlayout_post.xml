@@ -72,23 +72,34 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/buttonLike"
+            android:id="@+id/buttonPostLike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Like" />
 
         <Button
-            android:id="@+id/buttonUnLike"
+            android:id="@+id/buttonPostUnLike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Unlike"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textViewPostTotalLikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 Like"/>
 
         <Button
             android:id="@+id/buttonShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Share" />
+        <TextView
+            android:id="@+id/textViewPostTotalShares"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 Share"/>
     </LinearLayout>
 
 

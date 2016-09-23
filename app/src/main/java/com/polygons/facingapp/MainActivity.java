@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     String userid;
     Toolbar toolbar;
     TabLayout tabLayout;
-    ViewPager viewPager;
+    public static ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     Button buttonFace;
 
