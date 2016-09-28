@@ -31,6 +31,7 @@ public class Login extends Activity {
     EditText editTextPassword;
     Button buttonLogin;
     public static String myURL = "https://facing-app.herokuapp.com/api/";
+//    public static String myURL = "https://facing-app.herokuapp.com/api/";
     String loginURL = Login.myURL + "login";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();

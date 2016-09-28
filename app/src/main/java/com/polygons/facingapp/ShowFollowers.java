@@ -1,5 +1,6 @@
 package com.polygons.facingapp;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,6 +10,8 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 
 import com.polygons.facingapp.tools.CircleImageView;
 import com.polygons.facingapp.tools.Constant;
+import com.polygons.facingapp.tools.ImageLoader;
 
 public class ShowFollowers extends Activity {
     Context context = this;
@@ -28,7 +32,7 @@ public class ShowFollowers extends Activity {
 
     public static ArrayList<HashMap<String, String>> arrayListFollowers;
 
-    String showFollowersURL = Login.myURL + "see_follower";
+    String showFollowersURL = Login.myURL + "see_following";
 
 
     @Override
@@ -108,7 +112,22 @@ public class ShowFollowers extends Activity {
             TextView textViewItemLinearLayoutFullNameFollowerFollowing = (TextView) tempView.findViewById(R.id.textViewItemLinearLayoutFullNameFollowerFollowing);
             Button buttonItemLinearLayoutFollowFollowerFollowing = (Button) tempView.findViewById(R.id.buttonItemLinearLayoutFollowFollowerFollowing);
 
-            //circleImageViewItemLinearLayoutFollowerFollowing.setText(post.get(position).get(Constant.TAG_POST_ID));
+            try {
+
+
+                ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+                int loader = R.drawable.ic_launcher;
+                // whenever you want to load an image from url
+                // call DisplayImage function
+                // url - image url to load
+                // loader - loader image, will be displayed before getting image
+                // image - ImageView
+                imgLoader.DisplayImage("https://facing-app.herokuapp.com/" + "uploads/" + arrayListFollowers.get(position).get(Constant.TAG_PROFILE_PICTURE_URL), loader, circleImageViewItemLinearLayoutFollowerFollowing);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
             textViewItemLinearLayoutFullNameFollowerFollowing.setText(arrayListFollowers.get(position).get(Constant.TAG_FOLLOWER_FIRST_NAME) + " " + arrayListFollowers.get(position).get(Constant.TAG_FOLLOWER_LAST_NAME));
             linearLayoutShowFollowers.addView(tempView, 0);
         }

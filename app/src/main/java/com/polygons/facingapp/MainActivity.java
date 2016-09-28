@@ -6,7 +6,9 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -32,16 +34,16 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     TabLayout tabLayout;
     public static ViewPager viewPager;
-    ViewPagerAdapter viewPagerAdapter;
+    public static ViewPagerAdapter viewPagerAdapter;
     Button buttonFace;
-    static boolean isInternetPresent=true;
+    static boolean isInternetPresent = true;
     LinearLayout linearLayoutInternetCheckMainActivity;
     ValueAnimator internetCheckAnimator;
 
     public static Fragment videoCapture = new VideoCapture();
 
     SharedPreferences sp;
-    int[] tabIcons = {R.drawable.ic_home_white_48dp, R.drawable.ic_notifications_white_48dp, R.drawable.ic_search_white_48dp, R.drawable.ic_account_circle_white_48dp, R.drawable.ic_home_white_48dp};
+    int[] tabIcons = {R.drawable.home, R.drawable.notification, R.drawable.center, R.drawable.search, R.drawable.profile};
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolBar);
         buttonFace = (Button) findViewById(R.id.buttonFace);
 
-        linearLayoutInternetCheckMainActivity=(LinearLayout)findViewById(R.id.linearLayoutInternetCheckMainActivity);
+        linearLayoutInternetCheckMainActivity = (LinearLayout) findViewById(R.id.linearLayoutInternetCheckMainActivity);
 
         setSupportActionBar(toolbar);
 
@@ -92,6 +94,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(context, VideoCapture.class));
             }
         });
+
+        for (int i = 0; i < tabLayout.getChildCount(); i++) {
+            tabLayout.getChildAt(i).setPadding(15, 15, 15, 15);
+        }
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -169,8 +175,6 @@ public class MainActivity extends AppCompatActivity {
         internetCheckAnimator.start();
 
 
-
-
     }
 
 
@@ -189,6 +193,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return animator;
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkReceiver, filter);
     }
 
     @Override

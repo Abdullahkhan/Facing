@@ -36,8 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="3dp"
-            android:visibility="gone"
-            android:text="time" />
+            android:text="time"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textViewItemListViewTimePostNewsFeed"
@@ -88,19 +88,26 @@
             android:id="@+id/textViewPostTotalLikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 Like"/>
+            android:text="0 Like" />
 
         <Button
             android:id="@+id/buttonShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Share" />
+
         <TextView
             android:id="@+id/textViewPostTotalShares"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 Share"/>
+            android:text="0 Share" />
+
+
     </LinearLayout>
 
-
+    <!--Hidden Fields-->
+    <TextView android:id="@+id/textViewProfilePicURL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 </LinearLayout>

@@ -1,27 +1,24 @@
 package com.polygons.facingapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -65,6 +62,9 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     private long totalSize = 0;
     String postVideoURL = Login.myURL + "post";
     FrameLayout frameLayoutCameraPreview;
+    Camera camera;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,61 +72,35 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         return view;
     }
 
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-            sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
-            userid = sp.getString(Constant.TAG_USERID, "0");
-        start=(Button)view.findViewById(R.id.start);
+        sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        userid = sp.getString(Constant.TAG_USERID, "0");
+        start = (Button) view.findViewById(R.id.start);
 
-            frameLayoutVideoPreview =(FrameLayout) view.findViewById(R.id.frameLayoutVideoPreview);
-       cameraView = (SurfaceView) view.findViewById(R.id.CameraView);
+        frameLayoutVideoPreview = (FrameLayout) view.findViewById(R.id.frameLayoutVideoPreview);
+        cameraView = (SurfaceView) view.findViewById(R.id.CameraView);
 //        play=(ImageView) view.findViewById(R.id.play);
-        facingvideo=(VideoView)view.findViewById(R.id.facingvideo);
-        buttonCancelVideo=(Button)view.findViewById(R.id.buttonCancelVideo);
-        buttonPostVideo=(Button)view.findViewById(R.id.buttonPostVideo);
-        linearLayoutBottoHider=(LinearLayout)view.findViewById(R.id.linearLayoutBottoHider);
-        linearLayoutVideoBottoHider=(LinearLayout)view.findViewById(R.id.linearLayoutVideoBottoHider);
-            frameLayoutCameraPreview=(FrameLayout)view.findViewById(R.id.frameLayoutCameraPreview);
+        facingvideo = (VideoView) view.findViewById(R.id.facingvideo);
+        buttonCancelVideo = (Button) view.findViewById(R.id.buttonCancelVideo);
+        buttonPostVideo = (Button) view.findViewById(R.id.buttonPostVideo);
+        linearLayoutBottoHider = (LinearLayout) view.findViewById(R.id.linearLayoutBottoHider);
+        linearLayoutVideoBottoHider = (LinearLayout) view.findViewById(R.id.linearLayoutVideoBottoHider);
+        frameLayoutCameraPreview = (FrameLayout) view.findViewById(R.id.frameLayoutCameraPreview);
 
-            final ViewGroup.LayoutParams params = (android.view.ViewGroup.LayoutParams) linearLayoutBottoHider
-                    .getLayoutParams();
-
-            ViewTreeObserver vto = view.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    cameraView.getViewTreeObserver();
-                    // int width = view.getMeasuredWidth();
-                    //  int height = view.getMeasuredHeight();
-                    params.height = cameraView.getMeasuredWidth();
-
-                }
-            });
-            linearLayoutBottoHider.setLayoutParams(params);
-
-            final ViewGroup.LayoutParams paramsVideo = (android.view.ViewGroup.LayoutParams) linearLayoutVideoBottoHider
-                    .getLayoutParams();
-
-            ViewTreeObserver vto2 = view.getViewTreeObserver();
-            vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    cameraView.getViewTreeObserver();
-                    // int width = view.getMeasuredWidth();
-                    //  int height = view.getMeasuredHeight();
-                    paramsVideo.height = cameraView.getMeasuredWidth();
-
-                }
-            });
-            linearLayoutVideoBottoHider.setLayoutParams(paramsVideo);
+        frameLayoutCameraPreview.setVisibility(View.VISIBLE);
+        frameLayoutVideoPreview.setVisibility(View.GONE);
+        cameraView.getViewTreeObserver();
+        linearLayoutBottoHider.setLayoutParams(new LinearLayout.LayoutParams(getScreenWidth(), getScreenWidth()));
+        linearLayoutVideoBottoHider.setLayoutParams(new LinearLayout.LayoutParams(getScreenWidth(), getScreenWidth()));
 
         buttonPostVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                new PostThisVideo().execute(new File(Constant.TAG_VIDEO_PATH),userid);
+                new PostThisVideo().execute(new File(Constant.TAG_VIDEO_PATH), userid);
             }
         });
 
@@ -134,19 +108,24 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
             @Override
             public void onClick(View view) {
 
-                FragmentTransaction ft=getFragmentManager().beginTransaction();
-                ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(MainActivity.videoCapture);
+                // MainActivity.videoCapture= new VideoCapture();
+                MainActivity.viewPagerAdapter.notifyDataSetChanged();
+                ft.attach(MainActivity.videoCapture).commit();
 
                 //                initRecorder();
 //                prepareRecorder();
-
+                frameLayoutCameraPreview.setVisibility(View.VISIBLE);
+                frameLayoutVideoPreview.setVisibility(View.GONE);
 
             }
         });
-            facingvideo.setOnClickListener(new View.OnClickListener() {
+        linearLayoutVideoBottoHider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //facingvideo.refreshDrawableState();
+                linearLayoutVideoBottoHider.setBackgroundDrawable(null);
                 facingvideo.setBackgroundDrawable(null);
                 facingvideo.setVideoPath(Constant.TAG_VIDEO_PATH);
                 facingvideo.start();
@@ -159,7 +138,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-            initRecorder();
+        initRecorder();
         // cameraView.setClickable(true);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,12 +163,16 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
                     /* ;*/
 
-                 //   Intent returnIntent = new Intent();
-                   // returnIntent.putExtra("Path","/sdcard/videocapture_example.mp4");
-                 //   setResult(Activity.RESULT_OK,returnIntent);
-                 //   finish();
+                    //   Intent returnIntent = new Intent();
+                    // returnIntent.putExtra("Path","/sdcard/videocapture_example.mp4");
+                    //   setResult(Activity.RESULT_OK,returnIntent);
+                    //   finish();
 
                 } else {
+                    camera.stopPreview();
+                    camera.release();
+                    camera = null;
+
                     recording = true;
                     recorder.start();
                     start.setBackground(getResources().getDrawable(R.drawable.square_button));
@@ -197,6 +180,46 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
             }
         });
 
+
+    }
+
+    public void refreshCamera() {
+
+        if (holder.getSurface() == null) {
+
+            // preview surface does not exist
+
+            return;
+
+        }
+
+
+        // stop preview before making changes
+
+        try {
+
+            camera.stopPreview();
+        } catch (Exception e) {
+            // ignore: tried to stop a non-existent preview
+        }
+
+        // set preview size and make any resize, rotate or
+        // reformatting changes here
+        // start preview with new settings
+        try {
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 
     private void initRecorder() {
@@ -214,6 +237,13 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
     private void prepareRecorder() {
         recorder.setPreviewDisplay(holder.getSurface());
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recorder.setPreviewDisplay(holder.getSurface());
+            }
+        }, 1000);
 
         try {
             recorder.prepare();
@@ -242,11 +272,38 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
  */
     public void surfaceCreated(SurfaceHolder holder) {
         prepareRecorder();
+        try {
+            // open the camera
+            camera = Camera.open();
+        } catch (RuntimeException e) {
+            // check for exceptions
+            System.err.println(e);
+            return;
+        }
+        Camera.Parameters param;
+        param = camera.getParameters();
+
+        // modify parameter
+        param.setPreviewSize(352, 288);
+        camera.setParameters(param);
+        try {
+            // The Surface has been created, now tell the camera where to draw
+            // the preview.
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
+        } catch (Exception e) {
+            // check for exceptions
+            System.err.println(e);
+            return;
+        }
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
-       // prepareRecorder();
+        refreshCamera();
+
+        // prepareRecorder();
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -346,13 +403,16 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         protected void onPostExecute(Boolean result) {
             if (result) {
 
-                Toast.makeText(getActivity(),"Post Successfully",Toast.LENGTH_SHORT).show();
-                FragmentTransaction ft=getFragmentManager().beginTransaction();
+
+                Toast.makeText(getActivity(), "Post Successfully", Toast.LENGTH_SHORT).show();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
 
                 MainActivity.viewPager.setCurrentItem(0);
+                frameLayoutCameraPreview.setVisibility(View.VISIBLE);
+                frameLayoutVideoPreview.setVisibility(View.GONE);
             } else {
-                Toast.makeText(getActivity(),"Failed",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
 
             }
             // pDialog.dismiss();
