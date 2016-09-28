@@ -73,7 +73,11 @@ public class Facing extends Activity {
 
             @Override
             public void onClick(View v) {
-                new UploadFacingToServer().execute();
+
+             /*  Login.arrayListAsyncs.add((AsyncTask)new UploadFacingToServer());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute();*/
+
+               new UploadFacingToServer().execute();
             }
         });
     }
@@ -119,6 +123,11 @@ public class Facing extends Activity {
                 // textView.setText(selectedPath);
 //                 buttonOK.setVisibility(View.VISIBLE);
                 previewMedia();
+
+
+                Login.arrayListAsyncs.add((AsyncTask)new UploadFacingToServer());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute();
+
                 new UploadFacingToServer().execute();
 
                 // launchUploadActivity();

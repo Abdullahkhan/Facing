@@ -3,49 +3,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#7b0b0b"
+    android:background="#FFFF"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+   >
 
-    <Button
-        android:id="@+id/start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"/>
-    <SurfaceView
+
+        <FrameLayout
+            android:id="@+id/frameLayoutCameraPreview"
+            android:layout_width="match_parent" android:visibility="visible"
+            android:layout_height="match_parent">
+        <SurfaceView
         android:id="@+id/CameraView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutVideoCapture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+                <LinearLayout
+                android:id="@+id/linearLayoutBottoHider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:orientation="horizontal"
+                    android:paddingTop="50dp"
+                    android:gravity="center_horizontal"
+                    android:background="@color/white">
+
+                    <Button
+                    android:id="@+id/start"
+                    android:layout_marginTop="50dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/round_button" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayoutVideoPreview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <VideoView
             android:id="@+id/facingvideo"
-            android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/play"
-            android:layout_width="50dp"
-            android:layout_gravity="center"
-            android:layout_height="50dp"
-            android:src="@drawable/play"
-            />
+        <!--<ImageView-->
+            <!--android:id="@+id/play"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:src="@drawable/play"-->
+            <!--/>-->
     </FrameLayout>
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="center_horizontal">
+        <LinearLayout
+            android:id="@+id/linearLayoutVideoBottoHider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="horizontal"
+            android:paddingTop="50dp"
+            android:gravity="center_horizontal"
+            android:background="@color/white">
+
             <Button
                 android:id="@+id/buttonPostVideo"
                 android:layout_width="wrap_content"
@@ -55,5 +97,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-    </LinearLayout>
+        </LinearLayout>
+   </FrameLayout>
 </LinearLayout>

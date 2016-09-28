@@ -74,6 +74,12 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     String likeThisPost = Login.myURL + "likepost";
     String unlikeThisPost = Login.myURL + "unlike_post";
     String shareThisPost = Login.myURL + "share_post";
+    public static AsyncTask<String, String, Boolean> asyncTaskrefreshFacings;
+    public static AsyncTask<String, String, Boolean> asyncTaskBottomrefreshFacings;
+    public static AsyncTask<String, String, Boolean> asyncTasklikeThisPost;
+    public static AsyncTask<String, String, Boolean> asyncTaskunlikeThisPost;
+    public static AsyncTask<String, String, Boolean> asyncTaskshareThisPost;
+
 
 
     SharedPreferences sp;
@@ -92,7 +98,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             public void onRefresh() {
                 Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
 
-                new RefreshFacings().execute(userid, offset, bucket);
+               /* Login.arrayListAsyncs.add((AsyncTask)new RefreshFacings());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid, offset, bucket);*/
+               new RefreshFacings().execute(userid, offset, bucket);
             }
         });
 
@@ -113,7 +121,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             public void onBottomReached() {
 
                 if (!isBottomReached) {
-                    new RefreshBottomFacings().execute(userid, linearLayoutPost.getChildCount() + "", bucket);
+                   new RefreshBottomFacings().execute(userid, linearLayoutPost.getChildCount() + "", bucket);
+
+                   /* Login.arrayListAsyncs.add((AsyncTask)new RefreshBottomFacings());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid, linearLayoutPost.getChildCount() + "", bucket);*/
+
                     Toast.makeText(getActivity(), "Bottom reached", Toast.LENGTH_SHORT).show();
                     Log.i("Bottom", "Bottom");
                     isBottomReached = true;
@@ -511,15 +523,23 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             CircleImageView circleImageView=(CircleImageView)linearLayout.getChildAt(0);
 //            if(circleImageView.getDrawable()==getResources().getDrawable(R.drawable.thumbnail))
 
-                new SetUserProfilePicture().execute("http://image.made-in-china.com/3f2j00zFwaHifcbtqy/2015-Best-Selling-CDMA-Mobile-Phone.jpg",circleImageView);
+               new SetUserProfilePicture().execute("http://image.made-in-china.com/3f2j00zFwaHifcbtqy/2015-Best-Selling-CDMA-Mobile-Phone.jpg",circleImageView);
 
-
+           /* Login.arrayListAsyncs.add((AsyncTask)new SetUserProfilePicture());
+            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute("http://image.made-in-china.com/3f2j00zFwaHifcbtqy/2015-Best-Selling-CDMA-Mobile-Phone.jpg",circleImageView);
+*/
             like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     Log.i("postid",postid);
                    new LikeThisPost().execute(userid,postid,like,unlike);
+
+                  /*  Login.arrayListAsyncs.add((AsyncTask)new LikeThisPost());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid,postid,like,unlike);
+*/
+
+
                 }
             });
 
@@ -528,6 +548,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 public void onClick(View view) {
                     Log.i("postid",postid+" Unlike");
                     new UnLikeThisPost().execute(userid,postid,like,unlike);
+
+                   /* Login.arrayListAsyncs.add((AsyncTask)new UnLikeThisPost());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid,postid,like,unlike);*/
                 }
             });
 
@@ -535,6 +558,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 @Override
                 public void onClick(View view) {
                     new ShareThisPost().execute(userid,postid);
+
+                   /* Login.arrayListAsyncs.add((AsyncTask)new ShareThisPost());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid,postid);*/
                 }
             });
 
@@ -615,7 +641,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         textViewItemListViewNamePostNewsFeed.setText(post.get(position).get(Constant.TAG_USER_FIRST_NAME) + " " + post.get(position).get(Constant.TAG_USER_LAST_NAME));
         textViewItemListViewPostNewsFeed.setText(post.get(position).get(Constant.TAG_POST));
         textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
-        textViewItemListViewTimePostGoneNewsFeed.setText(String.valueOf(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
+        textViewItemListViewTimePostGoneNewsFeed.setText(String.valueOf(Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
 
         if(Boolean.parseBoolean(post.get(position).get(Constant.TAG_ISLIKE)))
         {
@@ -819,7 +845,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        new RefreshFacings().execute(userid, offset, bucket);
+       new RefreshFacings().execute(userid, offset, bucket);
+      /*  Login.arrayListAsyncs.add((AsyncTask)new RefreshFacings());
+        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid, offset, bucket);*/
 
     }
 }

@@ -32,8 +32,6 @@ public class ProfileMain extends FragmentActivity {
         ft.replace(R.id.linearLayoutProfileContainer, profile,
                 Profile.TAG);
         ft.addToBackStack(null);
-
         ft.commit();
-
     }
 }

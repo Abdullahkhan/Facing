@@ -141,6 +141,9 @@ public class ImageCaptureCamera extends AppCompatActivity {
                 fos.close();
 
 
+               /* Login.arrayListAsyncs.add((AsyncTask)new UploadFacingToServer());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(pictureFile, userid);*/
+
                 new UploadFacingToServer().execute(pictureFile, userid);
 
                 //            Intent in1 = new Intent(ImageCaptureCamera.this, MainActivity.class);

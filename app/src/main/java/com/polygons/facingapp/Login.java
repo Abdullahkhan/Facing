@@ -1,6 +1,8 @@
 package com.polygons.facingapp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.json.JSONObject;
 
@@ -35,7 +37,7 @@ public class Login extends Activity {
     public static User user;
     Context context = this;
     SharedPreferences sp;
-
+    public static ArrayList<AsyncTask<Object,Object,Object>> arrayListAsyncs=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +63,12 @@ public class Login extends Activity {
 
             @Override
             public void onClick(View v) {
+
                 new LoginUser().execute(editTextEmail.getText().toString(),
                         editTextPassword.getText().toString());
+                /*arrayListAsyncs.add((AsyncTask) new LoginUser());
+                arrayListAsyncs.get(arrayListAsyncs.size()-1).execute(editTextEmail.getText().toString(),
+                        editTextPassword.getText().toString());*/
             }
         });
     }
