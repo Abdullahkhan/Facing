@@ -132,9 +132,28 @@ public class MainActivity extends AppCompatActivity {
             internetCheckCollapse();
         } else {
             internetCheckExpand();
+
+            cancelAllAsync();
         }
     }
 
+    public void cancelAllAsync()
+
+    {
+
+        NewsFeed.swipeLayout.setRefreshing(false);
+
+        for(int i=0;i<Login.arrayListAsyncs.size();i++)
+        {
+            try {
+                if(Login.arrayListAsyncs.get(i)!=null)
+                {
+                    Login.arrayListAsyncs.get(i).cancel(true);
+                }
+            }catch (Exception e){}
+
+        }
+    }
     private void internetCheckCollapse() {
 
         int finalHeight = linearLayoutInternetCheckMainActivity.getHeight();

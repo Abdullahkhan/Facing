@@ -81,13 +81,13 @@ public class Suggestions extends Activity {
         });
     }
 
-    class GetSuggestions extends AsyncTask<String, String, Boolean> {
+    class GetSuggestions extends AsyncTask<Object, String, Boolean> {
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
 
             JSONObject json = jsonParser.makeHttpRequest(suggestionsURL, Constant.TAG_POST_METHOD, params);
 
@@ -125,12 +125,12 @@ public class Suggestions extends Activity {
         }
     }
 
-    class FollowTheUser extends AsyncTask<String, String, Boolean> {
+    class FollowTheUser extends AsyncTask<Object, String, Boolean> {
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
-            params.put("friend_id", args[1]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put("friend_id", (String) args[1]);
 
             JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, Constant.TAG_POST_METHOD, params);
 

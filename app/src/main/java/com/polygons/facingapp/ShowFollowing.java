@@ -60,7 +60,7 @@ public class ShowFollowing extends Activity {
 				});
 	}
 
-	class AllFollowers extends AsyncTask<String, String, String> {
+	class AllFollowers extends AsyncTask<Object, String, String> {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -73,10 +73,10 @@ public class ShowFollowing extends Activity {
 		}
 
 		@Override
-		protected String doInBackground(String... args) {
+		protected String doInBackground(Object... args) {
 
 			HashMap<String, String> params = new HashMap<String, String>();
-			params.put(TAG_USERNAME, args[0]);
+			params.put(TAG_USERNAME, (String) args[0]);
 			JSONObject json = jsonparser.makeHttpRequest(showFollowingURL,
 					"POST", params);
 

@@ -70,7 +70,7 @@ public class SignUp extends Activity {
         });
     }
 
-    class SignUpUser extends AsyncTask<String, String, String> {
+    class SignUpUser extends AsyncTask<Object, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -82,7 +82,7 @@ public class SignUp extends Activity {
         }
 
         @Override
-        protected String doInBackground(String... args) {
+        protected String doInBackground(Object... args) {
             // String username = editTextUsername.getText().toString();
             // String password = editTextPassword.getText().toString();
             //
@@ -90,10 +90,10 @@ public class SignUp extends Activity {
             // params.add(new BasicNameValuePair("username", username));
             // params.add(new BasicNameValuePair("password", password));
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_FIRST_NAME, args[0]);
-            params.put(Constant.TAG_LAST_NAME, args[1]);
-            params.put(Constant.TAG_EMAIL, args[2]);
-            params.put(Constant.TAG_PASSWORD, args[3]);
+            params.put(Constant.TAG_FIRST_NAME, (String) args[0]);
+            params.put(Constant.TAG_LAST_NAME, (String) args[1]);
+            params.put(Constant.TAG_EMAIL, (String) args[2]);
+            params.put(Constant.TAG_PASSWORD, (String) args[3]);
 
 
             try {

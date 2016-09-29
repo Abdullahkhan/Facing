@@ -147,16 +147,16 @@ public class Profile extends Fragment {
 
     }
 
-    class ViewProfile extends AsyncTask<String, String, Boolean>
+    class ViewProfile extends AsyncTask<Object, String, Boolean>
 
     {
 
         Bitmap profile_picture;
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
 
 
             JSONObject json = jsonParser.makeHttpRequest(profileURL, Constant.TAG_POST_METHOD, params);

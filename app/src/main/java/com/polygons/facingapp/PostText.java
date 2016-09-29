@@ -49,7 +49,7 @@ public class PostText extends Activity {
         });
     }
 
-    class PostMyText extends AsyncTask<String, String, Boolean> {
+    class PostMyText extends AsyncTask<Object, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -62,11 +62,11 @@ public class PostText extends Activity {
         }
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
-            params.put(Constant.TAG_POST, args[1]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put(Constant.TAG_POST, (String) args[1]);
 
             json = jsonparser.makeHttpRequest(postURL, Constant.TAG_POST_METHOD, params);
             try {

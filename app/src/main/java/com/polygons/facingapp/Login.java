@@ -38,7 +38,7 @@ public class Login extends Activity {
     public static User user;
     Context context = this;
     SharedPreferences sp;
-    public static ArrayList<AsyncTask<Object,Object,Object>> arrayListAsyncs=new ArrayList<>();
+    public static ArrayList<AsyncTask<Object,String,Boolean>> arrayListAsyncs=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +93,7 @@ public class Login extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    class LoginUser extends AsyncTask<String, String, Boolean> {
+    class LoginUser extends AsyncTask<Object, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -105,11 +105,11 @@ public class Login extends Activity {
         }
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_EMAIL, args[0]);
-            params.put(Constant.TAG_PASSWORD, args[1]);
+            params.put(Constant.TAG_EMAIL, (String) args[0]);
+            params.put(Constant.TAG_PASSWORD, (String) args[1]);
 
 
             try {

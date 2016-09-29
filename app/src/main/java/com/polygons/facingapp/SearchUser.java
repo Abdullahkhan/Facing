@@ -112,7 +112,7 @@ public class SearchUser extends Fragment {
         });
     }
 
-    class SearchUserPlease extends AsyncTask<String, String, Boolean> {
+    class SearchUserPlease extends AsyncTask<Object, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -125,10 +125,10 @@ public class SearchUser extends Fragment {
         }
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_SEARCH, args[0]);
-            params.put(Constant.TAG_USERID, args[1]);
+            params.put(Constant.TAG_SEARCH, (String) args[0]);
+            params.put(Constant.TAG_USERID, (String) args[1]);
             JSONObject json = jsonParser.makeHttpRequest(searchUserURL, Constant.TAG_POST_METHOD,
                     params);
             try {
@@ -168,12 +168,12 @@ public class SearchUser extends Fragment {
     }
 
 
-    class FollowTheUser extends AsyncTask<String, String, Boolean> {
+    class FollowTheUser extends AsyncTask<Object, String, Boolean> {
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
-            params.put(Constant.TAG_FRIEND_ID, args[1]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put(Constant.TAG_FRIEND_ID, (String) args[1]);
 
             JSONObject json = jsonParser.makeHttpRequest(followTheUserURL, Constant.TAG_POST_METHOD, params);
 
@@ -198,12 +198,12 @@ public class SearchUser extends Fragment {
         }
     }
 
-    class UnFollowTheUser extends AsyncTask<String, String, Boolean> {
+    class UnFollowTheUser extends AsyncTask<Object, String, Boolean> {
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put("userid", args[0]);
-            params.put("friend_id", args[1]);
+            params.put("userid", (String) args[0]);
+            params.put("friend_id", (String) args[1]);
 
             JSONObject json = jsonParser.makeHttpRequest(unFollowTheUserURL, Constant.TAG_POST_METHOD, params);
 
@@ -228,14 +228,14 @@ public class SearchUser extends Fragment {
         }
     }
 
-    class IsFollowed extends AsyncTask<String, String, Boolean> {
+    class IsFollowed extends AsyncTask<Object, String, Boolean> {
         Boolean isFollowed = false;
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
-            params.put("friend_id", args[1]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
+            params.put("friend_id", (String) args[1]);
 
             JSONObject json = jsonParser.makeHttpRequest(isFollowTheUserURL, Constant.TAG_POST_METHOD, params);
             try {

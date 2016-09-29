@@ -51,7 +51,7 @@ public class ShowFollowers extends Activity {
     void setAllClickListner() {
     }
 
-    class AllFollowers extends AsyncTask<String, String, Boolean> {
+    class AllFollowers extends AsyncTask<Object, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -59,10 +59,10 @@ public class ShowFollowers extends Activity {
         }
 
         @Override
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Object... args) {
 
             HashMap<String, String> params = new HashMap<String, String>();
-            params.put(Constant.TAG_USERID, args[0]);
+            params.put(Constant.TAG_USERID, (String) args[0]);
             JSONObject json = jsonparser.makeHttpRequest(showFollowersURL, Constant.TAG_POST_METHOD, params);
 
             try {
