@@ -67,20 +67,20 @@ public class Facing extends Activity {
     }
 
 
-    void setAllClickListner()
-    {
+    void setAllClickListner() {
         buttonOK.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-             /*  Login.arrayListAsyncs.add((AsyncTask)new UploadFacingToServer());
-                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute();*/
+                Login.arrayListAsyncs.add(new UploadFacingToServer());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute();
 
-               new UploadFacingToServer().execute();
+                //  new UploadFacingToServer().execute();
             }
         });
     }
+
     void setAllXMLReferences() {
 
         videoViewPreview = (VideoView) findViewById(R.id.videoViewPreview);
@@ -124,11 +124,11 @@ public class Facing extends Activity {
 //                 buttonOK.setVisibility(View.VISIBLE);
                 previewMedia();
 
-
-                Login.arrayListAsyncs.add((AsyncTask)new UploadFacingToServer());
-                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute();
-
-                new UploadFacingToServer().execute();
+                if (MainActivity.isInternetPresent) {
+                    Login.arrayListAsyncs.add((AsyncTask) new UploadFacingToServer());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute();
+                }
+                //  new UploadFacingToServer().execute();
 
                 // launchUploadActivity();
             } else if (resultCode == RESULT_CANCELED) {
@@ -214,7 +214,7 @@ public class Facing extends Activity {
         return path;
     }
 
-    private class UploadFacingToServer extends AsyncTask<Void, Integer, String> {
+    private class UploadFacingToServer extends AsyncTask<Object, Object, Boolean> {
         // @Override
         // protected void onPreExecute() {
         // super.onPreExecute();
@@ -232,24 +232,24 @@ public class Facing extends Activity {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... progress) {
+        protected void onProgressUpdate(Object... progress) {
             // Making progress bar visible
             progressBar.setVisibility(View.VISIBLE);
 
             // updating progress bar value
-            progressBar.setProgress(progress[0]);
+            progressBar.setProgress((int) progress[0]);
 
             // updating percentage value
             txtPercentage.setText(String.valueOf(progress[0]) + "%");
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected Boolean doInBackground(Object... params) {
             return uploadFile();
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile() {
+        private Boolean uploadFile() {
             String responseString = null;
 
             HttpClient httpclient = new DefaultHttpClient();
@@ -286,6 +286,7 @@ public class Facing extends Activity {
                 if (statusCode == 200) {
                     // Server response
                     responseString = EntityUtils.toString(r_entity);
+                    return true;
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
@@ -297,14 +298,18 @@ public class Facing extends Activity {
                 responseString = e.toString();
             }
 
-            return responseString;
+            return false;
 
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             // pDialog.dismiss();
-            showAlert(result);
+            if (result) {
+                showAlert("Success");
+            } else {
+                showAlert("Failed");
+            }
         }
     }
 

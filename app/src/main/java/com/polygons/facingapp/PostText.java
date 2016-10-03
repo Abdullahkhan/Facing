@@ -44,12 +44,15 @@ public class PostText extends Activity {
         buttonPostText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new PostMyText().execute(userid, editTextPostText.getText().toString());
-            }
+                if (MainActivity.isInternetPresent) {
+                    Login.arrayListAsyncs.add(new PostMyText());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, editTextPostText.getText().toString());
+                }
+                }
         });
     }
 
-    class PostMyText extends AsyncTask<Object, String, Boolean> {
+    class PostMyText extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

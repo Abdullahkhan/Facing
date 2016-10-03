@@ -53,7 +53,11 @@ public class Suggestions extends Activity {
         setAllClickListner();
         sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
-        new GetSuggestions().execute(userid);
+        if (MainActivity.isInternetPresent) {
+
+            Login.arrayListAsyncs.add(new GetSuggestions());
+            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid);
+        }
     }
 
     void setAllXMLReferences() {
@@ -81,7 +85,7 @@ public class Suggestions extends Activity {
         });
     }
 
-    class GetSuggestions extends AsyncTask<Object, String, Boolean> {
+    class GetSuggestions extends AsyncTask<Object, Object, Boolean> {
 
         @Override
         protected Boolean doInBackground(Object... args) {
@@ -125,7 +129,7 @@ public class Suggestions extends Activity {
         }
     }
 
-    class FollowTheUser extends AsyncTask<Object, String, Boolean> {
+    class FollowTheUser extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
@@ -201,7 +205,11 @@ public class Suggestions extends Activity {
             buttonItemListViewFollowSuggestion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new FollowTheUser().execute(userid, arrayListUserIdSuggestions.get(position));
+                    if (MainActivity.isInternetPresent) {
+
+                        Login.arrayListAsyncs.add(new FollowTheUser());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, arrayListUserIdSuggestions.get(position));
+                    }
                 }
             });
 

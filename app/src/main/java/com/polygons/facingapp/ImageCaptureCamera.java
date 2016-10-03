@@ -140,11 +140,11 @@ public class ImageCaptureCamera extends AppCompatActivity {
                 fos.write(stream.toByteArray());
                 fos.close();
 
-
-               /* Login.arrayListAsyncs.add((AsyncTask)new UploadFacingToServer());
-                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(pictureFile, userid);*/
-
-                new UploadFacingToServer().execute(pictureFile, userid);
+                if (MainActivity.isInternetPresent) {
+                    Login.arrayListAsyncs.add((AsyncTask) new UploadFacingToServer());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(pictureFile, userid);
+                }
+            //    new UploadFacingToServer().execute(pictureFile, userid);
 
                 //            Intent in1 = new Intent(ImageCaptureCamera.this, MainActivity.class);
                 //          in1.putExtra("image",data);
@@ -203,7 +203,7 @@ public class ImageCaptureCamera extends AppCompatActivity {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
-    private class UploadFacingToServer extends AsyncTask<Object, Integer, Boolean> {
+    private class UploadFacingToServer extends AsyncTask<Object, Object, Boolean> {
         // @Override
         // protected void onPreExecute() {
         // super.onPreExecute();

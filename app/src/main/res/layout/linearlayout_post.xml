@@ -60,10 +60,22 @@
             android:layout_marginLeft="16dp"
             android:text="post" />
 
-        <VideoView
-            android:id="@+id/videoView"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="wrap_content">
+
+            <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Play" />
+        </FrameLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -106,7 +118,8 @@
     </LinearLayout>
 
     <!--Hidden Fields-->
-    <TextView android:id="@+id/textViewProfilePicURL"
+    <TextView
+        android:id="@+id/textViewProfilePicURL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone" />

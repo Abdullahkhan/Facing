@@ -19,97 +19,100 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class ShowFollowing extends Activity {
-	Button buttonRefreshShowFollowing;
-	ListView listViewShowFollowing;
-	Context context = this;
-	JSONParser jsonparser = new JSONParser();
-	JSONArray findFollowing = null;
+    Button buttonRefreshShowFollowing;
+    ListView listViewShowFollowing;
+    Context context = this;
+    JSONParser jsonparser = new JSONParser();
+    JSONArray findFollowing = null;
 
-	public static ArrayList<HashMap<String, String>> userArrayList;
+    public static ArrayList<HashMap<String, String>> userArrayList;
 
-	String showFollowingURL = Login.myURL + "/facing/show_following.php";
+    String showFollowingURL = Login.myURL + "/facing/show_following.php";
 
-	String TAG_USERNAME = "username";
-	String TAG_SUCCESS = "success";
-	String TAG_MESSAGE = "message";
-	ProgressDialog pDialog;
+    String TAG_USERNAME = "username";
+    String TAG_SUCCESS = "success";
+    String TAG_MESSAGE = "message";
+    ProgressDialog pDialog;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.show_following);
-		setAllXMLReferences();
-		setAllClickListner();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.show_following);
+        setAllXMLReferences();
+        setAllClickListner();
+    }
 
-	void setAllXMLReferences()
-	{
-		buttonRefreshShowFollowing = (Button) findViewById(R.id.buttonRefreshShowFollowing);
-		listViewShowFollowing = (ListView) findViewById(R.id.listViewShowFollowing);
-	}
+    void setAllXMLReferences() {
+        buttonRefreshShowFollowing = (Button) findViewById(R.id.buttonRefreshShowFollowing);
+        listViewShowFollowing = (ListView) findViewById(R.id.listViewShowFollowing);
+    }
 
-	void setAllClickListner()
-	{
-		buttonRefreshShowFollowing
-				.setOnClickListener(new View.OnClickListener() {
+    void setAllClickListner() {
+        buttonRefreshShowFollowing
+                .setOnClickListener(new View.OnClickListener() {
 
-					@Override
-					public void onClick(View v) {
-						new AllFollowers().execute(Login.user.getUsername());
-					}
-				});
-	}
+                    @Override
+                    public void onClick(View v) {
+                        if (MainActivity.isInternetPresent) {
 
-	class AllFollowers extends AsyncTask<Object, String, String> {
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pDialog = new ProgressDialog(context);
-			pDialog.setMessage("Refreshing your notifications");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
-			pDialog.show();
+                            Login.arrayListAsyncs.add(new AllFollowers());
+                            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(Login.user.getUsername());
+                        }
+                    }
+                });
+    }
 
-		}
+    class AllFollowers extends AsyncTask<Object, Object, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(context);
+            pDialog.setMessage("Refreshing your notifications");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
 
-		@Override
-		protected String doInBackground(Object... args) {
+        }
 
-			HashMap<String, String> params = new HashMap<String, String>();
-			params.put(TAG_USERNAME, (String) args[0]);
-			JSONObject json = jsonparser.makeHttpRequest(showFollowingURL,
-					"POST", params);
+        @Override
+        protected Boolean doInBackground(Object... args) {
 
-			try {
-				userArrayList = new ArrayList<HashMap<String, String>>();
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put(TAG_USERNAME, (String) args[0]);
+            JSONObject json = jsonparser.makeHttpRequest(showFollowingURL,
+                    "POST", params);
 
-				int success = json.getInt(TAG_SUCCESS);
+            try {
+                userArrayList = new ArrayList<HashMap<String, String>>();
 
-				if (success == 1) {
-					findFollowing = json.getJSONArray("following");
-					for (int i = 0; i < findFollowing.length(); i++) {
-						JSONObject c = findFollowing.getJSONObject(i);
+                int success = json.getInt(TAG_SUCCESS);
 
-						// String FirstName = c.getString("FirstName");
-						String follower = c.getString("following");
+                if (success == 1) {
+                    findFollowing = json.getJSONArray("following");
+                    for (int i = 0; i < findFollowing.length(); i++) {
+                        JSONObject c = findFollowing.getJSONObject(i);
 
-						HashMap<String, String> map = new HashMap<String, String>();
-						// Log.d("Noti", username);
-						map.put("FirstName", "FirstName");
-						map.put("following", follower);
+                        // String FirstName = c.getString("FirstName");
+                        String follower = c.getString("following");
 
-						userArrayList.add(map);
-					}
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+                        HashMap<String, String> map = new HashMap<String, String>();
+                        // Log.d("Noti", username);
+                        map.put("FirstName", "FirstName");
+                        map.put("following", follower);
 
-			return null;
-		}
+                        userArrayList.add(map);
+                    }
+                    return true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-		protected void onPostExecute(String file_url) {
-			pDialog.dismiss();
+            return false;
+        }
+
+        protected void onPostExecute(String file_url) {
+            pDialog.dismiss();
 
 //			runOnUiThread(new Runnable() {
 //				public void run() {
@@ -126,7 +129,7 @@ public class ShowFollowing extends Activity {
 //				}
 //			});
 
-		}
-	}
+        }
+    }
 
 }

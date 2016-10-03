@@ -30,15 +30,15 @@ public class Login extends Activity {
     EditText editTextEmail;
     EditText editTextPassword;
     Button buttonLogin;
-    public static String myURL = "https://facing-app.herokuapp.com/api/";
-//    public static String myURL = "https://facing-app.herokuapp.com/api/";
+    public static String myURL = "http://192.168.8.106:3000/api/";
+   // public static String myURL = "https://facing-app.herokuapp.com/api/";
     String loginURL = Login.myURL + "login";
     private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
     public static User user;
     Context context = this;
     SharedPreferences sp;
-    public static ArrayList<AsyncTask<Object,String,Boolean>> arrayListAsyncs=new ArrayList<>();
+    public static ArrayList<AsyncTask<Object, Object, Boolean>> arrayListAsyncs = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +65,13 @@ public class Login extends Activity {
             @Override
             public void onClick(View v) {
 
-                new LoginUser().execute(editTextEmail.getText().toString(),
-                        editTextPassword.getText().toString());
-                /*arrayListAsyncs.add((AsyncTask) new LoginUser());
-                arrayListAsyncs.get(arrayListAsyncs.size()-1).execute(editTextEmail.getText().toString(),
-                        editTextPassword.getText().toString());*/
+//                new LoginUser().execute(editTextEmail.getText().toString(),
+//                        editTextPassword.getText().toString());
+                if (MainActivity.isInternetPresent) {
+                    arrayListAsyncs.add(new LoginUser());
+                    arrayListAsyncs.get(arrayListAsyncs.size() - 1).execute(editTextEmail.getText().toString(),
+                            editTextPassword.getText().toString());
+                }
             }
         });
     }
@@ -93,7 +95,7 @@ public class Login extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    class LoginUser extends AsyncTask<Object, String, Boolean> {
+    class LoginUser extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

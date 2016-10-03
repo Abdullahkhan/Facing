@@ -8,8 +8,14 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.media.session.MediaController;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,11 +94,17 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
+                try {
+                    Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
+                    if (MainActivity.isInternetPresent) {
+                        Login.arrayListAsyncs.add(new RefreshFacings());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, offset, bucket);
+                    }
+                    //   new RefreshFacings().execute(userid, offset, bucket);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                Login.arrayListAsyncs.add((AsyncTask)new RefreshFacings());
-                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid, offset, bucket);
-             //   new RefreshFacings().execute(userid, offset, bucket);
             }
         });
 
@@ -114,11 +127,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             public void onBottomReached() {
 
                 if (!isBottomReached) {
-                  //  new RefreshBottomFacings().execute(userid, linearLayoutPost.getChildCount() + "", bucket);
-
-                    Login.arrayListAsyncs.add((AsyncTask)new RefreshBottomFacings());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid, linearLayoutPost.getChildCount() + "", bucket);
-
+                    //  new RefreshBottomFacings().execute(userid, linearLayoutPost.getChildCount() + "", bucket);
+                    if (MainActivity.isInternetPresent) {
+                        Login.arrayListAsyncs.add(new RefreshBottomFacings());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, linearLayoutPost.getChildCount() + "", bucket);
+                    }
                     Toast.makeText(getActivity(), "Bottom reached", Toast.LENGTH_SHORT).show();
                     Log.i("Bottom", "Bottom");
                     isBottomReached = true;
@@ -186,7 +199,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         return eachPost;
     }
 
-    class RefreshFacings extends AsyncTask<Object, String, Boolean> {
+    class RefreshFacings extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -252,7 +265,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     }
 
 
-    class RefreshBottomFacings extends AsyncTask<Object, String, Boolean> {
+    class RefreshBottomFacings extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -316,7 +329,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     }
 
-    class LikeThisPost extends AsyncTask<Object, String, Boolean> {
+    class LikeThisPost extends AsyncTask<Object, Object, Boolean> {
 
         Button like;
         Button unlike;
@@ -368,7 +381,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     }
 
-    class UnLikeThisPost extends AsyncTask<Object, String, Boolean> {
+    class UnLikeThisPost extends AsyncTask<Object, Object, Boolean> {
 
         Button like;
         Button unlike;
@@ -420,7 +433,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     }
 
-    class ShareThisPost extends AsyncTask<Object, String, Boolean> {
+    class ShareThisPost extends AsyncTask<Object, Object, Boolean> {
 
 
         @Override
@@ -457,7 +470,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     }
 
-    class SetUserProfilePicture extends AsyncTask<Object, String, Boolean> {
+    class SetUserProfilePicture extends AsyncTask<Object, Object, Boolean> {
         Bitmap profile_picture;
         CircleImageView circleImageView;
 
@@ -506,18 +519,45 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             final Button unlike = (Button) linearLayoutbuttons.getChildAt(1);
             Button share = (Button) linearLayoutbuttons.getChildAt(3);
 
-            TextView textViewProfilePicURL= (TextView) linearLayoutEachPost.getChildAt(4);
-            String profilePicURL= textViewProfilePicURL.getText().toString();
+            TextView textViewProfilePicURL = (TextView) linearLayoutEachPost.getChildAt(4);
+            String profilePicURL = textViewProfilePicURL.getText().toString();
 
 
             CircleImageView circleImageView = (CircleImageView) linearLayout.getChildAt(0);
             if (circleImageView.getDrawable().getConstantState() ==
                     getResources().getDrawable(R.drawable.thumbnail).getConstantState()) {
-             //   new SetUserProfilePicture().execute("http://facing-app.herokuapp.com/"+profilePicURL, circleImageView);
-                Login.arrayListAsyncs.add((AsyncTask)new SetUserProfilePicture());
-                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute("http://facing-app.herokuapp.com/"+profilePicURL, circleImageView);
-
+                //   new SetUserProfilePicture().execute("http://facing-app.herokuapp.com/"+profilePicURL, circleImageView);
+                if (MainActivity.isInternetPresent) {
+                    Login.arrayListAsyncs.add(new SetUserProfilePicture());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://192.168.8.106/" + profilePicURL, circleImageView);
+                }
             }
+
+            LinearLayout linearLayoutVideo = (LinearLayout) linearLayoutEachPost.getChildAt(2);
+            final TextView postLink = (TextView) linearLayoutVideo.getChildAt(0);
+            FrameLayout frameLayoutVideo = (FrameLayout) linearLayoutVideo.getChildAt(1);
+
+            final VideoView videoView = (VideoView) frameLayoutVideo.getChildAt(0);
+            final Button buttonPlay = (Button) frameLayoutVideo.getChildAt(1);
+
+                    videoView.setVideoPath("http://192.168.8.106:3000/" + postLink.getText().toString());
+//                    videoView.setVideoPath("http://192.168.8.101/facing/upload/video.mp4");
+                    // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
+
+
+            buttonPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    videoView.start();
+                    buttonPlay.setVisibility(View.GONE);
+                }
+            });
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    buttonPlay.setVisibility(View.VISIBLE);
+                }
+            });
 
 
             like.setOnClickListener(new View.OnClickListener() {
@@ -525,11 +565,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 public void onClick(View view) {
 
                     Log.i("postid", postid);
-                 //   new LikeThisPost().execute(userid, postid, like, unlike);
-
-                    Login.arrayListAsyncs.add((AsyncTask)new LikeThisPost());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid,postid,like,unlike);
-
+                    //   new LikeThisPost().execute(userid, postid, like, unlike);
+                    if (MainActivity.isInternetPresent) {
+                        Login.arrayListAsyncs.add(new LikeThisPost());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, postid, like, unlike);
+                    }
 
                 }
             });
@@ -538,20 +578,22 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 @Override
                 public void onClick(View view) {
                     Log.i("postid", postid + " Unlike");
-                //    new UnLikeThisPost().execute(userid, postid, like, unlike);
-
-                    Login.arrayListAsyncs.add((AsyncTask)new UnLikeThisPost());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid,postid,like,unlike);
+                    //    new UnLikeThisPost().execute(userid, postid, like, unlike);
+                    if (MainActivity.isInternetPresent) {
+                        Login.arrayListAsyncs.add(new UnLikeThisPost());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, postid, like, unlike);
+                    }
                 }
             });
 
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                  //  new ShareThisPost().execute(userid, postid);
-
-                    Login.arrayListAsyncs.add((AsyncTask)new ShareThisPost());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid,postid);
+                    //  new ShareThisPost().execute(userid, postid);
+                    if (MainActivity.isInternetPresent) {
+                        Login.arrayListAsyncs.add(new ShareThisPost());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, postid);
+                    }
                 }
             });
 
@@ -591,7 +633,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         TextView textViewItemListViewPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostNewsFeed);
         TextView textViewItemListViewTimePostGoneNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostGoneNewsFeed);
         TextView textViewItemListViewTimePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewTimePostNewsFeed);
-        TextView textViewProfilePicURL=(TextView) tempView.findViewById(R.id.textViewProfilePicURL);
+        TextView textViewProfilePicURL = (TextView) tempView.findViewById(R.id.textViewProfilePicURL);
         Button buttonPostLike = (Button) tempView.findViewById(R.id.buttonPostLike);
         Button buttonPostUnLike = (Button) tempView.findViewById(R.id.buttonPostUnLike);
 
@@ -607,6 +649,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 videoView.setLayoutParams(params);
             }
         });
+        //  videoView.setVideoPath(post.get(position).get(Constant.TAG_POST));
 
 
         //  videoView.start();
@@ -834,9 +877,10 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-     //   new RefreshFacings().execute(userid, offset, bucket);
-        Login.arrayListAsyncs.add((AsyncTask)new RefreshFacings());
-        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size()-1).execute(userid, offset, bucket);
-
+        //   new RefreshFacings().execute(userid, offset, bucket);
+        if (MainActivity.isInternetPresent) {
+            Login.arrayListAsyncs.add(new RefreshFacings());
+            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, offset, bucket);
+        }
     }
 }

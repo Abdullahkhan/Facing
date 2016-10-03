@@ -41,7 +41,11 @@ public class ShowFollowers extends Activity {
         setContentView(R.layout.show_followers);
         setAllXMLReferences();
         setAllClickListner();
-        new AllFollowers().execute(getIntent().getStringExtra(Constant.TAG_USERID));
+        if (MainActivity.isInternetPresent) {
+
+            Login.arrayListAsyncs.add(new AllFollowers());
+            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(getIntent().getStringExtra(Constant.TAG_USERID));
+        }
     }
 
     void setAllXMLReferences() {
@@ -51,7 +55,7 @@ public class ShowFollowers extends Activity {
     void setAllClickListner() {
     }
 
-    class AllFollowers extends AsyncTask<Object, String, Boolean> {
+    class AllFollowers extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

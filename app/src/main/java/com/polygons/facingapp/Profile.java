@@ -62,9 +62,10 @@ public class Profile extends Fragment {
             @Override
             public void onRefresh() {
                 Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
-
-                new ViewProfile().execute(userid);
-            }
+                if (MainActivity.isInternetPresent) {
+                    Login.arrayListAsyncs.add(new ViewProfile());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid);
+                }   else swipeLayout.setRefreshing(false);             }
         });
 
         return view;
@@ -75,8 +76,11 @@ public class Profile extends Fragment {
         super.onCreate(savedInstanceState);
         setAllXMLReferences();
         setAllClickListner();
-        new ViewProfile().execute(userid);
-    }
+        if (MainActivity.isInternetPresent) {
+
+            Login.arrayListAsyncs.add(new ViewProfile());
+            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid);
+        }    }
 
 
 
@@ -147,7 +151,7 @@ public class Profile extends Fragment {
 
     }
 
-    class ViewProfile extends AsyncTask<Object, String, Boolean>
+    class ViewProfile extends AsyncTask<Object, Object, Boolean>
 
     {
 
@@ -176,8 +180,8 @@ public class Profile extends Fragment {
                     try {
 
                         Log.i("ImageURL", userData.get(Constant.TAG_PROFILE_PICTURE_URL));
-                        //URL imageURL = new URL("https://facing-app.herokuapp.com/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
-                        URL imageURL = new URL("https://facing-app.herokuapp.com/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
+                       // URL imageURL = new URL("https://facing-app.herokuapp.com/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
+                        URL imageURL = new URL("http://192.168.8.106:3000/" + userData.get(Constant.TAG_PROFILE_PICTURE_URL));
                         Log.i("ImageURL", imageURL.toString());
                         profile_picture = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
                     } catch (Exception e) {

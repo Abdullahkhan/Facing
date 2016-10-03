@@ -37,12 +37,13 @@ import java.io.IOException;
 
 public class ProfilePicturePreview extends AppCompatActivity {
 
-    Context context=this;
+    Context context = this;
     ImageView imageViewProfilePicturePreview;
     String imageUploadURL = Login.myURL + "set_profilepicture";
     private long totalSize = 0;
     String userid;
     SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,7 @@ public class ProfilePicturePreview extends AppCompatActivity {
 
         sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
-        imageViewProfilePicturePreview=(ImageView)findViewById(R.id.imageViewProfilePicturePreview);
+        imageViewProfilePicturePreview = (ImageView) findViewById(R.id.imageViewProfilePicturePreview);
         imageViewProfilePicturePreview.setImageDrawable(null);
         Crop.pickImage(this);
     }
@@ -71,7 +72,7 @@ public class ProfilePicturePreview extends AppCompatActivity {
 
     private void handleCrop(int resultCode, Intent result) {
         if (resultCode == RESULT_OK) {
-           Uri imageUri= Crop.getOutput(result);
+            Uri imageUri = Crop.getOutput(result);
             imageViewProfilePicturePreview.setImageURI(imageUri);
             File pictureFile = ImageCaptureCamera.getOutputMediaFile();
 
@@ -80,18 +81,20 @@ public class ProfilePicturePreview extends AppCompatActivity {
                 Bitmap profile = ImageCaptureCamera.resizePicture(bitmap);
 
 
+                FileOutputStream fos = new FileOutputStream(pictureFile);
 
-            FileOutputStream fos = new FileOutputStream(pictureFile);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                profile.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            profile.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                fos.write(stream.toByteArray());
+                fos.close();
+            } catch (Exception e) {
+            }
+            if (MainActivity.isInternetPresent) {
 
-            fos.write(stream.toByteArray());
-            fos.close();
-            }catch (Exception e){}
-
-            new UploadFacingToServer().execute(pictureFile, userid);
-            finish();
+                Login.arrayListAsyncs.add(new UploadFacingToServer());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(pictureFile, userid);
+            }
 
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
@@ -99,7 +102,7 @@ public class ProfilePicturePreview extends AppCompatActivity {
     }
 
 
-    private class UploadFacingToServer extends AsyncTask<Object, Integer, Boolean> {
+    private class UploadFacingToServer extends AsyncTask<Object, Object, Boolean> {
         // @Override
         // protected void onPreExecute() {
         // super.onPreExecute();
@@ -186,9 +189,10 @@ public class ProfilePicturePreview extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                Log.i("result","Successfully Uploades");
+                Log.i("result", "Successfully Uploaded");
+                finish();
             } else {
-                Log.i("result","Faild");
+                Log.i("result", "Faild");
             }
             // pDialog.dismiss();
 

@@ -88,9 +88,11 @@ public class SearchUser extends Fragment {
 
             @Override
             public void onClick(View v) {
-                new SearchUserPlease().execute(editTextSearchField.getText()
-                        .toString(), userid);
+                if (MainActivity.isInternetPresent) {
 
+                    Login.arrayListAsyncs.add(new SearchUserPlease());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(editTextSearchField.getText().toString(), userid);
+                }
 //                listViewSearchedUsers
 //                        .setOnItemClickListener(new OnItemClickListener() {
 //
@@ -112,7 +114,7 @@ public class SearchUser extends Fragment {
         });
     }
 
-    class SearchUserPlease extends AsyncTask<Object, String, Boolean> {
+    class SearchUserPlease extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -168,7 +170,7 @@ public class SearchUser extends Fragment {
     }
 
 
-    class FollowTheUser extends AsyncTask<Object, String, Boolean> {
+    class FollowTheUser extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
@@ -198,7 +200,7 @@ public class SearchUser extends Fragment {
         }
     }
 
-    class UnFollowTheUser extends AsyncTask<Object, String, Boolean> {
+    class UnFollowTheUser extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected Boolean doInBackground(Object... args) {
             HashMap<String, String> params = new HashMap<String, String>();
@@ -228,7 +230,7 @@ public class SearchUser extends Fragment {
         }
     }
 
-    class IsFollowed extends AsyncTask<Object, String, Boolean> {
+    class IsFollowed extends AsyncTask<Object, Object, Boolean> {
         Boolean isFollowed = false;
 
         @Override
@@ -325,15 +327,21 @@ public class SearchUser extends Fragment {
             buttonItemListViewFollowSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new FollowTheUser().execute(userid, arrayListUser.get(position).get(0));
+                    if (MainActivity.isInternetPresent) {
 
+                        Login.arrayListAsyncs.add(new FollowTheUser());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, arrayListUser.get(position).get(0));
+                    }
                 }
             });
             buttonItemListViewUnFollowSearch.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new UnFollowTheUser().execute(userid, arrayListUser.get(position).get(0));
-                }
+                    if (MainActivity.isInternetPresent) {
+
+                        Login.arrayListAsyncs.add(new UnFollowTheUser());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, arrayListUser.get(position).get(0));
+                    }                }
             });
 //            IsFollowed isFollowed = new IsFollowed();
 //

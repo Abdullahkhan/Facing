@@ -19,6 +19,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -42,7 +45,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
-
+//public class VideoCapture {
 public class VideoCapture extends android.support.v4.app.Fragment implements SurfaceHolder.Callback {
     MediaRecorder recorder;
     SurfaceHolder holder;
@@ -82,7 +85,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
         frameLayoutVideoPreview = (FrameLayout) view.findViewById(R.id.frameLayoutVideoPreview);
         cameraView = (SurfaceView) view.findViewById(R.id.CameraView);
-//        play=(ImageView) view.findViewById(R.id.play);
+//      play=(ImageView) view.findViewById(R.id.play);
         facingvideo = (VideoView) view.findViewById(R.id.facingvideo);
         buttonCancelVideo = (Button) view.findViewById(R.id.buttonCancelVideo);
         buttonPostVideo = (Button) view.findViewById(R.id.buttonPostVideo);
@@ -92,6 +95,8 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
         frameLayoutCameraPreview.setVisibility(View.VISIBLE);
         frameLayoutVideoPreview.setVisibility(View.GONE);
+
+
         cameraView.getViewTreeObserver();
         linearLayoutBottoHider.setLayoutParams(new LinearLayout.LayoutParams(getScreenWidth(), getScreenWidth()));
         linearLayoutVideoBottoHider.setLayoutParams(new LinearLayout.LayoutParams(getScreenWidth(), getScreenWidth()));
@@ -99,8 +104,11 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         buttonPostVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (MainActivity.isInternetPresent) {
 
-                new PostThisVideo().execute(new File(Constant.TAG_VIDEO_PATH), userid);
+                    Login.arrayListAsyncs.add(new PostThisVideo());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(new File(Constant.TAG_VIDEO_PATH), userid);
+                }
             }
         });
 
@@ -225,13 +233,15 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     private void initRecorder() {
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
-        recorder.setOrientationHint(90);
+     //   recorder.setOrientationHint(90);
         CamcorderProfile cpHigh = CamcorderProfile
                 .get(CamcorderProfile.QUALITY_HIGH);
+        cpHigh.videoFrameHeight=400;
+        cpHigh.videoFrameWidth=400;
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds
-        recorder.setMaxFileSize(5000000); // Approximately 5 megabytes
+        recorder.setMaxFileSize(50000000); // Approximately 50 megabytes
 
     }
 
@@ -315,7 +325,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
     }
 
-    private class PostThisVideo extends AsyncTask<Object, Integer, Boolean> {
+    private class PostThisVideo extends AsyncTask<Object, Object, Boolean> {
         // @Override
         // protected void onPreExecute() {
         // super.onPreExecute();
@@ -420,4 +430,57 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         }
     }
 
+//    @Override
+//    public void setMenuVisibility(final boolean visible) {
+//        if (visible) {
+//            //Do your stuff here
+//
+//        } else {
+//            if (camera != null) {
+//                camera.stopPreview();
+//                camera.release();
+//                camera = null;
+//            }
+//        }
+//
+//        super.setMenuVisibility(visible);
+//    }
+//    @Override
+//    public void onHiddenChanged(boolean hidden) {
+//        super.onHiddenChanged(hidden);
+//        if (hidden) {
+//            //do when hidden
+//
+//        } else {
+//            //do when show
+//            try {
+//                // open the camera
+//                camera = Camera.open();
+//            } catch (RuntimeException e) {
+//                // check for exceptions
+//                System.err.println(e);
+//                return;
+//            }
+//            Camera.Parameters param;
+//            param = camera.getParameters();
+//
+//            // modify parameter
+//            param.setPreviewSize(352, 288);
+//            camera.setParameters(param);
+//            try {
+//                // The Surface has been created, now tell the camera where to draw
+//                // the preview.
+//                camera.setPreviewDisplay(holder);
+//                camera.startPreview();
+//            } catch (Exception e) {
+//                // check for exceptions
+//                System.err.println(e);
+//                return;
+//            }
+//
+//
+//            refreshCamera();
+//
+//        }
+//    }
 }

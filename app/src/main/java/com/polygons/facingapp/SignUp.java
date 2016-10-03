@@ -48,7 +48,7 @@ public class SignUp extends Activity {
     void setAllXMLReferences() {
         editTextFirstName = (EditText) findViewById(R.id.editTextFirstName);
         editTextLastName = (EditText) findViewById(R.id.editTextLastName);
-        editTextEmail=(EditText)findViewById(R.id.editTextEmail);
+        editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextSignUpPassword = (EditText) findViewById(R.id.editTextSignUpPassword);
         buttonSignUp = (Button) findViewById(R.id.buttonSignUp);
         textViewGoToLogin = (TextView) findViewById(R.id.textViewGoToLogin);
@@ -58,8 +58,11 @@ public class SignUp extends Activity {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SignUpUser().execute(editTextFirstName.getText().toString(), editTextLastName.getText().toString(),editTextEmail.getText().toString(), editTextSignUpPassword.getText().toString());
+                if (MainActivity.isInternetPresent) {
 
+                    Login.arrayListAsyncs.add(new SignUpUser());
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(editTextFirstName.getText().toString(), editTextLastName.getText().toString(), editTextEmail.getText().toString(), editTextSignUpPassword.getText().toString());
+                }
             }
         });
         textViewGoToLogin.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +73,7 @@ public class SignUp extends Activity {
         });
     }
 
-    class SignUpUser extends AsyncTask<Object, String, String> {
+    class SignUpUser extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -82,7 +85,7 @@ public class SignUp extends Activity {
         }
 
         @Override
-        protected String doInBackground(Object... args) {
+        protected Boolean doInBackground(Object... args) {
             // String username = editTextUsername.getText().toString();
             // String password = editTextPassword.getText().toString();
             //
@@ -107,7 +110,8 @@ public class SignUp extends Activity {
                     editor.putString(Constant.TAG_USERID, json.getString(Constant.TAG_USERID));
                     editor.commit();
 
-                    startActivity(new Intent(context, Suggestions.class));
+
+                    return true;
 
                 }
                 //  Log.i("Login",""+ success);
@@ -137,12 +141,16 @@ public class SignUp extends Activity {
 //            }
             } catch (Exception e) {
             }
-            return null;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean result) {
             pDialog.dismiss();
+            if (result) {
+                startActivity(new Intent(context, Suggestions.class));
+            }
+
         }
     }
 

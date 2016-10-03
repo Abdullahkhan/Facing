@@ -2367,7 +2367,7 @@ containing a value of this type.
         public static final int line1=0x7f0c009f;
         public static final int line3=0x7f0c00a3;
         public static final int linearLayoutBottoHider=0x7f0c0069;
-        public static final int linearLayoutInternetCheckMainActivity=0x7f0c0094;
+        public static final int linearLayoutInternetCheckMainActivity=0x7f0c0095;
         public static final int linearLayoutItemListViewSearch=0x7f0c007a;
         public static final int linearLayoutItemListViewSuggestions=0x7f0c007f;
         public static final int linearLayoutPost=0x7f0c0099;
@@ -2427,7 +2427,7 @@ containing a value of this type.
         public static final int status_bar_latest_event_content=0x7f0c009c;
         public static final int submit_area=0x7f0c0063;
         public static final int swipe_container=0x7f0c0097;
-        public static final int tabLayout=0x7f0c0095;
+        public static final int tabLayout=0x7f0c0094;
         public static final int tabMode=0x7f0c000c;
         public static final int text=0x7f0c00a4;
         public static final int text2=0x7f0c00a2;

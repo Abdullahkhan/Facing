@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewPagerAdapter.adFragments(new NewsFeed(), "NewsFeed");
         viewPagerAdapter.adFragments(new Notifications(), "Notifications");
+//      viewPagerAdapter.adFragments(new Notifications(), "Notifications");
         viewPagerAdapter.adFragments(videoCapture, "Camera");
         viewPagerAdapter.adFragments(new SearchUser(), "Search");
 
