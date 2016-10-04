@@ -530,6 +530,13 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
             //android.widget.MediaController mc = new android.widget.MediaController(getActivity());
 //            videoView.setMediaController(mc);
+            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    videoView.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail));
+                    return true;
+                }
+            });
             buttonPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
