@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -66,6 +68,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     String postVideoURL = Login.myURL + "post";
     FrameLayout frameLayoutCameraPreview;
     Camera camera;
+    ProgressBar progressBar;
 
 
     @Override
@@ -92,6 +95,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         linearLayoutBottoHider = (LinearLayout) view.findViewById(R.id.linearLayoutBottoHider);
         linearLayoutVideoBottoHider = (LinearLayout) view.findViewById(R.id.linearLayoutVideoBottoHider);
         frameLayoutCameraPreview = (FrameLayout) view.findViewById(R.id.frameLayoutCameraPreview);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBarVideoCapture);
 
         frameLayoutCameraPreview.setVisibility(View.VISIBLE);
         frameLayoutVideoPreview.setVisibility(View.GONE);
@@ -284,7 +288,8 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         prepareRecorder();
         try {
             // open the camera
-            camera = Camera.open();
+            camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+            setCameraDisplayOrientation(getActivity(), Camera.CameraInfo.CAMERA_FACING_BACK, camera);
         } catch (RuntimeException e) {
             // check for exceptions
             System.err.println(e);
@@ -325,14 +330,51 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
     }
 
+    public static void setCameraDisplayOrientation(Activity activity,
+                                                   int cameraId, android.hardware.Camera camera) {
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay()
+                .getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
+
     private class PostThisVideo extends AsyncTask<Object, Object, Boolean> {
         @Override
         protected void onPreExecute() {
-            // setting progress bar to zero
-            //      progressBar.setProgress(0);
+            progressBar.setVisibility(View.VISIBLE);
             super.onPreExecute();
         }
 
+        @Override
+        protected void onProgressUpdate(Object... values) {
+            progressBar.setProgress((Integer) values[0]);
+            super.onProgressUpdate(values);
+        }
 
         @Override
         protected Boolean doInBackground(Object... arg) {
@@ -402,6 +444,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
         @Override
         protected void onPostExecute(Boolean result) {
+            progressBar.setVisibility(View.GONE);
             if (result) {
 
 
