@@ -85,33 +85,33 @@ public class Profile extends Fragment {
 
 
     void setAllClickListner() {
-        imageViewProfilePictureProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Choose your desired option")
-                        .setCancelable(true)
-                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                Intent intent=new Intent(getActivity(),ProfilePicturePreview.class);
-                                startActivity(intent);
-
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-
-
-            }
-        });
+//        imageViewProfilePictureProfile.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setMessage("Choose your desired option")
+//                        .setCancelable(true)
+//                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
+//                                startActivity(intent);
+//                            }
+//                        })
+//                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//
+//                                Intent intent=new Intent(getActivity(),ProfilePicturePreview.class);
+//                                startActivity(intent);
+//
+//                            }
+//                        });
+//                AlertDialog alert = builder.create();
+//                alert.show();
+//
+//
+//            }
+//        });
 
 
 

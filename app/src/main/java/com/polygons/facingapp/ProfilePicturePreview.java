@@ -1,9 +1,7 @@
 package com.polygons.facingapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -183,7 +181,6 @@ public class ProfilePicturePreview extends AppCompatActivity {
             } else {
                 Log.i("result", "Faild");
             }
-            // pDialog.dismiss();
 
         }
     }

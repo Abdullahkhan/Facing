@@ -107,7 +107,7 @@ public class ShowFollowers extends Activity {
     }
 
     public void CreateAndAppendFollowers() {
-        LayoutInflater li = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int position = arrayListFollowers.size() - 1; position >= 0; position--) {
             View tempView = li.inflate(R.layout.linearlayout_follower_following, null);
 
@@ -119,7 +119,7 @@ public class ShowFollowers extends Activity {
             try {
 
 
-                ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+                ImageLoader imgLoader = new ImageLoader(context);
                 int loader = R.drawable.ic_launcher;
                 // whenever you want to load an image from url
                 // call DisplayImage function

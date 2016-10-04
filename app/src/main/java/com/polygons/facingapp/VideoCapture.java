@@ -132,7 +132,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         linearLayoutVideoBottoHider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //facingvideo.refreshDrawableState();
+                facingvideo.refreshDrawableState();
                 linearLayoutVideoBottoHider.setBackgroundDrawable(null);
                 facingvideo.setBackgroundDrawable(null);
                 facingvideo.setVideoPath(Constant.TAG_VIDEO_PATH);
@@ -236,8 +236,8 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         recorder.setOrientationHint(90);
         CamcorderProfile cpHigh = CamcorderProfile
                 .get(CamcorderProfile.QUALITY_HIGH);
-      //  cpHigh.videoFrameHeight = 400;
-       // cpHigh.videoFrameWidth = 400;
+        cpHigh.videoFrameHeight = 400;
+        cpHigh.videoFrameWidth = 400;
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds

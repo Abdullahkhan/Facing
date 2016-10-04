@@ -1,21 +1,14 @@
 package com.polygons.facingapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.media.session.MediaController;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -355,7 +348,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            //   pDialog.dismiss();
             if (result) {
                 like.setVisibility(View.GONE);
                 unlike.setVisibility(View.VISIBLE);
@@ -525,10 +517,14 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             final VideoView videoView = (VideoView) frameLayoutVideo.getChildAt(0);
             final Button buttonPlay = (Button) frameLayoutVideo.getChildAt(1);
 
+            try {
 
-             // videoView.setVideoURI(Uri.parse("http://facing-app.herokuapp.com/" + postLink.getText().toString()));
-           // videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/" + postLink.getText().toString()));
-           videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/uploads/video.mp4"));
+                videoView.setVideoURI(Uri.parse("http://facing-app.herokuapp.com/" + postLink.getText().toString()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/" + postLink.getText().toString()));
+            // videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/uploads/video.mp4"));
             //   videoView.setVideoURI(Uri.parse("http://portal.ekniazi.com/The%20Giver%20(2014)/The.Giver.2014.720p.BluRay.x264.YIFY.mp4"));
 //                    videoView.setVideoPath("http://192.168.8.101/facing/upload/video.mp4");
             // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
@@ -600,11 +596,15 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         Iterator iterator2 = set2.iterator();
         while (iterator2.hasNext()) {
+            try {
 
-            Map.Entry me2 = (Map.Entry) iterator2.next();
+                Map.Entry me2 = (Map.Entry) iterator2.next();
 //            System.out.print(me2.getKey() + ": ");
 //            System.out.println(me2.getValue());
-            linearLayoutPost.addView(hashMap.get(me2.getKey()), 0);
+                linearLayoutPost.addView(hashMap.get(me2.getKey()), 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -677,7 +677,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     }
 
     public void CreateAndAppendPost() {
-        LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        for (int position = post.size() - 1; position >= 0; position--) {
         for (int position = 0; position < post.size(); position++) {
             View tempView = li.inflate(R.layout.linearlayout_post, null);
@@ -688,7 +688,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
 
     public void CreateAndAppendBottomPost() {
-        LayoutInflater li = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater li = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int position = 0; position < bottomPost.size(); position++) {
             View tempView = li.inflate(R.layout.linearlayout_post, null);
 

@@ -1,27 +1,7 @@
 package com.polygons.facingapp;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import com.polygons.facingapp.AndroidMultiPartEntity.ProgressListener;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -35,6 +15,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
+import com.polygons.facingapp.AndroidMultiPartEntity.ProgressListener;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ReplyFacing extends Activity {
 
@@ -130,12 +128,12 @@ public class ReplyFacing extends Activity {
                 // new UploadVideoToServer().execute();
                 // launchUploadActivity();
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(),
+                Toast.makeText(context,
                         "User cancelled video recording", Toast.LENGTH_SHORT)
                         .show();
             }
         } else {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(context,
                     "Sorry! Failed to record video", Toast.LENGTH_SHORT).show();
 
         }
