@@ -32,7 +32,6 @@ public class ShowFollowing extends Activity {
     String TAG_USERNAME = "username";
     String TAG_SUCCESS = "success";
     String TAG_MESSAGE = "message";
-    ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +65,6 @@ public class ShowFollowing extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Refreshing your notifications");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
 
         }
 
@@ -112,7 +106,6 @@ public class ShowFollowing extends Activity {
         }
 
         protected void onPostExecute(String file_url) {
-            pDialog.dismiss();
 
 //			runOnUiThread(new Runnable() {
 //				public void run() {

@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static Fragment videoCapture = new VideoCapture();
 
     SharedPreferences sp;
-    int[] tabIcons = {R.drawable.home, R.drawable.notification, R.drawable.center, R.drawable.search, R.drawable.profile};
+    int[] tabIcons = {R.drawable.home, R.drawable.notification, R.drawable.centericon, R.drawable.search, R.drawable.profile};
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -97,7 +97,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         for (int i = 0; i < tabLayout.getChildCount(); i++) {
-            tabLayout.getChildAt(i).setPadding(15, 15, 15, 15);
+            if (i == 2) {
+                // tabLayout.getChildAt(i).setPadding(5, 5, 5, 5);
+            } else {
+                tabLayout.getChildAt(i).setPadding(15, 15, 15, 15);
+            }
         }
 
 
@@ -144,17 +148,17 @@ public class MainActivity extends AppCompatActivity {
 
         NewsFeed.swipeLayout.setRefreshing(false);
 
-        for(int i=0;i<Login.arrayListAsyncs.size();i++)
-        {
+        for (int i = 0; i < Login.arrayListAsyncs.size(); i++) {
             try {
-                if(Login.arrayListAsyncs.get(i)!=null)
-                {
+                if (Login.arrayListAsyncs.get(i) != null) {
                     Login.arrayListAsyncs.get(i).cancel(true);
                 }
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
 
         }
     }
+
     private void internetCheckCollapse() {
 
         int finalHeight = linearLayoutInternetCheckMainActivity.getHeight();

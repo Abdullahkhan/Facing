@@ -26,7 +26,6 @@ public class PostText extends Activity {
     Button buttonPostText;
     SharedPreferences sp;
     String userid;
-    ProgressDialog pDialog;
     Context context = this;
     JSONObject json;
     JSONParser jsonparser = new JSONParser();
@@ -56,11 +55,6 @@ public class PostText extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Posting");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
 
         }
 
@@ -88,7 +82,6 @@ public class PostText extends Activity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            pDialog.dismiss();
 
             if (result) {
                 Toast.makeText(context, "Posted successfully ", Toast.LENGTH_SHORT).show();

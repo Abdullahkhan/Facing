@@ -50,7 +50,6 @@ public class Facing extends Activity {
     Button buttonOK;
     ProgressBar progressBar;
     TextView txtPercentage;
-    private ProgressDialog pDialog;
     private long totalSize = 0;
     String videoUploadURL = Login.myURL + "/facing/uploadit.php";
 
@@ -233,14 +232,6 @@ public class Facing extends Activity {
 
         @Override
         protected void onProgressUpdate(Object... progress) {
-            // Making progress bar visible
-            progressBar.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
-            progressBar.setProgress((int) progress[0]);
-
-            // updating percentage value
-            txtPercentage.setText(String.valueOf(progress[0]) + "%");
         }
 
         @Override
@@ -304,34 +295,13 @@ public class Facing extends Activity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            // pDialog.dismiss();
             if (result) {
-                showAlert("Success");
+                Log.i("Success", "Success");
             } else {
-                showAlert("Failed");
+                Log.i("failed", "failed");
             }
         }
     }
 
-    private void showAlert(final String message) {
-        runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(message)
-                        .setTitle("Response from Servers")
-                        .setCancelable(false)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int id) {
-                                        // do nothing
-                                    }
-                                });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
-    }
 }

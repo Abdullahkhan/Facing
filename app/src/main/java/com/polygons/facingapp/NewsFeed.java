@@ -50,8 +50,6 @@ import java.util.concurrent.TimeUnit;
 
 
 public class NewsFeed extends android.support.v4.app.Fragment {
-    Context context = getContext();
-    Activity activity = getActivity();
     View view;
     InteractiveScrollView scrollViewNewsFeed;
     LinearLayout linearLayoutPost;
@@ -61,7 +59,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     String offset = "0";
     String bucket = "5";
     Boolean isBottomReached = false;
-    ProgressDialog pDialog;
     static ArrayList<ArrayList<String>> facingsUrlArrayList;
     ArrayList<String> singleFacingURLArraylist;
     public static int loader = R.drawable.ic_launcher;
@@ -203,11 +200,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Refreshing your Facings");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            // pDialog.show();
 
         }
 
@@ -269,11 +261,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Refreshing your Facings");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            // pDialog.show();
 
         }
 
@@ -309,7 +296,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            //   pDialog.dismiss();
             if (result) {
                 getActivity().runOnUiThread(new Runnable() {
 
@@ -461,7 +447,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            //   pDialog.dismiss();
             if (result) {
                 Toast.makeText(getActivity(), "Shared Successfully", Toast.LENGTH_SHORT).show();
             } else
@@ -491,7 +476,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            //   pDialog.dismiss();
             if (result) {
                 circleImageView.setImageBitmap(profile_picture);
             } else
@@ -529,7 +513,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 //   new SetUserProfilePicture().execute("http://facing-app.herokuapp.com/"+profilePicURL, circleImageView);
                 if (MainActivity.isInternetPresent) {
                     Login.arrayListAsyncs.add(new SetUserProfilePicture());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://192.168.8.106/" + profilePicURL, circleImageView);
+                    //Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://192.168.8.101/:3000" + profilePicURL, circleImageView);
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://facing-app.herokuapp.com//" + profilePicURL, circleImageView);
                 }
             }
 
@@ -540,16 +525,20 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             final VideoView videoView = (VideoView) frameLayoutVideo.getChildAt(0);
             final Button buttonPlay = (Button) frameLayoutVideo.getChildAt(1);
 
-                    videoView.setVideoPath("http://192.168.8.106:3000/" + postLink.getText().toString());
+
+             // videoView.setVideoURI(Uri.parse("http://facing-app.herokuapp.com/" + postLink.getText().toString()));
+           // videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/" + postLink.getText().toString()));
+           videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/uploads/video.mp4"));
+            //   videoView.setVideoURI(Uri.parse("http://portal.ekniazi.com/The%20Giver%20(2014)/The.Giver.2014.720p.BluRay.x264.YIFY.mp4"));
 //                    videoView.setVideoPath("http://192.168.8.101/facing/upload/video.mp4");
-                    // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
-
-
+            // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
+            //android.widget.MediaController mc = new android.widget.MediaController(getActivity());
+//            videoView.setMediaController(mc);
             buttonPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     videoView.start();
-                    buttonPlay.setVisibility(View.GONE);
+                    buttonPlay.setVisibility(View.INVISIBLE);
                 }
             });
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -826,24 +815,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         }
     };
 
-    private void showAlert(final String message) {
-        getActivity().runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(message).setTitle("Response from Servers")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // do nothing
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
-    }
 
     public static final List<Long> times = Arrays.asList(
             TimeUnit.DAYS.toMillis(365),

@@ -49,7 +49,6 @@ public class ImageCaptureCamera extends AppCompatActivity {
     private CameraPreview mCameraPreview;
     Context context = this;
     String imageUploadURL = Login.myURL + "set_profilepicture";
-    ProgressBar progressBar;
     private long totalSize = 0;
     String userid;
     SharedPreferences sp;
@@ -204,19 +203,9 @@ public class ImageCaptureCamera extends AppCompatActivity {
     }
 
     private class UploadFacingToServer extends AsyncTask<Object, Object, Boolean> {
-        // @Override
-        // protected void onPreExecute() {
-        // super.onPreExecute();
-        // pDialog = new ProgressDialog(context);
-        // pDialog.setMessage("Please wait while we upload your video...");
-        // pDialog.setIndeterminate(false);
-        // pDialog.setCancelable(true);
-        // pDialog.show();
-        // }
+
         @Override
         protected void onPreExecute() {
-            // setting progress bar to zero
-            //      progressBar.setProgress(0);
             super.onPreExecute();
         }
 
@@ -291,35 +280,13 @@ public class ImageCaptureCamera extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
             if (result) {
 
-//               showAlert("Successfullly Uploaded Picture");
                 finish();
             } else {
-                showAlert("Failed");
+                Log.i("Result","Failed");
             }
-            // pDialog.dismiss();
 
         }
     }
 
-    private void showAlert(final String message) {
-        runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(message)
-                        .setTitle("Response from Servers")
-                        .setCancelable(false)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int id) {
-                                        // do nothing
-                                    }
-                                });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
-    }
 }

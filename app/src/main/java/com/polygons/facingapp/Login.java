@@ -30,10 +30,9 @@ public class Login extends Activity {
     EditText editTextEmail;
     EditText editTextPassword;
     Button buttonLogin;
-    public static String myURL = "http://192.168.8.106:3000/api/";
-   // public static String myURL = "https://facing-app.herokuapp.com/api/";
+//    public static String myURL = "http://192.168.8.101:3000/api/";
+  public static String myURL = "https://facing-app.herokuapp.com/api/";
     String loginURL = Login.myURL + "login";
-    private ProgressDialog pDialog;
     JSONParser jsonParser = new JSONParser();
     public static User user;
     Context context = this;
@@ -99,11 +98,6 @@ public class Login extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Please wait while we logged you in...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
         }
 
         @Override
@@ -134,31 +128,12 @@ public class Login extends Activity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            pDialog.dismiss();
             if (result) {
                 startActivity(new Intent(context, MainActivity.class));
             }
         }
     }
 
-    private void showAlert(final String message) {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage(message).setTitle("Response from Servers")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // do nothing
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        });
-    }
 
     void setUserid() {
         sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);

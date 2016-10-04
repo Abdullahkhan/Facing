@@ -233,11 +233,11 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     private void initRecorder() {
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
-     //   recorder.setOrientationHint(90);
+        recorder.setOrientationHint(90);
         CamcorderProfile cpHigh = CamcorderProfile
                 .get(CamcorderProfile.QUALITY_HIGH);
-        cpHigh.videoFrameHeight=400;
-        cpHigh.videoFrameWidth=400;
+      //  cpHigh.videoFrameHeight = 400;
+       // cpHigh.videoFrameWidth = 400;
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds
@@ -326,15 +326,6 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     }
 
     private class PostThisVideo extends AsyncTask<Object, Object, Boolean> {
-        // @Override
-        // protected void onPreExecute() {
-        // super.onPreExecute();
-        // pDialog = new ProgressDialog(context);
-        // pDialog.setMessage("Please wait while we upload your video...");
-        // pDialog.setIndeterminate(false);
-        // pDialog.setCancelable(true);
-        // pDialog.show();
-        // }
         @Override
         protected void onPreExecute() {
             // setting progress bar to zero
@@ -425,26 +416,26 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
                 Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
 
             }
-            // pDialog.dismiss();
 
         }
     }
 
-//    @Override
-//    public void setMenuVisibility(final boolean visible) {
-//        if (visible) {
-//            //Do your stuff here
-//
-//        } else {
-//            if (camera != null) {
-//                camera.stopPreview();
-//                camera.release();
-//                camera = null;
-//            }
-//        }
-//
-//        super.setMenuVisibility(visible);
-//    }
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        if (visible) {
+            //Do your stuff here
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
+        } else {
+            if (camera != null) {
+                camera.stopPreview();
+                camera.release();
+                camera = null;
+            }
+        }
+
+        super.setMenuVisibility(visible);
+    }
 //    @Override
 //    public void onHiddenChanged(boolean hidden) {
 //        super.onHiddenChanged(hidden);

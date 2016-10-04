@@ -44,7 +44,6 @@ public class SearchUser extends Fragment {
     private EditText editTextSearchField;
     private Button buttonSearch;
     private ListView listViewSearchedUsers;
-    ProgressDialog pDialog;
 
     JSONParser jsonParser = new JSONParser();
 
@@ -118,11 +117,6 @@ public class SearchUser extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Please wait while find your friend");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
 
         }
 
@@ -160,7 +154,6 @@ public class SearchUser extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            pDialog.dismiss();
 
 
             listViewSearchedUsers.setAdapter(adapter);
@@ -263,18 +256,7 @@ public class SearchUser extends Fragment {
     }
 
 
-    private void showAlert(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(message).setTitle("Response from Servers")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // do nothing
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
+
 
     private BaseAdapter adapter = new BaseAdapter() {
 

@@ -27,7 +27,6 @@ public class SignUp extends Activity {
     JSONParser jsonParser = new JSONParser();
     Button buttonSignUp;
     TextView textViewGoToLogin;
-    private ProgressDialog pDialog;
     Context context = this;
     String signUpURL = Login.myURL + "register";
     SharedPreferences sp;
@@ -77,11 +76,6 @@ public class SignUp extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(context);
-            pDialog.setMessage("Please wait while we logged you in...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
         }
 
         @Override
@@ -146,7 +140,6 @@ public class SignUp extends Activity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            pDialog.dismiss();
             if (result) {
                 startActivity(new Intent(context, Suggestions.class));
             }
