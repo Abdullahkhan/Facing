@@ -20,7 +20,7 @@ public class JSONParser {
     String charset = "UTF-8";
     HttpURLConnection conn;
     DataOutputStream wr;
-    StringBuilder result;
+    StringBuilder result=null;
     URL urlObj;
     JSONObject jObj = null;
     StringBuilder sbParams;

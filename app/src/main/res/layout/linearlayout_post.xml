@@ -70,10 +70,17 @@
                 android:layout_height="300dp" />
 
             <Button
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:background="@drawable/playbutton" />
+
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Play" />
+                android:background="@drawable/replyvideo"
+                android:visibility="gone" />
         </FrameLayout>
 
     </LinearLayout>
@@ -81,37 +88,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/buttonPostLike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Like" />
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/unlike" />
 
         <Button
             android:id="@+id/buttonPostUnLike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unlike"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/like"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/textViewPostTotalLikes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="0 Like" />
 
         <Button
             android:id="@+id/buttonShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Share" />
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/share" />
 
         <TextView
             android:id="@+id/textViewPostTotalShares"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="0 Share" />
 
 
@@ -121,6 +132,12 @@
     <TextView
         android:id="@+id/textViewProfilePicURL"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textViewComments"
+        android:layout_width="wrap_content" android:text="comments"
         android:layout_height="wrap_content"
         android:visibility="gone" />
 </LinearLayout>

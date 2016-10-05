@@ -30,7 +30,7 @@ public class Constant {
 
     //TAGS for POSTs
     public static String TAG_POST_ID = "_id";
-    public static String TAG_POST_ID_SEND="post_id";
+    public static String TAG_POST_ID_SEND = "post_id";
     public static String TAG_POST_USERID = "user_id";
     public static String TAG_POST = "post";
     public static String TAG_TIME = "time";
@@ -40,10 +40,10 @@ public class Constant {
 
     public static String TAG_USER_FIRST_NAME = "user_first_name";
     public static String TAG_USER_LAST_NAME = "user_last_name";
-    public static String TAG_TOTAL_LIKES="total_likes";
-    public static String TAG_TOTAL_SHARE="total_share";
-    public static String TAG_TOTAL_COMMENT="total_comment";
-    public static String TAG_ISLIKE="islike";
+    public static String TAG_TOTAL_LIKES = "total_likes";
+    public static String TAG_TOTAL_SHARE = "total_share";
+    public static String TAG_TOTAL_COMMENT = "total_comment";
+    public static String TAG_ISLIKE = "islike";
 
 
     //TAGS for NEWSFEED
@@ -55,6 +55,17 @@ public class Constant {
 
     //TAGS for Profile
     public static String TAG_PICTURE = "picture";
+
+    //TAGS for COMMENTs
+    public static String TAG_COMMENT = "comment";
+    public static String TAG_USER_COMMENT = "user_comment";
+    public static String TAG_COMMENT_USER_ID = "comment_user_id";
+    public static String TAG_COMMENT_FIRST_NAME = "comment_first_name";
+    public static String TAG_COMMENT_LAST_NAME = "comment_last_name";
+    public static String TAG_COMMENT_TIME = "comment_time";
+    public static String TAG_ENABLE = "enable";
+    public static String TAG_COMMENT_ID = "_id";
+    public static String TAG_COMMENT_PROFILE_PIC_URL = "comment_profile_pic_url";
 
 
 }

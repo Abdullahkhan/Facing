@@ -2,6 +2,7 @@ package com.polygons.facingapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -25,6 +27,7 @@ import android.widget.VideoView;
 import com.polygons.facingapp.tools.CircleImageView;
 import com.polygons.facingapp.tools.Constant;
 import com.polygons.facingapp.tools.InteractiveScrollView;
+import com.polygons.facingapp.tools.Tools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 public class NewsFeed extends android.support.v4.app.Fragment {
     View view;
-    InteractiveScrollView scrollViewNewsFeed;
+    public static InteractiveScrollView scrollViewNewsFeed;
     LinearLayout linearLayoutPost;
     public static SwipeRefreshLayout swipeLayout;
 
@@ -172,6 +175,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
     }
 
+    public static void refreshNewsFeed() {
+    }
+
     private HashMap<String, String> addPostParameters(HashMap<String, String> eachPost, JSONObject postObject) throws JSONException {
         eachPost.put(Constant.TAG_POST_ID, postObject.getString(Constant.TAG_POST_ID));
         eachPost.put(Constant.TAG_POST_USERID, postObject.getString(Constant.TAG_POST_USERID));
@@ -184,6 +190,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         eachPost.put(Constant.TAG_TOTAL_SHARE, postObject.getString(Constant.TAG_TOTAL_SHARE));
         eachPost.put(Constant.TAG_ISLIKE, String.valueOf(postObject.getBoolean(Constant.TAG_ISLIKE)));
         eachPost.put(Constant.TAG_TOTAL_COMMENT, postObject.getString(Constant.TAG_TOTAL_COMMENT));
+        eachPost.put(Constant.TAG_USER_COMMENT, postObject.getJSONArray(Constant.TAG_USER_COMMENT).toString());
 
 
         return eachPost;
@@ -222,9 +229,10 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
+                return false;
             }
 
-            return false;
+
         }
 
         @Override
@@ -240,6 +248,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                         CreateAndAppendPost();
                         swipeLayout.setRefreshing(false);
                         rearrangePosts();
+                        NewsFeed.scrollViewNewsFeed.fullScroll(ScrollView.FOCUS_UP);
+
                         // Toast.makeText(getActivity(), "Newsfeed updated ", Toast.LENGTH_SHORT).show();
 
                     }
@@ -479,6 +489,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
     private void rearrangePosts() {
         HashMap<Long, LinearLayout> hashMap = new HashMap<Long, LinearLayout>();
+        //  final Tools tools = new Tools();
 
         for (int position = 0; position < linearLayoutPost.getChildCount(); position++) {
             ViewGroup linearLayoutEachPost = (ViewGroup) linearLayoutPost.getChildAt(position);
@@ -516,10 +527,46 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
             final VideoView videoView = (VideoView) frameLayoutVideo.getChildAt(0);
             final Button buttonPlay = (Button) frameLayoutVideo.getChildAt(1);
+            final Button buttonReply = (Button) frameLayoutVideo.getChildAt(2);
+
+            final TextView textViewComments = (TextView) linearLayoutEachPost.getChildAt(5);
+            JSONArray jsonArrayComments = null;
+            try {
+
+                jsonArrayComments = new JSONArray(textViewComments.getText().toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            HashMap<String, String> hashMapComments = null;
+            final ArrayList<HashMap<String, String>> arrayListComments = new ArrayList<>();
+            for (int i = 0; i < jsonArrayComments.length(); i++) {
+
+                try {
+
+                    hashMapComments = new HashMap<>();
+                    JSONObject jsonObjectEachComment = jsonArrayComments.getJSONObject(i);
+                    hashMapComments.put(Constant.TAG_COMMENT, jsonObjectEachComment.getString(Constant.TAG_COMMENT));
+                    hashMapComments.put(Constant.TAG_USER_COMMENT, jsonObjectEachComment.getString(Constant.TAG_USER_COMMENT));
+                    hashMapComments.put(Constant.TAG_COMMENT_USER_ID, jsonObjectEachComment.getString(Constant.TAG_COMMENT_USER_ID));
+                    hashMapComments.put(Constant.TAG_COMMENT_FIRST_NAME, jsonObjectEachComment.getString(Constant.TAG_COMMENT_FIRST_NAME));
+                    hashMapComments.put(Constant.TAG_COMMENT_LAST_NAME, jsonObjectEachComment.getString(Constant.TAG_COMMENT_LAST_NAME));
+                    hashMapComments.put(Constant.TAG_COMMENT_TIME, jsonObjectEachComment.getString(Constant.TAG_COMMENT_TIME));
+                    hashMapComments.put(Constant.TAG_ENABLE, jsonObjectEachComment.getString(Constant.TAG_ENABLE));
+                    hashMapComments.put(Constant.TAG_COMMENT_ID, jsonObjectEachComment.getString(Constant.TAG_COMMENT_ID));
+                    hashMapComments.put(Constant.TAG_COMMENT_PROFILE_PIC_URL, jsonObjectEachComment.getString(Constant.TAG_COMMENT_PROFILE_PIC_URL));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                arrayListComments.add(hashMapComments);
+
+            }
+
 
             try {
 
-                videoView.setVideoURI(Uri.parse("http://facing-app.herokuapp.com/" + postLink.getText().toString()));
+                videoView.setVideoURI(Uri.parse("https://facing-app.herokuapp.com/" + postLink.getText().toString()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -530,13 +577,17 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
             //android.widget.MediaController mc = new android.widget.MediaController(getActivity());
 //            videoView.setMediaController(mc);
+            videoView.seekTo(100);
             videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     videoView.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail));
+                    buttonPlay.setVisibility(View.INVISIBLE);
                     return true;
                 }
             });
+            buttonPlay.setVisibility(View.VISIBLE);
+            buttonReply.setVisibility(View.GONE);
             buttonPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -544,10 +595,38 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     buttonPlay.setVisibility(View.INVISIBLE);
                 }
             });
+            buttonReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ReplyVideoCapture.class);
+                    intent.putExtra(Constant.TAG_POST_ID_SEND, postid);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.no_animation);
+
+                }
+            });
+            final Tools toolComment = new Tools();
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    buttonPlay.setVisibility(View.VISIBLE);
+                    try {
+                        if (toolComment.position < arrayListComments.size()) {
+                            mp.setDisplay(null);
+                            mp.reset();
+                            mp.setDisplay(videoView.getHolder());
+                            videoView.setVideoPath("https://facing-app.herokuapp.com/uploads/" + arrayListComments.get(toolComment.position).get(Constant.TAG_COMMENT));
+                            toolComment.position = (toolComment.position + 1);// % arrayListComments.size();
+                            videoView.start();
+                        } else {
+                            buttonReply.setVisibility(View.VISIBLE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        buttonReply.setVisibility(View.VISIBLE);
+
+
+                    }
                 }
             });
 
@@ -633,6 +712,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         Button buttonPostLike = (Button) tempView.findViewById(R.id.buttonPostLike);
         Button buttonPostUnLike = (Button) tempView.findViewById(R.id.buttonPostUnLike);
 
+        TextView textViewComments = (TextView) tempView.findViewById(R.id.textViewComments);
 
         final VideoView videoView = (VideoView) tempView.findViewById(R.id.videoView);
 
@@ -645,6 +725,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 videoView.setLayoutParams(params);
             }
         });
+
+        textViewComments.setText(post.get(position).get(Constant.TAG_USER_COMMENT));
         //  videoView.setVideoPath(post.get(position).get(Constant.TAG_POST));
 
 
@@ -857,8 +939,13 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         super.onResume();
         //   new RefreshFacings().execute(userid, offset, bucket);
         if (MainActivity.isInternetPresent) {
-            Login.arrayListAsyncs.add(new RefreshFacings());
-            Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, offset, bucket);
+            try {
+
+                Login.arrayListAsyncs.add(new RefreshFacings());
+                Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, offset, bucket);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

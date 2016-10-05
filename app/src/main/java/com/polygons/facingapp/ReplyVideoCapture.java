@@ -1,6 +1,7 @@
 package com.polygons.facingapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -13,23 +14,17 @@ import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -49,8 +44,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
-//public class VideoCapture {
-public class VideoCapture extends android.support.v4.app.Fragment implements SurfaceHolder.Callback {
+public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callback {
+    Context context = this;
     MediaRecorder recorder;
     SurfaceHolder holder;
     boolean recording = false;
@@ -63,41 +58,37 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
     SurfaceView cameraView;
     LinearLayout linearLayoutBottoHider;
     LinearLayout linearLayoutVideoBottoHider;
-    View view;
     String userid;
     SharedPreferences sp;
     private long totalSize = 0;
-    String postVideoURL = Login.myURL + "post";
+    String postVideoURL = Login.myURL + "post_comment";
     FrameLayout frameLayoutCameraPreview;
     Camera camera;
     ProgressBar progressBar;
+    String post_id;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_video_capture, container, false);
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.reply_video_capture);
 
-        sp = this.getActivity().getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        post_id = getIntent().getExtras().getString(Constant.TAG_POST_ID_SEND);
+
+        sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
-        start = (Button) view.findViewById(R.id.start);
+        start = (Button) findViewById(R.id.start);
 
-        frameLayoutVideoPreview = (FrameLayout) view.findViewById(R.id.frameLayoutVideoPreview);
-        cameraView = (SurfaceView) view.findViewById(R.id.CameraView);
+        frameLayoutVideoPreview = (FrameLayout) findViewById(R.id.frameLayoutVideoPreview);
+        cameraView = (SurfaceView) findViewById(R.id.CameraView);
 //      play=(ImageView) view.findViewById(R.id.play);
-        facingvideo = (VideoView) view.findViewById(R.id.facingvideo);
-        buttonCancelVideo = (Button) view.findViewById(R.id.buttonCancelVideo);
-        buttonPostVideo = (Button) view.findViewById(R.id.buttonPostVideo);
-        linearLayoutBottoHider = (LinearLayout) view.findViewById(R.id.linearLayoutBottoHider);
-        linearLayoutVideoBottoHider = (LinearLayout) view.findViewById(R.id.linearLayoutVideoBottoHider);
-        frameLayoutCameraPreview = (FrameLayout) view.findViewById(R.id.frameLayoutCameraPreview);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBarVideoCapture);
+        facingvideo = (VideoView) findViewById(R.id.facingvideo);
+        buttonCancelVideo = (Button) findViewById(R.id.buttonCancelVideo);
+        buttonPostVideo = (Button) findViewById(R.id.buttonPostVideo);
+        linearLayoutBottoHider = (LinearLayout) findViewById(R.id.linearLayoutBottoHider);
+        linearLayoutVideoBottoHider = (LinearLayout) findViewById(R.id.linearLayoutVideoBottoHider);
+        frameLayoutCameraPreview = (FrameLayout) findViewById(R.id.frameLayoutCameraPreview);
+        progressBar = (ProgressBar) findViewById(R.id.progressBarVideoCapture);
 
         Drawable draw = getResources().getDrawable(R.drawable.progressbar);
         progressBar.setProgressDrawable(draw);
@@ -125,11 +116,8 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
             @Override
             public void onClick(View view) {
 
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(MainActivity.videoCapture);
-                // MainActivity.videoCapture= new VideoCapture();
-                MainActivity.viewPagerAdapter.notifyDataSetChanged();
-                ft.attach(MainActivity.videoCapture).commit();
+                startActivity(getIntent());
+                finish();
 
                 //                initRecorder();
 //                prepareRecorder();
@@ -186,9 +174,12 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
                     //   finish();
 
                 } else {
-                    camera.stopPreview();
-                    camera.release();
-                    camera = null;
+
+                    if (camera != null) {
+                        camera.stopPreview();
+                        camera.release();
+                        camera = null;
+                    }
 
                     recording = true;
                     recorder.start();
@@ -294,7 +285,7 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         try {
             // open the camera
             camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-            setCameraDisplayOrientation(getActivity(), Camera.CameraInfo.CAMERA_FACING_BACK, camera);
+            setCameraDisplayOrientation(this, Camera.CameraInfo.CAMERA_FACING_BACK, camera);
         } catch (RuntimeException e) {
             // check for exceptions
             System.err.println(e);
@@ -404,11 +395,12 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
                 //    File sourceFile = new File(filePath);
 
                 // Adding file data to http body
-                entity.addPart(Constant.TAG_POST, new FileBody((File) arg[0]));
+                entity.addPart(Constant.TAG_COMMENT, new FileBody((File) arg[0]));
 
                 // Extra parameters if you want to pass to server
                 entity.addPart(Constant.TAG_USERID,
                         new StringBody(userid));
+                entity.addPart(Constant.TAG_POST_ID_SEND, new StringBody(post_id));
                 // entity.addPart("email", new StringBody("abc@gmail.com"));
 
                 totalSize = entity.getContentLength();
@@ -452,40 +444,25 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
             progressBar.setVisibility(View.GONE);
             if (result) {
 
+                if (camera != null) {
+                    camera.stopPreview();
+                    camera.release();
+                    camera = null;
+                }
+                finish();
+                overridePendingTransition(R.anim.no_animation, R.anim.slide_out_down);
 
-                Toast.makeText(getActivity(), "Post Successfully", Toast.LENGTH_SHORT).show();
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
-
-                MainActivity.viewPager.setCurrentItem(0);
-                NewsFeed.scrollViewNewsFeed.fullScroll(ScrollView.FOCUS_UP);
 
                 frameLayoutCameraPreview.setVisibility(View.VISIBLE);
                 frameLayoutVideoPreview.setVisibility(View.GONE);
             } else {
-                Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Failed", Toast.LENGTH_SHORT).show();
 
             }
 
         }
     }
 
-    @Override
-    public void setMenuVisibility(final boolean visible) {
-        if (visible) {
-            //Do your stuff here
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
-        } else {
-            if (camera != null) {
-                camera.stopPreview();
-                camera.release();
-                camera = null;
-            }
-        }
-
-        super.setMenuVisibility(visible);
-    }
 //    @Override
 //    public void onHiddenChanged(boolean hidden) {
 //        super.onHiddenChanged(hidden);

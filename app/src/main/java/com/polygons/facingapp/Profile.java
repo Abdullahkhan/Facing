@@ -65,7 +65,8 @@ public class Profile extends Fragment {
                 if (MainActivity.isInternetPresent) {
                     Login.arrayListAsyncs.add(new ViewProfile());
                     Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid);
-                }   else swipeLayout.setRefreshing(false);             }
+                } else swipeLayout.setRefreshing(false);
+            }
         });
 
         return view;
@@ -80,8 +81,8 @@ public class Profile extends Fragment {
 
             Login.arrayListAsyncs.add(new ViewProfile());
             Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid);
-        }    }
-
+        }
+    }
 
 
     void setAllClickListner() {
@@ -101,7 +102,7 @@ public class Profile extends Fragment {
                         .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                Intent intent=new Intent(getActivity(),ProfilePicturePreview.class);
+                                Intent intent = new Intent(getActivity(), ProfilePicturePreview.class);
                                 startActivity(intent);
 
                             }
@@ -112,8 +113,6 @@ public class Profile extends Fragment {
 
             }
         });
-
-
 
 
         textViewFollowerProfile.setOnClickListener(new View.OnClickListener() {
@@ -135,7 +134,6 @@ public class Profile extends Fragment {
             }
         });
     }
-
 
 
     void setAllXMLReferences() {
