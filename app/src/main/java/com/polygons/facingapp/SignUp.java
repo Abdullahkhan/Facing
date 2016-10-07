@@ -37,6 +37,11 @@ public class SignUp extends Activity {
         setContentView(R.layout.sign_up);
         setAllXMLReferences();
         setAllClickListner();
+        try {
+            setUserid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setUserid();
         if (isLoggedIn()) {
             startActivity(new Intent(context, MainActivity.class));
@@ -147,7 +152,7 @@ public class SignUp extends Activity {
     }
 
     void setUserid() {
-        sp = getSharedPreferences(Constant.TAG_USER, Activity.MODE_PRIVATE);
+        sp = getSharedPreferences(com.polygons.facingapp.tools.Constant.TAG_USER, Activity.MODE_PRIVATE);
         userid = sp.getString(Constant.TAG_USERID, "0");
 
     }

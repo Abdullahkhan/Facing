@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void cancelAllAsync()
+    static public void cancelAllAsync()
 
     {
 

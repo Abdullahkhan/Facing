@@ -244,9 +244,11 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
         recorder.setOrientationHint(90);
         CamcorderProfile cpHigh = CamcorderProfile
-                .get(CamcorderProfile.QUALITY_480P);
+                .get(Camera.CameraInfo.CAMERA_FACING_FRONT,CamcorderProfile.QUALITY_480P);
         cpHigh.videoFrameHeight = 400;
         cpHigh.videoFrameWidth = 400;
+        cpHigh.videoBitRate = 200000;
+        cpHigh.videoFrameRate = 10;
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds
@@ -458,7 +460,13 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
                 ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
 
                 MainActivity.viewPager.setCurrentItem(0);
+                if (camera != null) {
+                    camera.stopPreview();
+                    camera.release();
+                    camera = null;
+                }
                 NewsFeed.scrollViewNewsFeed.fullScroll(ScrollView.FOCUS_UP);
+
 
                 frameLayoutCameraPreview.setVisibility(View.VISIBLE);
                 frameLayoutVideoPreview.setVisibility(View.GONE);

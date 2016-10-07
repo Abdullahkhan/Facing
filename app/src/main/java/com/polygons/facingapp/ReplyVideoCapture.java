@@ -234,14 +234,16 @@ public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callbac
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
         recorder.setOrientationHint(90);
-        CamcorderProfile cpHigh = CamcorderProfile
-                .get(CamcorderProfile.QUALITY_480P);
+        CamcorderProfile cpHigh = CamcorderProfile.get(Camera.CameraInfo.CAMERA_FACING_FRONT,CamcorderProfile.QUALITY_480P);
         cpHigh.videoFrameHeight = 400;
         cpHigh.videoFrameWidth = 400;
+        cpHigh.videoBitRate = 200000;
+        cpHigh.videoFrameRate = 10;
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds
         recorder.setMaxFileSize(50000000); // Approximately 50 megabytes
+
 
     }
 

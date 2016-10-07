@@ -90,6 +90,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 try {
                     Toast.makeText(getActivity(), "refreshing ", Toast.LENGTH_SHORT).show();
                     if (MainActivity.isInternetPresent) {
+                        MainActivity.cancelAllAsync();
+
                         Login.arrayListAsyncs.add(new RefreshFacings());
                         Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(userid, offset, bucket);
                     }
@@ -200,7 +202,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
         }
 
         @Override
@@ -480,8 +481,9 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 circleImageView.setImageBitmap(profile_picture);
-            } else
-                Toast.makeText(getActivity(), "UnSuccessfull", Toast.LENGTH_SHORT).show();
+            }
+//            else
+               // Toast.makeText(getActivity(), "UnSuccessfull", Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -516,8 +518,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 //   new SetUserProfilePicture().execute("http://facing-app.herokuapp.com/"+profilePicURL, circleImageView);
                 if (MainActivity.isInternetPresent) {
                     Login.arrayListAsyncs.add(new SetUserProfilePicture());
-                    //Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://192.168.8.101/:3000" + profilePicURL, circleImageView);
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://facing-app.herokuapp.com//" + profilePicURL, circleImageView);
+                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(Login.baseUrl + profilePicURL, circleImageView);
+                    // Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute("http://facing-app.herokuapp.com//" + profilePicURL, circleImageView);
                 }
             }
 
@@ -566,7 +568,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
             try {
 
-                videoView.setVideoURI(Uri.parse("https://facing-app.herokuapp.com/" + postLink.getText().toString()));
+                // videoView.setVideoURI(Uri.parse("https://facing-app.herokuapp.com/" + postLink.getText().toString()));
+                videoView.setVideoURI(Uri.parse(Login.baseUrl + postLink.getText().toString()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -577,7 +580,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
             //android.widget.MediaController mc = new android.widget.MediaController(getActivity());
 //            videoView.setMediaController(mc);
-            videoView.seekTo(100);
+            // videoView.seekTo(100);
             videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -615,7 +618,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                             mp.setDisplay(null);
                             mp.reset();
                             mp.setDisplay(videoView.getHolder());
-                            videoView.setVideoPath("https://facing-app.herokuapp.com/uploads/" + arrayListComments.get(toolComment.position).get(Constant.TAG_COMMENT));
+                            // videoView.setVideoPath("https://facing-app.herokuapp.com/uploads/" + arrayListComments.get(toolComment.position).get(Constant.TAG_COMMENT));
+                            videoView.setVideoPath(Login.baseUrl + "uploads/" + arrayListComments.get(toolComment.position).get(Constant.TAG_COMMENT));
                             toolComment.position = (toolComment.position + 1);// % arrayListComments.size();
                             videoView.start();
                         } else {

@@ -27,8 +27,9 @@ public class Login extends Activity {
     EditText editTextEmail;
     EditText editTextPassword;
     Button buttonLogin;
-//    public static String myURL = "http://192.168.8.101:3000/api/";
-  public static String myURL = "https://facing-app.herokuapp.com/api/";
+    public static String baseUrl = "https://facing-app.herokuapp.com/";
+//    public static String baseUrl = "http://192.168.8.100:3000/";
+    public static String myURL = baseUrl+"api/";
     String loginURL = Login.myURL + "login";
     JSONParser jsonParser = new JSONParser();
     public static User user;
