@@ -17,10 +17,12 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -97,19 +99,24 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(context, VideoCapture.class));
             }
         });
+        //tabLayout.getChildAt(2).setPadding(15, 15, 15, 15);
+        // Log.i("TAB", tabLayout.getChildCount() + "");
 
         for (int i = 0; i < tabLayout.getChildCount(); i++) {
-            if (i == 2) {
-                // tabLayout.getChildAt(i).setPadding(5, 5, 5, 5);
-            } else {
-                tabLayout.getChildAt(i).setPadding(15, 15, 15, 15);
-            }
-        }
+            tabLayout.getChildAt(i).setPadding(15, 15, 15, 15);
 
+        }
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        client = new GoogleApiClient.Builder(this).
+
+                addApi(AppIndex.API)
+
+                .
+
+                        build();
+
     }
 
     private void setupTabIcons() {
@@ -274,4 +281,11 @@ public class MainActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        cancelAllAsync();
+    }
 }
+

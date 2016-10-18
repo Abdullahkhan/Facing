@@ -185,5 +185,11 @@ public class ProfilePicturePreview extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.no_animation, R.anim.slide_out_down);
+
+    }
 
 }

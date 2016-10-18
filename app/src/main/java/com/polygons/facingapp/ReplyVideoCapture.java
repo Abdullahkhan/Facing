@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -28,6 +30,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.polygons.facingapp.tools.Constant;
 
 import org.apache.http.HttpEntity;
@@ -104,11 +111,8 @@ public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callbac
         buttonPostVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.isInternetPresent) {
+                loadFFmpeg();
 
-                    Login.arrayListAsyncs.add(new PostThisVideo());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(new File(Constant.TAG_VIDEO_PATH), userid);
-                }
             }
         });
 
@@ -155,16 +159,18 @@ public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callbac
 
                     frameLayoutCameraPreview.setVisibility(View.GONE);
                     frameLayoutVideoPreview.setVisibility(View.VISIBLE);
+                    cameraView.setVisibility(View.GONE);
 
 
                     // facingvideo.setVideoPath("/sdcard/videocapture_example.mp4");
-                    Bitmap thumb = ThumbnailUtils.createVideoThumbnail(Constant.TAG_VIDEO_PATH,
-                            MediaStore.Images.Thumbnails.MINI_KIND);
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(thumb);
+//                    Bitmap thumb = ThumbnailUtils.createVideoThumbnail(Constant.TAG_VIDEO_PATH,
+//                            MediaStore.Images.Thumbnails.MINI_KIND);
+//                    BitmapDrawable bitmapDrawable = new BitmapDrawable(thumb);
 
 
-                    facingvideo.setBackgroundDrawable(bitmapDrawable);
-                    start.setBackground(getResources().getDrawable(R.drawable.round_button));
+                    facingvideo.setBackgroundDrawable(null);
+                    facingvideo.setVideoPath(Constant.TAG_VIDEO_PATH);
+                    facingvideo.start();
 
                     /* ;*/
 
@@ -189,6 +195,136 @@ public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callbac
         });
 
 
+    }
+
+    void loadFFmpeg() {
+
+        FFmpeg ffmpeg = FFmpeg.getInstance(context);
+        try {
+            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
+
+                @Override
+                public void onStart() {
+                    Toast.makeText(context, "Loaded start",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure() {
+                    Toast.makeText(context, "Load failed",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(context, "load success",
+                            Toast.LENGTH_LONG).show();
+                    cropVideo();
+
+                }
+
+                @Override
+                public void onFinish() {
+                    Toast.makeText(context, "load finished",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (FFmpegNotSupportedException e) {
+            // Handle if FFmpeg is not supported by device
+            Toast.makeText(context, "Load failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void cropVideo() {
+        final String command = "-y -i " + Constant.TAG_VIDEO_PATH + " -vf crop=in_w:in_w:0:0 -threads 5 -preset ultrafast -strict -2 " + Constant.TAG_VIDEO_PATH_CROPPED;
+        final String[] cmd = command.split(" ");
+
+        try {
+            final FFmpeg ffmpeg = FFmpeg.getInstance(context);
+            ffmpeg.execute(cmd, new FFmpegExecuteResponseHandler() {
+                @Override
+                public void onSuccess(String message) {
+                    Toast.makeText(context, "Successfully cropped!",
+                            Toast.LENGTH_LONG).show();
+                    resizeVideo();
+
+                }
+
+                @Override
+                public void onProgress(String message) {
+
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(context, "Cropping Fail!   " + message,
+                            Toast.LENGTH_LONG).show();
+                    Log.i("status", message);
+                }
+
+                @Override
+                public void onStart() {
+                    Toast.makeText(context, "Cropping Started!",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFinish() {
+                    Toast.makeText(context, "Cropping Stopped!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (FFmpegCommandAlreadyRunningException e) {
+
+        }
+    }
+
+    void resizeVideo() {
+        final String commandScale = "-y -i " + Constant.TAG_VIDEO_PATH_CROPPED + " -vf scale=300:300 -threads 5 -preset ultrafast -strict -2 " + Constant.TAG_VIDEO_PATH_RESIZED;
+//        final String commandScale = "-i " + Constant.TAG_VIDEO_PATH_CROPPED + " -s 300x300 -b:v 512k -vcodec mpeg1video -acodec copy " + Constant.TAG_VIDEO_PATH_RESIZE;
+        final String[] cmd4 = commandScale.split(" ");
+
+        try {
+            final FFmpeg ffmpeg2 = FFmpeg.getInstance(context);
+            ffmpeg2.execute(cmd4, new FFmpegExecuteResponseHandler() {
+                @Override
+                public void onSuccess(String message) {
+                    Toast.makeText(context, "Successfully resized!",
+                            Toast.LENGTH_LONG).show();
+                    if (MainActivity.isInternetPresent) {
+
+                        Login.arrayListAsyncs.add(new PostThisVideo());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(new File(Constant.TAG_VIDEO_PATH_RESIZED), userid);
+                    }
+                }
+
+                @Override
+                public void onProgress(String message) {
+                    Log.i("status", message);
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(context, "Resizing Fail!   " + message,
+                            Toast.LENGTH_LONG).show();
+                    Log.i("status", message);
+                }
+
+                @Override
+                public void onStart() {
+                    Toast.makeText(context, "Resizing Started!",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFinish() {
+                    Toast.makeText(context, "Resizing Stopped!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (FFmpegCommandAlreadyRunningException e) {
+
+        }
     }
 
     public void refreshCamera() {
@@ -234,15 +370,11 @@ public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callbac
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
         recorder.setOrientationHint(90);
-        CamcorderProfile cpHigh = CamcorderProfile.get(Camera.CameraInfo.CAMERA_FACING_FRONT,CamcorderProfile.QUALITY_480P);
-        cpHigh.videoFrameHeight = 400;
-        cpHigh.videoFrameWidth = 400;
-        cpHigh.videoBitRate = 200000;
-        cpHigh.videoFrameRate = 10;
+        CamcorderProfile cpHigh = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds
-        recorder.setMaxFileSize(50000000); // Approximately 50 megabytes
+        recorder.setMaxFileSize(500000000); // Approximately 50 megabytes
 
 
     }
@@ -465,7 +597,28 @@ public class ReplyVideoCapture extends Activity implements SurfaceHolder.Callbac
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        if (camera != null) {
+//            camera.stopPreview();
+//            camera.release();
+//            camera = null;
+//        }
+//        finish();
+        overridePendingTransition(R.anim.no_animation, R.anim.slide_out_down);
+
+    }
+
 //    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        finish();
+//        overridePendingTransition(R.anim.no_animation, R.anim.slide_out_down);
+//
+//    }
+
+    //    @Override
 //    public void onHiddenChanged(boolean hidden) {
 //        super.onHiddenChanged(hidden);
 //        if (hidden) {

@@ -7,8 +7,8 @@ android {
         applicationId "com.polygons.facingapp"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 2
-        versionName '1.0.1'
+        versionCode 3
+        versionName '1.0.2'
     }
     buildTypes {
         release {
@@ -41,4 +41,6 @@ dependencies {
     compile files('libs/httpmime-4.3.6.jar')
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.writingminds:FFmpegAndroid:0.3.2'
+
 }

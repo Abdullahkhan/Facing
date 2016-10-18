@@ -10,8 +10,11 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +35,13 @@ import com.polygons.facingapp.tools.Tools;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -249,7 +258,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                         CreateAndAppendPost();
                         swipeLayout.setRefreshing(false);
                         rearrangePosts();
-                        NewsFeed.scrollViewNewsFeed.fullScroll(ScrollView.FOCUS_UP);
+                        scrollViewNewsFeed.fullScroll(ScrollView.FOCUS_UP);
 
                         // Toast.makeText(getActivity(), "Newsfeed updated ", Toast.LENGTH_SHORT).show();
 
@@ -483,11 +492,54 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 circleImageView.setImageBitmap(profile_picture);
             }
 //            else
-               // Toast.makeText(getActivity(), "UnSuccessfull", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getActivity(), "UnSuccessfull", Toast.LENGTH_SHORT).show();
 
         }
     }
 
+    private class DownloadVideos extends AsyncTask<Object, Object, Boolean> {
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected Boolean doInBackground(Object... arg) {
+            return downloadFile((String) arg[0], (String) arg[1]);
+
+        }
+
+        protected void onPostExecute(Boolean result) {
+
+        }
+
+    }
+
+    private Boolean downloadFile(String fileURL, String fileName) {
+        try {
+            String rootDir = Environment.getExternalStorageDirectory()
+                    + File.separator + "VemeCircle";
+            File rootFile = new File(rootDir);
+            rootFile.mkdir();
+            URL url = new URL(fileURL);
+            HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.setDoOutput(true);
+            c.connect();
+            FileOutputStream f = new FileOutputStream(new File(rootFile,
+                    fileName));
+            InputStream in = c.getInputStream();
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ((len1 = in.read(buffer)) > 0) {
+                f.write(buffer, 0, len1);
+            }
+            f.close();
+            return true;
+        } catch (Exception e) {
+            Log.d("Error....", e.toString());
+            return false;
+        }
+    }
 
     private void rearrangePosts() {
         HashMap<Long, LinearLayout> hashMap = new HashMap<Long, LinearLayout>();
@@ -527,7 +579,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             final TextView postLink = (TextView) linearLayoutVideo.getChildAt(0);
             FrameLayout frameLayoutVideo = (FrameLayout) linearLayoutVideo.getChildAt(1);
 
-            final VideoView videoView = (VideoView) frameLayoutVideo.getChildAt(0);
+            final LinearLayout linearLayoutVideos = (LinearLayout) frameLayoutVideo.getChildAt(0);
+//            final VideoView videoView = (VideoView) linearLayoutVideos.getChildAt(0);
             final Button buttonPlay = (Button) frameLayoutVideo.getChildAt(1);
             final Button buttonReply = (Button) frameLayoutVideo.getChildAt(2);
 
@@ -549,7 +602,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     hashMapComments = new HashMap<>();
                     JSONObject jsonObjectEachComment = jsonArrayComments.getJSONObject(i);
                     hashMapComments.put(Constant.TAG_COMMENT, jsonObjectEachComment.getString(Constant.TAG_COMMENT));
-                    hashMapComments.put(Constant.TAG_USER_COMMENT, jsonObjectEachComment.getString(Constant.TAG_USER_COMMENT));
+                    //   hashMapComments.put(Constant.TAG_USER_COMMENT, jsonObjectEachComment.getString(Constant.TAG_USER_COMMENT));
                     hashMapComments.put(Constant.TAG_COMMENT_USER_ID, jsonObjectEachComment.getString(Constant.TAG_COMMENT_USER_ID));
                     hashMapComments.put(Constant.TAG_COMMENT_FIRST_NAME, jsonObjectEachComment.getString(Constant.TAG_COMMENT_FIRST_NAME));
                     hashMapComments.put(Constant.TAG_COMMENT_LAST_NAME, jsonObjectEachComment.getString(Constant.TAG_COMMENT_LAST_NAME));
@@ -565,37 +618,146 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
             }
 
-
-            try {
-
-                // videoView.setVideoURI(Uri.parse("https://facing-app.herokuapp.com/" + postLink.getText().toString()));
-                videoView.setVideoURI(Uri.parse(Login.baseUrl + postLink.getText().toString()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            // videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/" + postLink.getText().toString()));
-            // videoView.setVideoURI(Uri.parse("http://192.168.8.107:3000/uploads/video.mp4"));
-            //   videoView.setVideoURI(Uri.parse("http://portal.ekniazi.com/The%20Giver%20(2014)/The.Giver.2014.720p.BluRay.x264.YIFY.mp4"));
-//                    videoView.setVideoPath("http://192.168.8.101/facing/upload/video.mp4");
-            // videoView.setVideoPath("http://192.168.8.106:3000/uploads/110716_video.mp4");
-            //android.widget.MediaController mc = new android.widget.MediaController(getActivity());
-//            videoView.setMediaController(mc);
-            // videoView.seekTo(100);
-            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            final VideoView videoView = new VideoView(getActivity());
+            videoView.setLayoutParams(new LinearLayout.LayoutParams(VideoCapture.getScreenWidth(), VideoCapture.getScreenWidth()));
+            videoView.setVideoURI(Uri.parse(Login.baseUrl + postLink.getText().toString()));
+            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    videoView.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail));
-                    buttonPlay.setVisibility(View.INVISIBLE);
-                    return true;
+                public void onCompletion(MediaPlayer mp) {
+                    buttonPlay.setVisibility(View.VISIBLE);
+                    buttonReply.setVisibility(View.VISIBLE);
+                    final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    params.setMargins(0, 0, 80, 0);
+                    params.gravity = Gravity.CENTER;
+                    buttonPlay.setLayoutParams(params);
+                    buttonPlay.getLayoutParams().width = 120;
+                    buttonPlay.getLayoutParams().height = 120;
+                    buttonPlay.requestLayout();
+
                 }
             });
+
+            linearLayoutVideos.addView(videoView);
+//            final ArrayList<VideoView> arrayListVideoView = new ArrayList<>();
+//            VideoView videoView = new VideoView(getActivity());
+//            videoView.setVideoURI(Uri.parse(Login.baseUrl + postLink.getText().toString()));
+//            arrayListVideoView.add(videoView);
+//
+//
+//            for (int i = 0; i < arrayListComments.size(); i++) {
+//                VideoView videoViewComment = new VideoView(getActivity());
+//                videoViewComment.setVideoPath(Login.baseUrl + "uploads/" + arrayListComments.get(i).get(Constant.TAG_COMMENT));
+//                videoViewComment.setVisibility(View.GONE);
+//                arrayListVideoView.add(videoViewComment);
+//            }
+//            final Tools toolComment = new Tools();
+//            Log.i("Size", arrayListComments.size() + "" + arrayListVideoView.size());
+//            for (toolComment.position = 0; toolComment.position < arrayListVideoView.size(); ) {
+//                arrayListVideoView.get(toolComment.position).seekTo(100);
+//                arrayListVideoView.get(toolComment.position).start();
+//                arrayListVideoView.get(toolComment.position).pause();
+//                arrayListVideoView.get(toolComment.position).setLayoutParams(new LinearLayout.LayoutParams(VideoCapture.getScreenWidth(), VideoCapture.getScreenWidth()));
+//                arrayListVideoView.get(toolComment.position).setOnErrorListener(new MediaPlayer.OnErrorListener() {
+//                    @Override
+//                    public boolean onError(MediaPlayer mp, int what, int extra) {
+////                        arrayListVideoView.get(toolComment.position).setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail));
+//                        buttonPlay.setVisibility(View.INVISIBLE);
+//                        return true;
+//                    }
+//                });
+//                final Integer positionComment = new Integer(toolComment.position);
+//                Log.i("listener", positionComment + "");
+//                if (toolComment.position == arrayListVideoView.size() - 1 || arrayListVideoView.size() == 0) {
+//
+//
+//                    arrayListVideoView.get(toolComment.position).setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                        @Override
+//                        public void onCompletion(MediaPlayer mp) {
+//                            buttonPlay.setVisibility(View.VISIBLE);
+//                            buttonReply.setVisibility(View.VISIBLE);
+//                            final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+//                                    FrameLayout.LayoutParams.WRAP_CONTENT,
+//                                    FrameLayout.LayoutParams.WRAP_CONTENT
+//                            );
+//                            params.setMargins(0, 0, 80, 0);
+//                            params.gravity = Gravity.CENTER;
+//                            buttonPlay.setLayoutParams(params);
+//                            buttonPlay.getLayoutParams().width = 120;
+//                            buttonPlay.getLayoutParams().height = 120;
+//                            buttonPlay.requestLayout();
+//                            for (int i = 0; i < arrayListVideoView.size(); i++) {
+//                                arrayListVideoView.get(i).setVisibility(View.GONE);
+//                            }
+//                            arrayListVideoView.get(0).setVisibility(View.VISIBLE);
+//
+//                        }
+//                    });
+//                } else {
+//                    arrayListVideoView.get(toolComment.position).setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                        @Override
+//                        public void onCompletion(MediaPlayer mp) {
+//
+//                            try {
+//                                arrayListVideoView.get(positionComment - 1).setVisibility(View.GONE);
+//                                Log.i("listener", "pre");
+//                                Log.i("listener", positionComment + "");
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            try {
+//                                arrayListVideoView.get(positionComment).setVisibility(View.GONE);
+//                                Log.i("listener", "cur");
+//                                Log.i("listener", positionComment + "");
+//
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                            try {
+//                                arrayListVideoView.get(positionComment + 1).setVisibility(View.VISIBLE);
+//                                arrayListVideoView.get(positionComment + 1).start();
+//                                Log.i("listener", "next");
+//                                Log.i("listener", positionComment + "");
+//
+//                            } catch (Exception e) {
+//
+//                                e.printStackTrace();
+//                            }
+//
+//                        }
+//
+//                    });
+//                }
+//                toolComment.position++;
+//            }
+//            for (int i = 0; i < arrayListVideoView.size(); i++) {
+//                linearLayoutVideos.addView(arrayListVideoView.get(i));
+//            }
+
+
             buttonPlay.setVisibility(View.VISIBLE);
             buttonReply.setVisibility(View.GONE);
+            final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            params.setMargins(80, 0, 0, 0);
+            params.gravity = Gravity.CENTER;
+            buttonReply.setLayoutParams(params);
+
+
             buttonPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    buttonPlay.setVisibility(View.GONE);
+                    buttonReply.setVisibility(View.GONE);
                     videoView.start();
-                    buttonPlay.setVisibility(View.INVISIBLE);
+                    //arrayListVideoView.get(0).start();
+
+
                 }
             });
             buttonReply.setOnClickListener(new View.OnClickListener() {
@@ -606,31 +768,6 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.no_animation);
 
-                }
-            });
-            final Tools toolComment = new Tools();
-            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    try {
-                        if (toolComment.position < arrayListComments.size()) {
-                            mp.setDisplay(null);
-                            mp.reset();
-                            mp.setDisplay(videoView.getHolder());
-                            // videoView.setVideoPath("https://facing-app.herokuapp.com/uploads/" + arrayListComments.get(toolComment.position).get(Constant.TAG_COMMENT));
-                            videoView.setVideoPath(Login.baseUrl + "uploads/" + arrayListComments.get(toolComment.position).get(Constant.TAG_COMMENT));
-                            toolComment.position = (toolComment.position + 1);// % arrayListComments.size();
-                            videoView.start();
-                        } else {
-                            buttonReply.setVisibility(View.VISIBLE);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        buttonReply.setVisibility(View.VISIBLE);
-
-
-                    }
                 }
             });
 
@@ -705,7 +842,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
     }
 
-    private View creatingPost(View tempView, ArrayList<HashMap<String, String>> post, int position) {
+    private View creatingPost(View tempView, ArrayList<HashMap<String, String>> post,
+                              int position) {
 
         TextView textViewItemListViewPostIDPostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewPostIDPostNewsFeed);
         TextView textViewItemListViewNamePostNewsFeed = (TextView) tempView.findViewById(R.id.textViewItemListViewFullNamePostNewsFeed);
@@ -715,20 +853,11 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         TextView textViewProfilePicURL = (TextView) tempView.findViewById(R.id.textViewProfilePicURL);
         Button buttonPostLike = (Button) tempView.findViewById(R.id.buttonPostLike);
         Button buttonPostUnLike = (Button) tempView.findViewById(R.id.buttonPostUnLike);
+        TextView textViewPostTotalLikes = (TextView) tempView.findViewById(R.id.textViewPostTotalLikes);
+        TextView textViewPostTotalShares = (TextView) tempView.findViewById(R.id.textViewPostTotalShares);
 
         TextView textViewComments = (TextView) tempView.findViewById(R.id.textViewComments);
 
-        final VideoView videoView = (VideoView) tempView.findViewById(R.id.videoView);
-
-        final ViewGroup.LayoutParams params = videoView.getLayoutParams();
-        videoView.post(new Runnable() {
-            @Override
-            public void run() {
-
-                params.height = videoView.getWidth();
-                videoView.setLayoutParams(params);
-            }
-        });
 
         textViewComments.setText(post.get(position).get(Constant.TAG_USER_COMMENT));
         //  videoView.setVideoPath(post.get(position).get(Constant.TAG_POST));
@@ -758,6 +887,35 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         textViewItemListViewTimePostNewsFeed.setText(toDuration(System.currentTimeMillis() - Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
         textViewItemListViewTimePostGoneNewsFeed.setText(String.valueOf(Long.parseLong(post.get(position).get(Constant.TAG_TIME))));
         textViewProfilePicURL.setText(post.get(position).get(Constant.TAG_USER_PROFILE_PICTURE_URL));
+        int noLikes = 0;
+        try {
+
+            noLikes = Integer.parseInt(post.get(position).get(Constant.TAG_TOTAL_LIKES));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (noLikes <= 1) {
+
+            textViewPostTotalLikes.setText(noLikes + " Like");
+        } else {
+            textViewPostTotalLikes.setText(post.get(position).get(Constant.TAG_TOTAL_LIKES) + " Likes");
+
+        }
+        int noShares = 0;
+        try {
+
+            noShares = Integer.parseInt(post.get(position).get(Constant.TAG_TOTAL_SHARE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (noShares <= 1) {
+
+            textViewPostTotalShares.setText(noShares + " Share");
+        } else {
+            textViewPostTotalShares.setText(post.get(position).get(Constant.TAG_TOTAL_SHARE) + " Shares");
+
+        }
 
         if (Boolean.parseBoolean(post.get(position).get(Constant.TAG_ISLIKE))) {
             buttonPostLike.setVisibility(View.GONE);
@@ -774,8 +932,12 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 //        for (int position = post.size() - 1; position >= 0; position--) {
         for (int position = 0; position < post.size(); position++) {
             View tempView = li.inflate(R.layout.linearlayout_post, null);
+            try {
 
-            linearLayoutPost.addView(creatingPost(tempView, post, position), 0);
+                linearLayoutPost.addView(creatingPost(tempView, post, position), 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -784,8 +946,12 @@ public class NewsFeed extends android.support.v4.app.Fragment {
         LayoutInflater li = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int position = 0; position < bottomPost.size(); position++) {
             View tempView = li.inflate(R.layout.linearlayout_post, null);
+            try {
 
-            linearLayoutPost.addView(creatingPost(tempView, bottomPost, position), linearLayoutPost.getChildCount());
+                linearLayoutPost.addView(creatingPost(tempView, bottomPost, position), linearLayoutPost.getChildCount());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -827,7 +993,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
             for (int position2 = 0; position2 < post.size(); position2++) {
                 if (postId.equals(post.get(position2).get(Constant.TAG_POST_ID))) {
 
-                    post.remove(position2);
+//                    post.remove(position2);
+                    linearLayoutPost.removeViewAt(position);
                 }
 
 
@@ -931,7 +1098,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 break;
             }
         }
-        if ("".equals(res.toString()))
+        if ("" .equals(res.toString()))
             return "0 second ago";
         else
             return res.toString();

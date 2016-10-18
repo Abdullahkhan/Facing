@@ -1,6 +1,7 @@
 package com.polygons.facingapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -33,6 +36,11 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.polygons.facingapp.tools.Constant;
 
 import org.apache.http.HttpEntity;
@@ -113,11 +121,9 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         buttonPostVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.isInternetPresent) {
+                facingvideo.pause();
+                loadFFmpeg();
 
-                    Login.arrayListAsyncs.add(new PostThisVideo());
-                    Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(new File(Constant.TAG_VIDEO_PATH), userid);
-                }
             }
         });
 
@@ -148,6 +154,12 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
                 facingvideo.start();
             }
         });
+        facingvideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                facingvideo.start();
+            }
+        });
 
         recorder = new MediaRecorder();
 
@@ -167,16 +179,20 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
                     frameLayoutCameraPreview.setVisibility(View.GONE);
                     frameLayoutVideoPreview.setVisibility(View.VISIBLE);
+                    cameraView.setVisibility(View.GONE);
 
 
                     // facingvideo.setVideoPath("/sdcard/videocapture_example.mp4");
-                    Bitmap thumb = ThumbnailUtils.createVideoThumbnail(Constant.TAG_VIDEO_PATH,
-                            MediaStore.Images.Thumbnails.MINI_KIND);
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(thumb);
+//                    Bitmap thumb = ThumbnailUtils.createVideoThumbnail(Constant.TAG_VIDEO_PATH,
+//                            MediaStore.Images.Thumbnails.MINI_KIND);
+//                    BitmapDrawable bitmapDrawable = new BitmapDrawable(thumb);
 
 
-                    facingvideo.setBackgroundDrawable(bitmapDrawable);
-                    start.setBackground(getResources().getDrawable(R.drawable.round_button));
+                    //  facingvideo.setBackgroundDrawable(bitmapDrawable);
+                    //  start.setBackground(getResources().getDrawable(R.drawable.round_button));
+                    facingvideo.setBackgroundDrawable(null);
+                    facingvideo.setVideoPath(Constant.TAG_VIDEO_PATH);
+                    facingvideo.start();
 
                     /* ;*/
 
@@ -198,6 +214,136 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
         });
 
 
+    }
+
+    void loadFFmpeg() {
+
+        FFmpeg ffmpeg = FFmpeg.getInstance(getActivity());
+        try {
+            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
+
+                @Override
+                public void onStart() {
+                    Toast.makeText(getActivity(), "Loaded start",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure() {
+                    Toast.makeText(getActivity(), "Load failed",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(getActivity(), "load success",
+                            Toast.LENGTH_LONG).show();
+                    cropVideo();
+
+                }
+
+                @Override
+                public void onFinish() {
+                    Toast.makeText(getActivity(), "load finished",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (FFmpegNotSupportedException e) {
+            // Handle if FFmpeg is not supported by device
+            Toast.makeText(getActivity(), "Load failed", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void cropVideo() {
+        final String command = "-y -i " + Constant.TAG_VIDEO_PATH + " -vf crop=in_w:in_w:0:0 -threads 5 -preset ultrafast -strict -2 " + Constant.TAG_VIDEO_PATH_CROPPED;
+        final String[] cmd = command.split(" ");
+
+        try {
+            final FFmpeg ffmpeg = FFmpeg.getInstance(getActivity());
+            ffmpeg.execute(cmd, new FFmpegExecuteResponseHandler() {
+                @Override
+                public void onSuccess(String message) {
+                    Toast.makeText(getActivity(), "Successfully cropped!",
+                            Toast.LENGTH_LONG).show();
+                    resizeVideo();
+
+                }
+
+                @Override
+                public void onProgress(String message) {
+
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(getActivity(), "Cropping Fail!   " + message,
+                            Toast.LENGTH_LONG).show();
+                    Log.i("status", message);
+                }
+
+                @Override
+                public void onStart() {
+                    Toast.makeText(getActivity(), "Cropping Started!",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFinish() {
+                    Toast.makeText(getActivity(), "Cropping Stopped!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (FFmpegCommandAlreadyRunningException e) {
+
+        }
+    }
+
+    void resizeVideo() {
+        final String commandScale = "-y -i " + Constant.TAG_VIDEO_PATH_CROPPED + " -vf scale=300:300 -threads 5 -preset ultrafast -strict -2 " + Constant.TAG_VIDEO_PATH_RESIZED;
+//        final String commandScale = "-i " + Constant.TAG_VIDEO_PATH_CROPPED + " -s 300x300 -b:v 512k -vcodec mpeg1video -acodec copy " + Constant.TAG_VIDEO_PATH_RESIZE;
+        final String[] cmd4 = commandScale.split(" ");
+
+        try {
+            final FFmpeg ffmpeg2 = FFmpeg.getInstance(getActivity());
+            ffmpeg2.execute(cmd4, new FFmpegExecuteResponseHandler() {
+                @Override
+                public void onSuccess(String message) {
+                    Toast.makeText(getActivity(), "Successfully resized!",
+                            Toast.LENGTH_LONG).show();
+                    if (MainActivity.isInternetPresent) {
+
+                        Login.arrayListAsyncs.add(new PostThisVideo());
+                        Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(new File(Constant.TAG_VIDEO_PATH_RESIZED), userid);
+                    }
+                }
+
+                @Override
+                public void onProgress(String message) {
+                    Log.i("status", message);
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(getActivity(), "Resizing Fail!   " + message,
+                            Toast.LENGTH_LONG).show();
+                    Log.i("status", message);
+                }
+
+                @Override
+                public void onStart() {
+                    Toast.makeText(getActivity(), "Resizing Started!",
+                            Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFinish() {
+                    Toast.makeText(getActivity(), "Resizing Stopped!",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (FFmpegCommandAlreadyRunningException e) {
+
+        }
     }
 
     public void refreshCamera() {
@@ -241,14 +387,14 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
     private void initRecorder() {
         recorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-        recorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+        recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
         recorder.setOrientationHint(90);
         CamcorderProfile cpHigh = CamcorderProfile
-                .get(Camera.CameraInfo.CAMERA_FACING_FRONT,CamcorderProfile.QUALITY_480P);
-        cpHigh.videoFrameHeight = 400;
-        cpHigh.videoFrameWidth = 400;
-        cpHigh.videoBitRate = 200000;
-        cpHigh.videoFrameRate = 10;
+                .get(CamcorderProfile.QUALITY_HIGH);
+//        cpHigh.videoFrameHeight = 400;
+//        cpHigh.videoFrameWidth = 400;
+//        cpHigh.videoBitRate = 200000;
+//        cpHigh.videoFrameRate = 10;
         recorder.setProfile(cpHigh);
         recorder.setOutputFile(Constant.TAG_VIDEO_PATH);
         recorder.setMaxDuration(50000); // 50 seconds
@@ -456,15 +602,15 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
 
                 Toast.makeText(getActivity(), "Post Successfully", Toast.LENGTH_SHORT).show();
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
 
-                MainActivity.viewPager.setCurrentItem(0);
                 if (camera != null) {
                     camera.stopPreview();
                     camera.release();
                     camera = null;
                 }
+                MainActivity.viewPager.setCurrentItem(0);
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
                 NewsFeed.scrollViewNewsFeed.fullScroll(ScrollView.FOCUS_UP);
 
 
@@ -480,8 +626,14 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
 
     @Override
     public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
         if (visible) {
             //Do your stuff here
+            if (camera != null) {
+                camera.stopPreview();
+                camera.release();
+                camera = null;
+            }
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.detach(MainActivity.videoCapture).attach(MainActivity.videoCapture).commit();
         } else {
@@ -492,7 +644,6 @@ public class VideoCapture extends android.support.v4.app.Fragment implements Sur
             }
         }
 
-        super.setMenuVisibility(visible);
     }
 //    @Override
 //    public void onHiddenChanged(boolean hidden) {

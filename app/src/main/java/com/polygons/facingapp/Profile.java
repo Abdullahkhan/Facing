@@ -97,6 +97,7 @@ public class Profile extends Fragment {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(getActivity(), ImageCaptureCamera.class);
                                 startActivity(intent);
+                                getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.no_animation);
                             }
                         })
                         .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
@@ -104,6 +105,7 @@ public class Profile extends Fragment {
 
                                 Intent intent = new Intent(getActivity(), ProfilePicturePreview.class);
                                 startActivity(intent);
+                                getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.no_animation);
 
                             }
                         });
@@ -227,4 +229,5 @@ public class Profile extends Fragment {
         super.onDestroy();
         getActivity().finish();
     }
+
 }

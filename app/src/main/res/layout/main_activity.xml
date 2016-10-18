@@ -8,7 +8,6 @@
     tools:context="com.polygons.facingapp.MainActivity">
 
 
-
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -28,7 +27,9 @@
                 android:layout_height="wrap_content"
                 android:background="@color/red"
                 app:tabGravity="fill"
+                app:tabIndicatorColor="@color/white"
                 app:tabMode="fixed"></android.support.design.widget.TabLayout>
+
             <LinearLayout
                 android:id="@+id/linearLayoutInternetCheckMainActivity"
                 android:layout_width="match_parent"

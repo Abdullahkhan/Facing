@@ -141,7 +141,7 @@ public class ImageCaptureCamera extends AppCompatActivity {
                     Login.arrayListAsyncs.add((AsyncTask) new UploadFacingToServer());
                     Login.arrayListAsyncs.get(Login.arrayListAsyncs.size() - 1).execute(pictureFile, userid);
                 }
-            //    new UploadFacingToServer().execute(pictureFile, userid);
+                //    new UploadFacingToServer().execute(pictureFile, userid);
 
                 //            Intent in1 = new Intent(ImageCaptureCamera.this, MainActivity.class);
                 //          in1.putExtra("image",data);
@@ -177,7 +177,7 @@ public class ImageCaptureCamera extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
                 .format(new Date());
         File mediaFile;
-      //  mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+        //  mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + "profilepic" + ".jpg");
 
         return mediaFile;
@@ -279,12 +279,26 @@ public class ImageCaptureCamera extends AppCompatActivity {
             if (result) {
 
                 finish();
+               // overridePendingTransition(R.anim.no_animation, R.anim.slide_out_down);
+
             } else {
-                Log.i("Result","Failed");
+                Log.i("Result", "Failed");
             }
 
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        if (mCamera != null) {
+//            mCamera.stopPreview();
+//            mCamera.release();
+//            mCamera = null;
+//        }
+//        finish();
+        overridePendingTransition(R.anim.no_animation, R.anim.slide_out_down);
+
+    }
 
 }
