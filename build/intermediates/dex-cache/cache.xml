@@ -1,3 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\support-annotations-23.0.1_6caa1fe4da30cf2cc1676a54cb9890359b7ae5e4.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\libs\httpclient-4.3.6.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="f3cf3b25e14d3bca47773e95aa85ea8fefbf8e81">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\httpclient-4.3.6_a1d5e176415ecec06c767760352bd9719fb90873.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\internal_impl-23.0.1_bb247594f753b1a208f795cdda0f067f3d2ad03f.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.soundcloud.android\android-crop\1.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="11a65cf2b30c192b38a881d626fa771a78a2293d">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.soundcloud.android-android-crop-1.0.1_7ecbdebcaee15b569850f2e63aa9fa2aa1f2e739.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="a68fac659fad9fe8d72f148c05e802ac1f6c140b">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\instant-run_e4fa77841418e73aad25a864cda9976768dc13c8.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.0.1_3f5c81261c7b3c55709037f621fd21abde0fa223.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="1b9419c46d99f52d3ef3f5363e6cd7d792ed419e">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_9830c3e2e0891c7be068897c57cd22c4faa116e8.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.1.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-appindexing-8.1.0_88b2bd1cb6af26a9d5ec52e99eebbaf6f66be3d1.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\libs\httpmime-4.3.6.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="66a39a5e37d5da40fdad6176fc24ef4316e74702">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\httpmime-4.3.6_5f2473b457cf4c94de8630599150e8afd4df7439.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-basement-8.1.0_d65dd5b943fd7d8e6a9e2dac73f26df515fa56dd.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.android.support\design\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="e5c61a3169221a89654ffcaaed47bba51cf071ad">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-design-23.0.1_590f28e748382f215fd75300a375b6771e7d43c1.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\libs\httpcore-4.3.3.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="f91b7a4aadc5cf486df6e4634748d7dd7a73f06d">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\httpcore-4.3.3_b332658d0a6e43348d2ef8cf4a74d50f39ff5039.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.writingminds\FFmpegAndroid\0.3.2\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="722acae466ccefebedf8a6631384e83bf3139f7c">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.writingminds-FFmpegAndroid-0.3.2_87be2a187ed9160a7419910948fb6d2cebcdb53c.jar" />
+    </item>
+    <item
+        jar="D:\Android Projects\Facing\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="D:\Android Projects\Facing\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.0.1_78cb61a7611a27e368be4120d594b3bd3c9c2338.jar" />
+    </item>
+
+</items>

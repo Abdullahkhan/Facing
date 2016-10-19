@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,6 +17,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -37,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,6 +63,7 @@ public class NewsFeed extends android.support.v4.app.Fragment {
     public static InteractiveScrollView scrollViewNewsFeed;
     LinearLayout linearLayoutPost;
     public static SwipeRefreshLayout swipeLayout;
+
 
     String userid;
     String offset = "0";
@@ -618,13 +623,13 @@ public class NewsFeed extends android.support.v4.app.Fragment {
 
             }
 
-            final VideoView videoView = new VideoView(getActivity());
+           /* final VideoView videoView = new VideoView(getActivity());
             videoView.setLayoutParams(new LinearLayout.LayoutParams(VideoCapture.getScreenWidth(), VideoCapture.getScreenWidth()));
             videoView.setVideoURI(Uri.parse(Login.baseUrl + postLink.getText().toString()));
             videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    buttonPlay.setVisibility(View.VISIBLE);
+                   *//* buttonPlay.setVisibility(View.VISIBLE);
                     buttonReply.setVisibility(View.VISIBLE);
                     final FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                             FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -635,12 +640,105 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                     buttonPlay.setLayoutParams(params);
                     buttonPlay.getLayoutParams().width = 120;
                     buttonPlay.getLayoutParams().height = 120;
-                    buttonPlay.requestLayout();
+                    buttonPlay.requestLayout();*//*
 
                 }
-            });
+            });*/
 
-            linearLayoutVideos.addView(videoView);
+             final MediaPlayer  mediaPlayerFirstVideo=MediaPlayer.create(getActivity().getBaseContext(),Uri.parse(Login.baseUrl + postLink.getText().toString()));
+            SurfaceView surfaceViewVideoEmpty=new SurfaceView(getActivity());
+            surfaceViewVideoEmpty.setLayoutParams(new LinearLayout.LayoutParams(VideoCapture.getScreenWidth(), VideoCapture.getScreenWidth()));
+
+            linearLayoutVideos.addView(surfaceViewVideoEmpty);
+            SurfaceView surfaceViewVideo=(SurfaceView) linearLayoutVideos.getChildAt(linearLayoutVideos.getChildCount()-1);
+            final SurfaceHolder surfaceHolderVideo=surfaceViewVideo.getHolder();
+          
+
+            surfaceHolderVideo.addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+
+                    final ArrayList<MediaPlayer> arrayListmediaPlayers=new ArrayList<MediaPlayer>();
+
+
+
+                    try {
+                        mediaPlayerFirstVideo.prepare();
+                    }catch (Exception e){
+
+                        e.printStackTrace();
+                    }
+
+                    mediaPlayerFirstVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mediaPlayerFirstVideo.setDisplay(surfaceHolderVideo);
+                        }
+                    });
+                    mediaPlayerFirstVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+
+                            mediaPlayerFirstVideo.release();
+                            try {
+                                arrayListmediaPlayers.get(1).setDisplay(surfaceHolderVideo);
+                                arrayListmediaPlayers.get(1).start();
+                            }catch (Exception e){
+
+                            }
+                        }
+                    });
+
+                    mediaPlayerFirstVideo.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+                    arrayListmediaPlayers.add(mediaPlayerFirstVideo);
+                    final Tools toolsComment=new Tools();
+                    for (toolsComment.position=0;toolsComment.position<arrayListComments.size();) {
+                        final Integer positionComment = new Integer(toolsComment.position);
+                        MediaPlayer mediaPlayerComment = MediaPlayer.create(getActivity().getBaseContext(), Uri.parse(Login.baseUrl + "uploads/" + arrayListComments.get(positionComment).get(Constant.TAG_COMMENT)));
+                        mediaPlayerComment.prepareAsync();
+
+                        mediaPlayerComment.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                try {
+                                    arrayListmediaPlayers.get(positionComment + 1).release();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    arrayListmediaPlayers.get(positionComment + 2).setDisplay(surfaceHolderVideo);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                try {
+                                    arrayListmediaPlayers.get(positionComment + 2).start();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        });
+
+                        toolsComment.position++;
+                    }
+                }
+
+                @Override
+                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+
+                }
+            }
+            );
+
+
+
 //            final ArrayList<VideoView> arrayListVideoView = new ArrayList<>();
 //            VideoView videoView = new VideoView(getActivity());
 //            videoView.setVideoURI(Uri.parse(Login.baseUrl + postLink.getText().toString()));
@@ -754,9 +852,8 @@ public class NewsFeed extends android.support.v4.app.Fragment {
                 public void onClick(View v) {
                     buttonPlay.setVisibility(View.GONE);
                     buttonReply.setVisibility(View.GONE);
-                    videoView.start();
+                    mediaPlayerFirstVideo.start();
                     //arrayListVideoView.get(0).start();
-
 
                 }
             });
